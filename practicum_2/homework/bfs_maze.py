@@ -41,6 +41,18 @@ class Maze:
                     print(f"{sym} ", end="")
             print()  # linebreak
 
+def _shift_coordinate(i: int, j: int, move: str) -> tuple[int, int]:
+    if move == "L":
+        j -= 1
+    elif move == "R":
+        j += 1
+    elif move == "U":
+        i -= 1
+    elif move == "D":
+        i += 1
+    return i, j
+    
+
 def find_path(maze: Maze, G: nx.Graph):
 	visited, olders = {}, {}
 	lw = maze.list_view
@@ -51,7 +63,6 @@ def find_path(maze: Maze, G: nx.Graph):
 	q = Queue(); q.put(src)
 	
 	for node in G:
-		print(node)
 		visited[node] = False
 		olders[node] = None
 	visited[src] = True
@@ -82,8 +93,7 @@ def find_path(maze: Maze, G: nx.Graph):
 		next = olders[next]
 	
 	return return_path[::-1]
-	
-	
+    
 def solve(maze: Maze):
 	# creating graph with nodes-elements of the maze
 	G = nx.Graph()
@@ -102,7 +112,7 @@ def solve(maze: Maze):
 
 
 if __name__ == "__main__":
-    maze = Maze.from_file("practicum_2/maze_2.txt")
+    maze = Maze.from_file("maze_2.txt")
     t_start = perf_counter()
     print(solve(maze))
     t_end = perf_counter()
