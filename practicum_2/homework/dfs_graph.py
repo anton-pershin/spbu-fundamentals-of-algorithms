@@ -13,17 +13,9 @@ def visit(node: Any):
 def dfs_iterative(G: nx.Graph, node: Any):
     visited = {n: False for n in G}
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-
 
 def topological_sort(G: nx.DiGraph, node: Any):
     visited = {n: False for n in G}
-
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
 
 
 if __name__ == "__main__":

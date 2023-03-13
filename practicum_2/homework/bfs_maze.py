@@ -39,10 +39,6 @@ class Maze:
 def solve(maze: Maze) -> None:
     path = ""  # solution as a string made of "L", "R", "U", "D"
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-
     print(f"Found: {path}")
     maze.print(path)
 
