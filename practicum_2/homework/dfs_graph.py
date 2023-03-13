@@ -83,7 +83,7 @@ def assert_algo(algo_to_check: Callable, algo_true: Callable, *options) -> bool:
 
 if __name__ == "__main__":
     # Load and plot the graph
-    G = nx.read_edgelist("practicum_2/graph_2.edgelist", create_using=nx.Graph)
+    G = nx.read_edgelist("homework/graph_2.edgelist", create_using=nx.Graph)
 	
     print("Recursive DFS")
     print("-" * 32)
@@ -99,7 +99,7 @@ if __name__ == "__main__":
     
     
     plot_graph(G)
-    G = nx.read_edgelist("practicum_2/graph_2.edgelist", create_using=nx.DiGraph)
+    G = nx.read_edgelist("homework/graph_2.edgelist", create_using=nx.DiGraph)
     
     print("Topological sort")
     print("-" * 32)
