@@ -1,3 +1,5 @@
+import os
+
 import networkx as nx
 from src.plotting import plot_graph
 
