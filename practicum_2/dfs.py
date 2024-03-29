@@ -1,3 +1,10 @@
+# print(100//6)
+# print(100//-6)
+# print(-100//6)
+# print(-100//-6)
+
+print()
+
 import queue
 from typing import Any
 
@@ -37,7 +44,7 @@ def dfs_recursive_postorder(G: nx.DiGraph, node: Any, visited: dict[Any]) -> Non
 if __name__ == "__main__":
     # Load and plot the graph
     G = nx.read_edgelist("practicum_2/graph_2.edgelist", create_using=nx.Graph)
-    # plot_graph(G)
+    plot_graph(G)
 
     # 1. Recursive DFS. Trivial to implement, but it does not scale on large graphs
     # In the debug mode, look at the call stack
