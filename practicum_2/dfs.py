@@ -3,7 +3,9 @@ from typing import Any
 
 import networkx as nx
 
-from src.plotting import plot_graph
+import sys
+sys.path.insert(1, 'C:\Новая папка\spbu-fundamentals-of-algorithms\src')
+from plotting import plot_graph
 
 
 def visit(node: Any):
@@ -11,18 +13,25 @@ def visit(node: Any):
 
 
 def dfs_recursive(G: nx.Graph, node: Any, visited: dict[Any]) -> None:
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-
-    pass
+    visit(node)
+    visited[node] = True
+    for next in G.neighbors(node):
+        if (visited[next] != True):
+            visited = dfs_recursive(G, node=next, visited=visited)
+    return visited
 
 
 def dfs_iterative(G: nx.Graph, node: Any) -> None:
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-
+    visited = {n: False for n in G}
+    stack = [node]
+    visited[node] = True
+    while stack:
+        node = stack.pop()
+        visit(node)
+        for next in G.neighbors(node):
+            if (visited[next] != True):
+                visited[next] = True
+                stack.append(next)
     pass
 
 
