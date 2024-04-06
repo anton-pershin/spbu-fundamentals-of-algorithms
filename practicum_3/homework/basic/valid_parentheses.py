@@ -19,11 +19,10 @@ class Stack:
         ### PUT YOUR CODE HERE ###
         ##########################
 
-        return ...
+        pass
 
     def push(self, x: Any) -> None:
         """Complexity: O(1)"""
-
         ##########################
         ### PUT YOUR CODE HERE ###
         ##########################
@@ -36,7 +35,7 @@ class Stack:
         ### PUT YOUR CODE HERE ###
         ##########################
 
-        return ...
+        pass
 
 
 class StackUnderflowException(BaseException):
@@ -63,14 +62,14 @@ def are_parentheses_valid(s: str) -> bool:
     ### PUT YOUR CODE HERE ###
     ##########################
 
-    return ...
+    pass
 
 
 if __name__ == "__main__":
     # Let's solve Valid Parentheses problem from leetcode.com:
     # https://leetcode.com/problems/valid-parentheses/
     cases = []
-    with open("practicum_2/valid_parentheses_cases.yaml", "r") as f:
+    with open("practicum_3/homework/basic/valid_parentheses_cases.yaml", "r") as f:
         cases = yaml.safe_load(f)
     for c in cases:
         res = are_parentheses_valid(c["input"])

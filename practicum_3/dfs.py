@@ -10,7 +10,7 @@ def visit(node: Any):
     print(f"Wow, it is {node} right here!")
 
 
-def dfs_recursive(G: nx.Graph, node: Any, visited: dict[Any]) -> None:
+def dfs_recursive(G: nx.Graph, node: Any, visited: dict[Any]):
     ##########################
     ### PUT YOUR CODE HERE ###
     ##########################
@@ -18,7 +18,7 @@ def dfs_recursive(G: nx.Graph, node: Any, visited: dict[Any]) -> None:
     pass
 
 
-def dfs_iterative(G: nx.Graph, node: Any) -> None:
+def dfs_iterative(G: nx.Graph, node: Any):
     ##########################
     ### PUT YOUR CODE HERE ###
     ##########################
@@ -26,7 +26,7 @@ def dfs_iterative(G: nx.Graph, node: Any) -> None:
     pass
 
 
-def dfs_recursive_postorder(G: nx.DiGraph, node: Any, visited: dict[Any]) -> None:
+def dfs_recursive_postorder(G: nx.DiGraph, node: Any, visited: dict[Any]):
     ##########################
     ### PUT YOUR CODE HERE ###
     ##########################
@@ -36,7 +36,7 @@ def dfs_recursive_postorder(G: nx.DiGraph, node: Any, visited: dict[Any]) -> Non
 
 if __name__ == "__main__":
     # Load and plot the graph
-    G = nx.read_edgelist("practicum_2/graph_2.edgelist", create_using=nx.Graph)
+    G = nx.read_edgelist("practicum_3/graph_2.edgelist", create_using=nx.Graph)
     # plot_graph(G)
 
     # 1. Recursive DFS. Trivial to implement, but it does not scale on large graphs
@@ -57,9 +57,9 @@ if __name__ == "__main__":
     # If a directed graph represent tasks to be done, the topological sort tells
     # us what the task order should be, i.e. scheduling
     # Postorder DFS outputs the reversed order!
-    G = nx.read_edgelist("practicum_2/graph_2.edgelist", create_using=nx.DiGraph)
+    G = nx.read_edgelist("practicum_3/graph_2.edgelist", create_using=nx.DiGraph)
     plot_graph(G)
-    print("Postorder iterative DFS")
+    print("Postorder recursive DFS")
     print("-" * 32)
     visited = {n: False for n in G}
     dfs_recursive_postorder(G, node="0", visited=visited)
