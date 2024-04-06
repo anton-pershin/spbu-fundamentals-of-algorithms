@@ -1,4 +1,5 @@
 # spbu-fundamentals-of-algorithms
+# fork by Timmy
 Materials for the practicum for "Fundamentals of Algorithms" course at SpbU
 
 ## Getting started
