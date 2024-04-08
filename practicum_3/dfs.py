@@ -19,19 +19,15 @@ def dfs_recursive(G: nx.Graph, node: Any, visited: dict[Any]):
 
 
 def dfs_iterative(G: nx.Graph, node: Any):
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+   visited = {n: False for n in G}
+   stack = {node}
+   while len(stack)>0:
+       node = stack.pop ()
 
-    pass
 
 
 def dfs_recursive_postorder(G: nx.DiGraph, node: Any, visited: dict[Any]):
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-
-    pass
+    
 
 
 if __name__ == "__main__":
