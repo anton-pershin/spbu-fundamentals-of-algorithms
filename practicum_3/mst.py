@@ -36,7 +36,6 @@ def prim_mst(G: nx.Graph, start_node="0") -> set[tuple[Any, Any]]:
 
 if __name__ == "__main__":
     G = nx.read_edgelist("practicum_3/graph_1.edgelist", create_using=nx.Graph)
-    plot_graph(G)
     mst_edges = prim_mst(G, start_node="0")
     plot_graph(G, highlighted_edges=list(mst_edges))
     print()

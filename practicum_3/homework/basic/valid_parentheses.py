@@ -4,9 +4,6 @@ import yaml
 import numpy as np
 from numpy.typing import NDArray
 
-from src.common import ProblemCase
-
-
 class Stack:
     """LIFO queue"""
 
@@ -15,36 +12,28 @@ class Stack:
         self._top_i: int = -1  # index of the most recently inserted element
 
     def empty(self) -> bool:
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        return self._top_i == -1
 
     def push(self, x: Any) -> None:
         """Complexity: O(1)"""
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        if self._top_i + 1 == len(self._array):
+            raise StackOverflowException("Stack is full")
+        self._top_i += 1
+        self._array[self._top_i] = x
 
     def pop(self) -> Any:
         """Complexity: O(1)"""
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
-
+        if self.empty():
+            raise StackUnderflowException("Stack is empty")
+        x = self._array[self._top_i]
+        self._top_i -= 1
+        return x
 
 class StackUnderflowException(BaseException):
     pass
 
-
 class StackOverflowException(BaseException):
     pass
-
 
 def get_starting_symbol(sym: str) -> str:
     if sym == ")":
@@ -56,14 +45,15 @@ def get_starting_symbol(sym: str) -> str:
     else:
         raise ValueError(f'Unknown parenthesis: "{sym}"')
 
-
 def are_parentheses_valid(s: str) -> bool:
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-
-    pass
-
+    stack = Stack(max_n=len(s), dtype=str)
+    for sym in s:
+        if sym in "([{":
+            stack.push(sym)
+        elif sym in ")]}":
+            if stack.empty() or stack.pop() != get_starting_symbol(sym):
+                return False
+    return stack.empty()
 
 if __name__ == "__main__":
     # Let's solve Valid Parentheses problem from leetcode.com:
