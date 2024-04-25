@@ -36,6 +36,22 @@ class Maze:
             print()  # linebreak
 
 
+def solve(maze):
+    queue = [(0, maze.start_j, "")]
+    visited = set()
+    while queue:
+        row, col, path = queue.pop(0)
+        if row == len(maze.list_view) - 1 and maze.list_view[row][col] == "X":
+            print(f"Found: {path}")
+            maze.print(path)
+            return
+        visited.add((row, col))
+        for drow, dcol, direction in [(0, 1, "R"), (0, -1, "L"), (1, 0, "D"), (-1, 0, "U")]:
+            new_row, new_col = row + drow, col + dcol
+            if 0 <= new_row < len(maze.list_view) and 0 <= new_col < len(maze.list_view[0]) and maze.list_view[new_row][new_col] != "#" and (new_row, new_col) not in visited:
+                queue.append((new_row, new_col, path + direction))
+    print("No path found!")
+
 def solve(maze: Maze) -> None:
     path = ""  # solution as a string made of "L", "R", "U", "D"
 
@@ -45,7 +61,6 @@ def solve(maze: Maze) -> None:
 
     print(f"Found: {path}")
     maze.print(path)
-
 
 def _shift_coordinate(i: int, j: int, move: str) -> tuple[int, int]:
     if move == "L":
