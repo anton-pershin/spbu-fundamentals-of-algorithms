@@ -35,6 +35,7 @@ class Maze:
                     print(f"{sym} ", end="")
             print()  # linebreak
 
+
 def solve(maze):
     queue = [(0, maze.start_j, "")]
     visited = set()
@@ -51,6 +52,15 @@ def solve(maze):
                 queue.append((new_row, new_col, path + direction))
     print("No path found!")
 
+def solve(maze: Maze) -> None:
+    path = ""  # solution as a string made of "L", "R", "U", "D"
+
+    ##########################
+    ### PUT YOUR CODE HERE ###
+    ##########################
+
+    print(f"Found: {path}")
+    maze.print(path)
 
 def _shift_coordinate(i: int, j: int, move: str) -> tuple[int, int]:
     if move == "L":
