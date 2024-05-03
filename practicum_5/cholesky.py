@@ -1,18 +1,19 @@
+from math import sqrt
 import numpy as np
 
 def cholesky(A):
     n = len(A)
-    L = np.zeros_like(A)
+    L = [[0.0] * n for i in range(n)]
 
     for i in range(n):
-        for j in range(i + 1):
-            s = sum(L[i][k] * L[j][k] for k in range(j))
-            if i == j:
-                L[i][j] = np.sqrt(A[i][i] - s)
-            else:
-                L[i][j] = (1.0 / L[j][j] * (A[i][j] - s))
-    return L
+        for k in range(i + 1):
+            tmp_sum = sum(L[i][j] * L[k][j] for j in range(k))
 
+            if (i == k):
+                L[i][k] = sqrt(A[i][i] - tmp_sum)
+            else:
+                L[i][k] = (1.0 / L[k][k] * (A[i][k] - tmp_sum))
+    return L
 if __name__ == "__main__":
     L = np.array(
         [
