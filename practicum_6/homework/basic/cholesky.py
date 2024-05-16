@@ -1,23 +1,31 @@
 import numpy as np
 
-
 def cholesky(A):
+    n = A.shape[0]
+    L = np.zeros_like(A)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    for i in range(n):
+        for j in range(i + 1):
+            if i == j:  # Diagonal elements
+                sum_k = np.sum(L[i, :j] ** 2)
+                L[i, j] = np.sqrt(A[i, i] - sum_k)
+            else:
+                sum_k = np.sum(L[i, :j] * L[j, :j])
+                L[i, j] = (A[i, j] - sum_k) / L[j, j]
 
-    pass
-
+    return L
 
 if __name__ == "__main__":
-    L = np.array(
+    L_true = np.array(
         [
             [1.0, 0.0, 0.0],
             [4.0, 2.0, 0.0],
             [6.0, 5.0, 3.0],
         ]
     )
-    A = L @ L.T
+    A = L_true @ L_true.T
     L = cholesky(A)
+    print("Computed L:")
     print(L)
+    print("True L:")
+    print(L_true)
