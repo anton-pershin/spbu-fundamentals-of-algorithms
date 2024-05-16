@@ -1,5 +1,5 @@
+from collections import deque
 from time import perf_counter
-
 
 class Maze:
     def __init__(self, list_view: list[list[str]]) -> None:
@@ -35,17 +35,33 @@ class Maze:
                     print(f"{sym} ", end="")
             print()  # linebreak
 
-
 def solve(maze: Maze) -> None:
-    path = ""  # solution as a string made of "L", "R", "U", "D"
+    start = (0, maze.start_j)
+    end = None
+    for i, row in enumerate(maze.list_view):
+        for j, sym in enumerate(row):
+            if sym == "X":
+                end = (i, j)
+                break
+        if end:
+            break
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-
+    path = bfs(maze.list_view, start, end)
     print(f"Found: {path}")
     maze.print(path)
 
+def bfs(maze, start, end):
+    queue = deque([(start, "")])  # Now the queue contains tuples of (coordinate, path)
+    seen = set([start])
+    while queue:
+        (x, y), path = queue.popleft()
+        if (x, y) == end:
+            return path
+        for move, (x2, y2) in [("U", (x-1, y)), ("D", (x+1, y)), ("L", (x, y-1)), ("R", (x, y+1))]:
+            if 0 <= x2 < len(maze) and 0 <= y2 < len(maze[0]) and maze[x2][y2] != '#' and (x2, y2) not in seen:
+                queue.append(((x2, y2), path + move))
+                seen.add((x2, y2))
+    return None
 
 def _shift_coordinate(i: int, j: int, move: str) -> tuple[int, int]:
     if move == "L":
@@ -57,7 +73,6 @@ def _shift_coordinate(i: int, j: int, move: str) -> tuple[int, int]:
     elif move == "D":
         i += 1
     return i, j
-
 
 if __name__ == "__main__":
     maze = Maze.from_file("practicum_3/homework/basic/maze_2.txt")
