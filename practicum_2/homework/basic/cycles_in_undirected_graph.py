@@ -10,10 +10,13 @@ TEST_GRAPH_FILES = [
 
 
 def has_cycles(g: nx.Graph):
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-
+    cycles = nx.cycle_basis(g)
+    #если метод возвращает непустой список, то цикл существует
+    if len(cycles) > 0:
+        print("Cycles found")
+        return True
+    else:
+        return False
     pass
 
 
