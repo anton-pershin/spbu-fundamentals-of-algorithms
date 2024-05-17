@@ -100,13 +100,13 @@ if __name__ == "__main__":
     n_max_colors = 3
     initial_colors = np.random.randint(low=0, high=n_max_colors - 1, size=len(G.nodes))
 
-    loss_history = solve_via_random_search(G, n_max_colors, initial_colors, n_max_iters)
-    plot_loss_history(loss_history)
+    #loss_history = solve_via_random_search(G, n_max_colors, initial_colors, n_max_iters)
+    #plot_loss_history(loss_history)
 
-    loss_history = solve_via_hill_climbing(G, n_max_colors, initial_colors, n_max_iters)
-    plot_loss_history(loss_history)
+    #loss_history = solve_via_hill_climbing(G, n_max_colors, initial_colors, n_max_iters)
+    #plot_loss_history(loss_history)
 
-    n_restarts = 10
+    n_restarts = 5
     loss_history = solve_with_restarts(
         solve_via_hill_climbing,
         G,

@@ -2,13 +2,22 @@ import queue
 from typing import Any
 
 import networkx as nx
+import matplotlib.pyplot as plt
 
 from src.plotting import plot_graph
-
 
 def visit(node: Any):
     print(f"Wow, it is {node} right here!")
 
+def neighbours(G: nx.Graph, node: Any):
+    arr = []
+    for i in G.edges:
+        if (node in i):
+            if (i[0] != node):
+                arr.append(i[0])
+            else:
+                arr.append(i[1])
+    return arr
 
 def dfs_recursive(G: nx.Graph, node: Any, visited: dict[Any]):
     visit(node)
@@ -51,10 +60,14 @@ if __name__ == "__main__":
     dfs_recursive(G, node="0", visited=visited)
     print()
 
+
+    
+    #arr = neighbours(G, node="5")
+   # print(arr)
     # 2. Iterative DFS. Makes use of LIFO/stack data structure, does scale on large graphs
     print("Iterative DFS")
     print("-" * 32)
-    dfs_iterative(G, node="0")
+    #dfs_iterative(G, node="0")
     print()
 
     # 3. Postorder recursive DFS for topological sort

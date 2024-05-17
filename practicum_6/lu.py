@@ -16,7 +16,6 @@ def lu(A: NDArray, permute: bool) -> tuple[NDArray, NDArray, NDArray]:
         U = U_0 @ U
     return L, U, P
 
-
 def solve(L: NDArray, U: NDArray, P: NDArray, b: NDArray) -> NDArray:
 
     ##########################
