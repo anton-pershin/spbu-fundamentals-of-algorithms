@@ -19,21 +19,41 @@ class Performance:
 
 
 def lu(A: NDArray, permute: bool) -> tuple[NDArray, NDArray, NDArray]:
+    n = A.shape[0]
+    L = np.eye(n)
+    U = np.copy(A)
+    P = np.eye(n)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    for col in range(n - 1):
+        if (permute):
+            max_i = np.argmax(abs(U[col:, col])) + col
+            if max_i != col:
+                U[[col, max_i]] = U[[max_i, col]]
+                P[[col, max_i]] = P[[max_i, col]]
+                if col != 0:
+                    L[[col, max_i], :col] = L[[max_i, col], :col]
 
-    pass
+        diag_elem = U[col][col]
+        for row in range(col + 1, n):
+            coefficient = U[row][col] / diag_elem
+            L[row][col] = coefficient
+            U[row] -= (U[col] * coefficient)
+    return L, U, P
 
 
 def solve(L: NDArray, U: NDArray, P: NDArray, b: NDArray) -> NDArray:
+    n = P.shape[0]
+    x = np.zeros((n, 1))
+    b_permuted = P.dot(b)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    y = np.zeros(n)
+    for i in range(n):
+        y[i] = b_permuted[i] - (L[0:i + 1, 0:i + 1] @ y[0:i + 1])[i]
 
-    pass
+    x = np.zeros(n)
+    for i in range(n - 1, -1, -1):
+        x[i] = (y[i] - np.sum(U[i, i + 1:] * x[i + 1:])) / U[i, i]
+    return x
 
 
 def run_test_cases(n_runs: int, path_to_homework: str) -> dict[str, Performance]:
