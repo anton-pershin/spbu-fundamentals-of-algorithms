@@ -107,12 +107,12 @@ if __name__ == "__main__":
     plot_loss_history(loss_history)
 
     n_restarts = 10
-    loss_history = solve_with_restarts(
-        solve_via_hill_climbing,
-        G,
-        n_max_colors,
-        initial_colors,
-        n_max_iters,
-        n_restarts,
-    )
-    plot_loss_history(loss_history)
+    # loss_history = solve_with_restarts(
+    #     solve_via_hill_climbing,
+    #     G,
+    #     n_max_colors,
+    #     initial_colors,
+    #     n_max_iters,
+    #     n_restarts,
+    # )
+    ##plot_loss_history(loss_history)
