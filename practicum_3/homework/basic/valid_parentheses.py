@@ -1,10 +1,7 @@
-from typing import Any
-
-import yaml
 import numpy as np
-from numpy.typing import NDArray
-
-from src.common import ProblemCase
+from numpy import ndarray as NDArray
+from typing import Any
+import yaml
 
 
 class Stack:
@@ -15,27 +12,22 @@ class Stack:
         self._top_i: int = -1  # index of the most recently inserted element
 
     def empty(self) -> bool:
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        return self._top_i == -1
 
     def push(self, x: Any) -> None:
         """Complexity: O(1)"""
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        if self._top_i == len(self._array) - 1:
+            raise StackOverflowException("Stack overflow")
+        self._top_i += 1
+        self._array[self._top_i] = x
 
     def pop(self) -> Any:
         """Complexity: O(1)"""
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        if self.empty():
+            raise StackUnderflowException("Stack underflow")
+        item = self._array[self._top_i]
+        self._top_i -= 1
+        return item
 
 
 class StackUnderflowException(BaseException):
@@ -58,18 +50,22 @@ def get_starting_symbol(sym: str) -> str:
 
 
 def are_parentheses_valid(s: str) -> bool:
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-
-    pass
+    stack = Stack(len(s), dtype=str)
+    for sym in s:
+        if sym in "([{":
+            stack.push(sym)
+        elif sym in ")]}":
+            if stack.empty():
+                return False
+            start_sym = get_starting_symbol(sym)
+            if stack.pop() != start_sym:
+                return False
+    return stack.empty()
 
 
 if __name__ == "__main__":
-    # Let's solve Valid Parentheses problem from leetcode.com:
-    # https://leetcode.com/problems/valid-parentheses/
     cases = []
-    with open("practicum_3/homework/basic/valid_parentheses_cases.yaml", "r") as f:
+    with open("valid_parentheses_cases.yaml", "r") as f:
         cases = yaml.safe_load(f)
     for c in cases:
         res = are_parentheses_valid(c["input"])
