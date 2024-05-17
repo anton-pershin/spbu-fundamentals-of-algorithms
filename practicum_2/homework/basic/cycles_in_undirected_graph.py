@@ -1,7 +1,4 @@
-import os
-
 import networkx as nx
-
 
 TEST_GRAPH_FILES = [
     "graph_1_wo_cycles.edgelist",
@@ -10,18 +7,29 @@ TEST_GRAPH_FILES = [
 
 
 def has_cycles(g: nx.Graph):
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    def dfs(v, parent):
+        visited.add(v)
+        for neighbor in g.neighbors(v):
+            if neighbor not in visited:
+                if dfs(neighbor, v):
+                    return True
+            elif parent != neighbor:
+                return True
+        return False
 
-    pass
+    visited = set()
+    for node in g.nodes:
+        if node not in visited:
+            if dfs(node, None):
+                return True
+    return False
 
 
 if __name__ == "__main__":
     for filename in TEST_GRAPH_FILES:
-        # Load the graph
-        G = nx.read_edgelist(
-            os.path.join("practicum_2", "homework", filename), create_using=nx.Graph
-        )
-        # Output whether it has cycles
-        print(f"Graph {filename} has cycles: {has_cycles(G)}")
+        G = nx.read_edgelist("C:/IT/algorithms/spbu-fundamentals-of-algorithms/practicum_2/homework/basic/" + filename,
+                             create_using=nx.Graph)
+        if has_cycles(G):
+            print(f"Graph {filename} has cycles: YES")
+        else:
+            print(f"Graph {filename} has cycles: NO")

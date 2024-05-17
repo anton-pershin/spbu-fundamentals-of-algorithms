@@ -1,4 +1,5 @@
 from time import perf_counter
+from collections import deque
 
 
 class Maze:
@@ -38,10 +39,26 @@ class Maze:
 
 def solve(maze: Maze) -> None:
     path = ""  # solution as a string made of "L", "R", "U", "D"
+    directions = {'L': (0, -1), 'R': (0, 1), 'U': (-1, 0), 'D': (1, 0)}
+    start = (0, maze.start_j)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    queue = deque([(start, "")])
+    visited = set([start])
+
+    while queue:
+        (row, col), path = queue.popleft()
+        if maze.list_view[row][col] == 'X':
+            print(f"Found: {path}")
+            maze.print(path)
+            return
+        for direction, (dx, dy) in directions.items():
+            new_row, new_col = row + dx, col + dy
+            if (0 <= new_row < len(maze.list_view) and
+                    0 <= new_col < len(maze.list_view[0]) and
+                    maze.list_view[new_row][new_col] != '#' and
+                    (new_row, new_col) not in visited):
+                queue.append(((new_row, new_col), path + direction))
+                visited.add((new_row, new_col))
 
     print(f"Found: {path}")
     maze.print(path)
@@ -60,7 +77,7 @@ def _shift_coordinate(i: int, j: int, move: str) -> tuple[int, int]:
 
 
 if __name__ == "__main__":
-    maze = Maze.from_file("practicum_3/homework/basic/maze_2.txt")
+    maze = Maze.from_file("C:/IT/algorithms/spbu-fundamentals-of-algorithms/practicum_3/homework/basic/maze_2.txt")
     t_start = perf_counter()
     solve(maze)
     t_end = perf_counter()

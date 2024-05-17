@@ -15,27 +15,22 @@ class Stack:
         self._top_i: int = -1  # index of the most recently inserted element
 
     def empty(self) -> bool:
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        return self._top_i == -1
 
     def push(self, x: Any) -> None:
         """Complexity: O(1)"""
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self._top_i += 1
+        self._array[self._top_i] = x
 
     def pop(self) -> Any:
         """Complexity: O(1)"""
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        if self.empty():
+            raise StackUnderflowException("Stack is empty")
+        else:
+            top_elem = self._array[self._top_i]
+            self._top_i -= 1
+            return top_elem
 
-        pass
 
 
 class StackUnderflowException(BaseException):
@@ -58,18 +53,24 @@ def get_starting_symbol(sym: str) -> str:
 
 
 def are_parentheses_valid(s: str) -> bool:
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-
-    pass
+    stack = Stack(len(s), str)
+    for sym in s:
+        if sym in "([{":
+            stack.push(sym)
+        elif sym in ")]}":
+            if stack.empty():
+                return False
+            else:
+                if stack.pop() != get_starting_symbol(sym):
+                    return False
+    return stack.empty()
 
 
 if __name__ == "__main__":
     # Let's solve Valid Parentheses problem from leetcode.com:
     # https://leetcode.com/problems/valid-parentheses/
     cases = []
-    with open("practicum_3/homework/basic/valid_parentheses_cases.yaml", "r") as f:
+    with open("C:/IT/algorithms/spbu-fundamentals-of-algorithms/practicum_3/homework/basic/valid_parentheses_cases.yaml", "r") as f:
         cases = yaml.safe_load(f)
     for c in cases:
         res = are_parentheses_valid(c["input"])
