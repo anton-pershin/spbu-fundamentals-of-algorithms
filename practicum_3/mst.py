@@ -16,10 +16,10 @@ def prim_mst(G: nx.Graph, start_node="0") -> set[tuple[Any, Any]]:
     rest_set.remove(start_node)
     while rest_set:
         edge_to_add = {
-            "edge": (None, None),
-            "weight": np.inf,
+            "edge" : (None, None),
+            "weight" : np.inf,
         }
-        node_to_add = None
+        node_to_add = None 
         for node in mst_set:
             for neigh_node in G.neighbors(node):
                 if neigh_node in mst_set:

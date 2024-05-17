@@ -9,10 +9,8 @@ import networkx as nx
 from src.plotting import plot_graph
 
 
-def dijkstra_sp_with_priority_queue(
-    G: nx.Graph, source_node="0"
-) -> dict[Any, list[Any]]:
-    # unvisited_set = set()
+def dijkstra_sp_with_priority_queue(G: nx.Graph, source_node="0") -> dict[Any, list[Any]]:
+    unvisited_set = set(G.nodes())
     visited_set = set()
     shortest_paths = {}  # key = destination node, value = list of intermediate nodes
     dist = {n: np.inf for n in G}
@@ -34,7 +32,6 @@ def dijkstra_sp_with_priority_queue(
                 pq.put((new_dist, neigh_node))
     return shortest_paths
 
-
 def dijkstra_sp(G: nx.Graph, source_node="0") -> dict[Any, list[Any]]:
     unvisited_set = set(G.nodes())
     visited_set = set()
@@ -42,7 +39,6 @@ def dijkstra_sp(G: nx.Graph, source_node="0") -> dict[Any, list[Any]]:
     dist = {n: np.inf for n in G}
     dist[source_node] = 0
     shortest_paths[source_node] = [source_node]
-
     while unvisited_set:
         node = None
         min_dist = np.inf
