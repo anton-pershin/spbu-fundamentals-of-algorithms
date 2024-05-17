@@ -2,7 +2,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 import os
 import yaml
-import time
+import time as tm
 
 import numpy as np
 from numpy.typing import NDArray
@@ -19,21 +19,42 @@ class Performance:
 
 
 def lu(A: NDArray, permute: bool) -> tuple[NDArray, NDArray, NDArray]:
+    n = len(A)
+    U = np.copy(A)
+    L = np.eye(n)
+    P = np.eye(n)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    for j in range(n - 1):
+        max_ind = np.argmax(abs(U[j:, j])) + j
+        max_el = np.max(np.abs(U[j:, j]))
+        if max_el == 0:
+            continue
+        if permute and max_ind != j:
+            U[[j, max_ind]] = U[[max_ind, j]]
+            P[[j, max_ind]] = P[[max_ind, j]]
+            L[[j, max_ind], :j] = L[[max_ind, j], :j]
 
-    pass
+        for i in range(j + 1, n):
+            L[i, j] = U[i, j] / U[j, j]
+            U[i] -= U[j] * L[i, j]
+
+    return L, U, P
 
 
 def solve(L: NDArray, U: NDArray, P: NDArray, b: NDArray) -> NDArray:
+    n = P.shape[0]
+    y = np.zeros(n)
+    x = np.zeros(n)
+    Pb = P @ b
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    for i in range(n):
+        r = L[0:i + 1, 0:i + 1] @ y[0:i + 1]
+        y[i] = Pb[i] - r[i]
 
-    pass
+    for i in range(n - 1, -1, -1):
+        r = U[i, i + 1:] * x[i + 1:]
+        x[i] = (y[i] - np.sum(r)) / U[i, i]
+    return x
 
 
 def run_test_cases(n_runs: int, path_to_homework: str) -> dict[str, Performance]:
