@@ -1,6 +1,7 @@
 import numpy as np
 from numpy.typing import NDArray
 import networkx as nx
+import random
 
 from src.plotting import plot_graph, plot_loss_history
 
@@ -27,9 +28,35 @@ def solve_via_simulated_annealing(
 ):
     loss_history = np.zeros((n_iters,), dtype=np.int_)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+
+    def tweak(current_point):
+        new_point = current_point.copy()
+        node = np.random.choice(list(G.nodes))
+        color = np.random.choice(list(range(n_max_colors)))
+        new_point[node] = color
+        return new_point
+
+    def reduction(t):
+        return 0.9999 * t
+
+    current_point = initial_colors.copy()
+    current_conflict = number_of_conflicts(G, current_point)
+    T = 1.0
+    n_iter = 0
+
+    while n_iter < n_iters and T > 0.1:
+            new_point = tweak(current_point)
+            new_conflict = number_of_conflicts(G, new_point)
+            conflict = new_conflict - current_conflict
+
+            if conflict < 0 or np.random.random() < np.exp(-conflict / T):
+                current_point = new_point
+                current_conflict = new_conflict
+
+            T = reduction(T)
+            loss_history[n_iter] = current_conflict
+            n_iter += 1
+
 
     return loss_history
 
@@ -40,7 +67,7 @@ if __name__ == "__main__":
     G = nx.erdos_renyi_graph(n=100, p=0.05, seed=seed)
     plot_graph(G)
 
-    n_max_iters = 500
+    n_max_iters = 1000
     n_max_colors = 3
     initial_colors = np.random.randint(low=0, high=n_max_colors - 1, size=len(G.nodes))
 
