@@ -22,22 +22,52 @@ class BinaryTree:
         return self.root is None
 
     def zigzag_level_order_traversal(self) -> list[Any]:
+        if not self.root:
+            return []
+        full_tree = []
+        current_level = [self.root]
+        inversed_drive = False
+        while current_level:
+            next_level = []
+            current_values = []
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+            for node in current_level:
+                current_values.append(node.key)
+                if node.left:
+                    next_level.append(node.left)
+                if node.right:
+                    next_level.append(node.right)
 
-        pass
+            if inversed_drive:
+                current_values.reverse()
+
+            full_tree.append(current_values)
+            inversed_drive = not inversed_drive
+            current_level = next_level
+
+        return full_tree
 
 
 def build_tree(list_view: list[Any]) -> BinaryTree:
     bt = BinaryTree()
+    if not list_view:
+        return bt
+    bt.root = Node(list_view[0])
+    inwork = [bt.root]
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    i = 1
+    while inwork and i < len(list_view):
+        current = inwork.pop(0)
+        if list_view[i] is not None:
+            current.left = Node(list_view[i])
+            inwork.append(current.left)
+        i += 1
+        if list_view[i] is not None:
+            current.right = Node(list_view[i])
+            inwork.append(current.right)
+        i += 1
 
-    pass
+    return bt
 
 
 if __name__ == "__main__":
@@ -49,9 +79,6 @@ if __name__ == "__main__":
 
     with open(
         os.path.join(
-            "practicum_5",
-            "homework",
-            "basic",
             "binary_tree_zigzag_level_order_traversal_cases.yaml",
         ),
         "r",
