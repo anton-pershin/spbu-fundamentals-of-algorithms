@@ -19,21 +19,43 @@ class Performance:
 
 
 def lu(A: NDArray, permute: bool) -> tuple[NDArray, NDArray, NDArray]:
+    n = A.shape[0]
+    L = np.eye(n)
+    U = np.copy(A)
+    P = np.eye(n)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    for k in range(n - 1):
+        if permute:
+            i_max_elem_of_k = np.argmax(abs(U[k:, k])) + k
+            if i_max_elem_of_k != k:
+                U[[k, i_max_elem_of_k]] = U[[i_max_elem_of_k, k]]
+                P[[k, i_max_elem_of_k]] = P[[i_max_elem_of_k, k]]
+                L[[k, i_max_elem_of_k], :k] = L[[i_max_elem_of_k, k], :k]
 
-    pass
+        for i in range(k+1, n):
+            L[i, k] = U[i, k] / U[k, k]
+            U[i, k:] -= L[i, k] * U[k, k:]
 
+    return L, U, P
 
 def solve(L: NDArray, U: NDArray, P: NDArray, b: NDArray) -> NDArray:
+    n = L.shape[0]
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    b_p = P @ b
 
-    pass
+    y = np.zeros(n)
+    for i in range(n):
+        y[i] = b_p[i] - L[i, :i].dot(y[:i])
+
+    
+    x = np.zeros(n)
+    for i in range(n - 1, -1, -1):
+        x[i] = (y[i] - U[i, i+1:].dot(x[i+1:])) / U[i, i]
+
+    return x
+
+
+
 
 
 def run_test_cases(n_runs: int, path_to_homework: str) -> dict[str, Performance]:
@@ -65,7 +87,7 @@ def run_test_cases(n_runs: int, path_to_homework: str) -> dict[str, Performance]
 
 
 if __name__ == "__main__":
-    n_runs = 10
+    n_runs = 1
     path_to_homework = os.path.join("practicum_6", "homework", "advanced")
     performance_by_matrix = run_test_cases(
         n_runs=n_runs, path_to_homework=path_to_homework

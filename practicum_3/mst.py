@@ -31,6 +31,7 @@ def prim_mst(G: nx.Graph, start_node="0") -> set[tuple[Any, Any]]:
         mst_edges.add(edge_to_add["edge"])
         mst_set.add(node_to_add)
         rest_set.remove(node_to_add)
+
     return mst_edges
 
 
