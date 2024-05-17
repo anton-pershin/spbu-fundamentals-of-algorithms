@@ -8,6 +8,7 @@ import numpy as np
 from numpy.typing import NDArray
 import scipy.io
 import scipy.linalg
+from scipy.linalg import solve_triangular
 
 from src.linalg import get_scipy_solution
 
@@ -18,22 +19,49 @@ class Performance:
     relative_error: float = 0.0
 
 
+def find_max_index(A, column_index):
+    diagonal_index = column_index
+    column = np.abs(A[diagonal_index:, column_index])
+    max_index = np.argmax(column)
+    return diagonal_index + max_index
+
 def lu(A: NDArray, permute: bool) -> tuple[NDArray, NDArray, NDArray]:
+    size_matrix = A.shape[0]
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    for x in A:
+        row = len(x)
+        if row != size_matrix:
+            print("Матрица должна быть квадратной")
+             
+    U = np.copy(A)
+    L = np.eye(size_matrix)
+    P = np.eye(size_matrix)
 
-    pass
+    for column_index in range(size_matrix - 1):
+        if(permute):
+            max_index = find_max_index(U, column_index)
+
+            P[[column_index, max_index]] = P[[max_index, column_index]]
+            U[[column_index, max_index]] = U[[max_index, column_index]]
+
+            if column_index > 0:
+                L[column_index, :column_index], L[max_index, :column_index] = L[max_index, :column_index].copy(), L[column_index, :column_index].copy()
+
+        diag_elem = U[column_index, column_index]
+        if diag_elem == 0:
+            print("Диагональный элемент равен нулю")
+        
+        ratio = U[column_index + 1:, column_index] / diag_elem
+        L[column_index + 1:, column_index] = ratio
+        U[column_index + 1:] -= U[column_index] * ratio[:, np.newaxis]
+
+    return L, U, P
 
 
 def solve(L: NDArray, U: NDArray, P: NDArray, b: NDArray) -> NDArray:
-
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-
-    pass
+    y = solve_triangular(L, P@b, lower=True) #Ly = Pb
+    x = solve_triangular(U, y, lower=False) # Ux = y
+    return x
 
 
 def run_test_cases(n_runs: int, path_to_homework: str) -> dict[str, Performance]:
