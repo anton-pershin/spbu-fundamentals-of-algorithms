@@ -3,12 +3,21 @@ from numpy.typing import NDArray
 
 
 def lu(A: NDArray, permute: bool) -> tuple[NDArray, NDArray, NDArray]:
-    n = len(A)
-    U = np.copy(A)
+
+    n = A.shape[0]
     L = np.eye(n)
+    U = np.copy(A)
     P = np.eye(n)
-    for k in range(n - 1):
-        U_0 = np.eye(n)
+    U_0 = np.eye(n)
+
+    for k in range(n-1):
+        if permute:
+            max_index = np.argmax(abs(U[k:, k])) + k
+            if max_index != k:
+                U[[k, max_index]] = U[[max_index, k]]
+                P[[k, max_index]] = P[[max_index, k]]
+                if k > 0:
+                    L[[k, max_index], :k] = L[[max_index, k], :k]
         for i in range(k + 1, n):
             m = U[i, k] / U[k, k]
             U_0[i, k] = -m
@@ -18,12 +27,19 @@ def lu(A: NDArray, permute: bool) -> tuple[NDArray, NDArray, NDArray]:
 
 
 def solve(L: NDArray, U: NDArray, P: NDArray, b: NDArray) -> NDArray:
+    n = L.shape[0]
+    b_permuted = P.dot(b)
+     #(Ly = Pb)
+    y = np.zeros(n)
+    for i in range(n):
+        y[i] = b_permuted[i] - L[i, :i].dot(y[:i])
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    #(Ux = y)
+    x = np.zeros(n)
+    for i in range(n-1, -1, -1):
+        x[i] = (y[i] - U[i, i+1:].dot(x[i+1:])) / U[i, i]
 
-    pass
+    return x
 
 
 def get_A_b(a_11: float, b_1: float) -> tuple[NDArray, NDArray]:
