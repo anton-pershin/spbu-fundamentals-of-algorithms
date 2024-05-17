@@ -2,12 +2,19 @@ import numpy as np
 
 
 def cholesky(A):
+    n = A.shape[0]
+    L = np.zeros_like(A)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    for i in range(n):
+        for j in range(i + 1):
+            if i == j:
+                sum_k = np.sum(L[i, :j] ** 2)
+                L[i, j] = np.sqrt(A[i, i] - sum_k)
+            else:
+                sum_k = np.sum(L[i, :j] * L[j, :j])
+                L[i, j] = (A[i, j] - sum_k) / L[j, j]
 
-    pass
+    return L
 
 
 if __name__ == "__main__":
