@@ -17,16 +17,35 @@ from src.linalg import get_numpy_eigenvalues
 class Performance:
     time: float = 0.0
     relative_error: float = 0.0
+#QR, алгоритм Грама-Шмидта
+def qr(A: np.array):
+    
+    rows, cols = A.shape
+    Q = A.copy()
+    R = np.zeros((cols, cols))
+
+    for i in range(cols):
+        norm = np.linalg.norm(Q[:, i])
+        R[i, i] = norm
+        Q[:, i] = Q[:, i] / norm
+
+        for j in range(i + 1, cols):
+            proj = np.dot(Q[:, i], Q[:, j])
+            R[i, j] = proj
+            Q[:, j] = Q[:, j] - proj * Q[:, i]
+
+    return Q, R
 
 
 def get_all_eigenvalues(A: NDArrayFloat) -> NDArrayFloat:
+    max_iter = 100
+    A_k = A.copy()
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    for k in range(max_iter):
+        Q, R = qr(A_k)
+        A_k = R @ Q
 
-    pass
-
+    return np.array(np.diag(A_k))
 
 def run_test_cases(
     path_to_homework: str, path_to_matrices: str
