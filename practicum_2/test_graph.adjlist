@@ -1,0 +1,7 @@
+#/usr/lib/python3.11/site-packages/ipykernel_launcher.py --ip=127.0.0.1 --stdin=9003 --control=9001 --hb=9000 --Session.signature_scheme="hmac-sha256" --Session.key=b"73ce7bbf-0af5-42d2-a9e2-70c95b1c9962" --shell=9002 --transport="tcp" --iopub=9004 --f=/home/simon/.local/share/jupyter/runtime/kernel-v2-37243Zfhl93Vseld.json
+# GMT Sat Apr 20 01:16:41 2024
+# 
+1 2 3
+2 4
+3 4
+4
