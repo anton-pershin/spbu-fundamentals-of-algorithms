@@ -1,3 +1,4 @@
+
 from typing import Any
 
 import yaml
@@ -15,26 +16,26 @@ class Stack:
         self._top_i: int = -1  # index of the most recently inserted element
 
     def empty(self) -> bool:
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
+        return self._top_i == -1 #проверка пуст ли стек
         pass
 
     def push(self, x: Any) -> None:
         """Complexity: O(1)"""
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        if self._top_i == len(self._array) - 1:
+            raise StackOverflowException("Стек переполнен")
+        self._top_i += 1
+        self._array[self._top_i] = x
 
         pass
 
     def pop(self) -> Any:
         """Complexity: O(1)"""
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
+        if self.empty():
+            raise StackUnderflowException("Стек пуст")
+        top_i = self._array[self._top_i]
+        self._top_i -= 1
+        return top_i
+    
         pass
 
 
@@ -58,11 +59,17 @@ def get_starting_symbol(sym: str) -> str:
 
 
 def are_parentheses_valid(s: str) -> bool:
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-
-    pass
+    stack = Stack(len(s), dtype=str)
+    for char in s:
+        if char in "([{":
+            stack.push(char)
+        elif char in ")]}":
+            if stack.empty():
+                return False
+            opening_symbol = stack.pop()
+            if opening_symbol != get_starting_symbol(char):
+                return False
+    return stack.empty()
 
 
 if __name__ == "__main__":

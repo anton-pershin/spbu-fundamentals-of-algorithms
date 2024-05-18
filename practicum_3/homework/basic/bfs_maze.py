@@ -1,13 +1,13 @@
 from time import perf_counter
-
+from collections import deque
 
 class Maze:
     def __init__(self, list_view: list[list[str]]) -> None:
-        self.list_view = list_view
-        self.start_j = None
-        for j, sym in enumerate(self.list_view[0]):
+        self.list_view = list_view #хранит представление лабиринта в виде двумерного списка
+        self.start_j = None # хранит индекс столбца, в котором находится стартовая позиция "O"
+        for j, sym in enumerate(self.list_view[0]): # ищем символ "O"
             if sym == "O":
-                self.start_j = j
+                self.start_j = j #сохраняем индекс столбца j символа "O" в переменной start_j
 
     @classmethod
     def from_file(cls, filename):
@@ -19,10 +19,10 @@ class Maze:
         return obj
 
     def print(self, path="") -> None:
-        # Find the path coordinates
+        # Find the path coordinates - найти координаты пути
         i = 0  # in the (i, j) pair, i is usually reserved for rows and j is reserved for columns
         j = self.start_j
-        path_coords = set()
+        path_coords = set() #будут храниться координаты, через которые проходит путь
         for move in path:
             i, j = _shift_coordinate(i, j, move)
             path_coords.add((i, j))
@@ -35,16 +35,26 @@ class Maze:
                     print(f"{sym} ", end="")
             print()  # linebreak
 
-
 def solve(maze: Maze) -> None:
-    path = ""  # solution as a string made of "L", "R", "U", "D"
+        path = ""
+        start_i = 0 
+        start_j = maze.start_j #начальные координаты i и j
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+        queue = deque([(start_i, start_j, "")])
+        visited = set([(start_i, start_j)]) # проверяем посещали ли мы эту вершину, чтобы не возникало рекурсии
 
-    print(f"Found: {path}")
-    maze.print(path)
+        while queue != 0:
+            i, j, path = queue.popleft() #извлекаем первый элемент из очереди queue и распаковываем его в переменные i, j и path.
+            if maze.list_view[i][j] == "X": #проверяем, достигли ли мы конечной точки Х
+                print(f"Found: {path}")
+                maze.print(path)
+                return
+            for move in ["L", "R", "U", "D"]: #исследуем всевозможные направления движения из текущей позиции
+                new_i, new_j = _shift_coordinate(i, j, move)
+                if (new_i, new_j) not in visited and maze.list_view[new_i][new_j] != "#":
+                    visited.add((new_i, new_j))
+                    queue.append((new_i, new_j, path + move))
+        print("No path found.") 
 
 
 def _shift_coordinate(i: int, j: int, move: str) -> tuple[int, int]:
