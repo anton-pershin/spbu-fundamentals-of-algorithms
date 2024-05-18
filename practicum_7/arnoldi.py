@@ -2,10 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from src.common import NDArrayFloat
-from practicum_7.qr import get_eigenvalues_via_qr
+from qr import get_eigenvalues_via_qr
 
 
 def get_arnoldi_vectors(A: NDArrayFloat, n_iters: int) -> NDArrayFloat:
+    A_k = A.copy()
     n = A.shape[0]
     Q = np.zeros((n, n_iters))
     v_k = np.random.rand(n)
@@ -33,8 +34,14 @@ if __name__ == "__main__":
     )
 
     Q = get_arnoldi_vectors(A, n_iters=3)
-    eigvals = get_eigenvalues_via_qr(Q.T @ A @ Q, n_iters=10)
-    print()
+    print(Q.T @ Q)
+
+    eigvalues = get_eigenvalues_via_qr(Q.T @ A @ Q, n_iters = 30)
+    print(eigvalues)
+
+    eig_vectors, eig_values = np.linalg.eig(A)
+    print(eig_vectors)
+
     ##########################
     ### PUT YOUR CODE HERE ###
     ##########################

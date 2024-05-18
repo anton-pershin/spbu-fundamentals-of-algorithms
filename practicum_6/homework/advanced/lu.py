@@ -1,16 +1,12 @@
+import os
 from collections import defaultdict
 from dataclasses import dataclass
-import os
-import yaml
 import time
-
 import numpy as np
-from numpy.typing import NDArray
 import scipy.io
 import scipy.linalg
-
-from src.linalg import get_scipy_solution
-
+import yaml
+from numpy.typing import NDArray
 
 @dataclass
 class Performance:
@@ -19,22 +15,43 @@ class Performance:
 
 
 def lu(A: NDArray, permute: bool) -> tuple[NDArray, NDArray, NDArray]:
+    n = A.shape[0]
+    U = A.copy()
+    L = np.eye(n)
+    P = np.eye(n)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    for i in range(n):
+        if permute:
+            max_row = i + np.argmax(np.abs(U[i:n, i]))
+            if i != max_row:
+                U[[i, max_row]], U[[max_row, i]] = U[[max_row, i]], U[[i, max_row]].copy()
+                P[[i, max_row]], P[[max_row, i]] = P[[max_row, i]], P[[i, max_row]].copy()
+                if i > 0:
+                    L[[i, max_row], :i], L[[max_row, i], :i] = L[[max_row, i], :i], L[[i, max_row], :i].copy()
 
-    pass
+        for j in range(i + 1, n):
+            factor = U[j, i] / U[i, i]
+            U[j, i:] -= factor * U[i, i:]
+            L[j, i] = factor
 
+    return P, L, U
 
 def solve(L: NDArray, U: NDArray, P: NDArray, b: NDArray) -> NDArray:
+    Pb = P @ b   #учет перестановок
+    n = L.shape[0]
+    y = np.zeros_like(b)  # Lu = Pb
+    for i in range(n):
+        y[i] = Pb[i] - np.dot(L[i, :i], y[:i])
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    x = np.zeros_like(b)  # Ax = b
+    for i in range(n - 1, -1, -1):
+        x[i] = (y[i] - np.dot(U[i, i + 1:], x[i + 1:])) / U[i, i]
 
-    pass
+    return x
 
+def get_scipy_solution(A, b):
+    lu_and_piv = scipy.linalg.lu_factor(A)
+    return scipy.linalg.lu_solve(lu_and_piv, b)
 
 def run_test_cases(n_runs: int, path_to_homework: str) -> dict[str, Performance]:
     matrix_filenames = []

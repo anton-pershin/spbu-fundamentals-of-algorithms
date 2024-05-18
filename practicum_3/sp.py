@@ -9,10 +9,8 @@ import networkx as nx
 from src.plotting import plot_graph
 
 
-def dijkstra_sp_with_priority_queue(
-    G: nx.Graph, source_node="0"
-) -> dict[Any, list[Any]]:
-    # unvisited_set = set()
+def dijkstra_sp_with_priority_queue(G: nx.Graph, source_node="0") -> dict[Any, list[Any]]:
+    unvisited_set = set(G.nodes())
     visited_set = set()
     shortest_paths = {}  # key = destination node, value = list of intermediate nodes
     dist = {n: np.inf for n in G}
@@ -27,13 +25,20 @@ def dijkstra_sp_with_priority_queue(
         for neigh_node in G.neighbors(node):
             if neigh_node in visited_set:
                 continue
+<<<<<<< HEAD
             new_dist = min_dist + G.edges[node, neigh_node]["weight"]
+=======
+            new_dist = mid_dist + G.edges[node, neigh_node]["weight"]
+>>>>>>> Trofimov
             if new_dist < dist[neigh_node]:
                 dist[neigh_node] = new_dist
                 shortest_paths[neigh_node] = shortest_paths[node] + [neigh_node]
                 pq.put((new_dist, neigh_node))
+<<<<<<< HEAD
     return shortest_paths
+=======
 
+    return shortest_paths
 
 def dijkstra_sp(G: nx.Graph, source_node="0") -> dict[Any, list[Any]]:
     unvisited_set = set(G.nodes())
@@ -43,6 +48,31 @@ def dijkstra_sp(G: nx.Graph, source_node="0") -> dict[Any, list[Any]]:
     dist[source_node] = 0
     shortest_paths[source_node] = [source_node]
 
+    while unvisited_set:
+        node = None
+        min_dist = np.inf 
+        for n, d in dict.items():
+            if (n in unvisited_set) and (d < min_dist):
+                min_dst = d 
+                node = n 
+        unvisited_set.remove(node)
+        visited_set.add(node)
+    for neigh_node in G.neighbors(node):
+        if neigh_node in visited_set:
+            continue
+        new_dist = min_dist + G.edges[node, neigh_node]["weight"]
+        if new_dist < dist[neigh_node]:
+            dist[neigh_node] = new_dist
+            shortest_paths[neigh_node] = shortest_paths[node] + [neigh_node]
+>>>>>>> Trofimov
+
+def dijkstra_sp(G: nx.Graph, source_node="0") -> dict[Any, list[Any]]:
+    unvisited_set = set(G.nodes())
+    visited_set = set()
+    shortest_paths = {}  # key = destination node, value = list of intermediate nodes
+    dist = {n: np.inf for n in G}
+    dist[source_node] = 0
+    shortest_paths[source_node] = [source_node]
     while unvisited_set:
         node = None
         min_dist = np.inf

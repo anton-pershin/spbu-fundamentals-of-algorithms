@@ -50,21 +50,15 @@ class Polynomial(Evaluator):
     def _eval_standard(self, x):
         res = self.dtype(0.0)
         x = self.dtype(x)
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
+        for i, coeff in enumerate(self.coeffs):
+            res += coeff * np.power(x, i, dtype=self.dtype)
         return res
 
     def _eval_optimal(self, x):
         res = self.dtype(0.0)
         x = self.dtype(x)
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
+        for coeff in reversed(self.coeffs):
+            res = res * x + coeff
         return res
 
 
