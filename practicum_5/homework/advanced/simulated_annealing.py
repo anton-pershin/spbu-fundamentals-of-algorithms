@@ -22,15 +22,41 @@ def set_colors(G, colors):
         G.nodes[n]["color"] = color
 
 
+def tweak(colors, n_max_colors, temp):
+    new_colors = colors.copy()
+    n_nodes = len(new_colors)
+    random_nodes = []
+    n_nodes_to_change = 1
+    random_nodes = np.random.random_integers(low=0, high=n_nodes - 1, size = (n_nodes_to_change, ))
+    for node in random_nodes:
+        new_colors[node] = np.random.randint(low=0, high=n_max_colors)
+    return new_colors
+
+
 def solve_via_simulated_annealing(
     G: nx.Graph, n_max_colors: int, initial_colors: NDArrayInt, n_iters: int
 ):
     loss_history = np.zeros((n_iters,), dtype=np.int_)
-
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-
+    temp = 500
+    now_colors=initial_colors.copy()
+    now_conflict=number_of_conflicts(G,now_colors)
+    best_colors=initial_colors.copy()
+    timer=0
+    while (timer < n_iters and temp > 0):
+        rand=np.random.random()
+        next_col=tweak(now_colors,n_max_colors,temp)
+        next_conflicts=number_of_conflicts(G,next_col)
+        if (next_conflicts <  now_conflict or rand > np.exp((now_conflict-next_conflicts)/temp)):
+            now_colors=next_col
+            now_conflict=next_conflicts
+        k=1
+        temp-=k
+        best_conflict=number_of_conflicts(G,best_colors)
+        if (now_conflict < best_conflict):
+            best_colors=now_colors
+            best_conflict=now_conflict
+        loss_history[timer]=best_conflict
+        timer+=1
     return loss_history
 
 

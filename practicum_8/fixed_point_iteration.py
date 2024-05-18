@@ -12,48 +12,34 @@ def fixed_point_iteration(
     T: NDArrayFloat, c: NDArrayFloat, n_iters: int
 ) -> NDArrayFloat:
 
-    solution_history = np.zeros((n_iters, T.shape[0]))
-    u_i = np.random.rand(T.shape[0])
-    for i in range(n_iters):
-        u_i = T @ u_i + c
-        solution_history[i] = u_i
+    ##########################
+    ### PUT YOUR CODE HERE ###
+    ##########################
 
-    return solution_history
+    pass
 
 
 def jacobi_method(A: NDArrayFloat, b: NDArrayFloat, n_iters: int) -> NDArrayFloat:
-    D_inv = np.diag(1.0 / np.diag(A))
-    L = -np.tril(A, k=-1)
-    U = -np.triu(A, k=1)
-    T = D_inv @ (L + U)
-    c = D_inv @ b
-    return fixed_point_iteration(T, c, n_iters)
+
+    ##########################
+    ### PUT YOUR CODE HERE ###
+    ##########################
+
+    pass
 
 
 def gauss_seidel_method(A: NDArrayFloat, b: NDArrayFloat, n_iters: int) -> NDArrayFloat:
-    D = np.diag(np.diag(A))
-    L = -np.tril(A, k=-1)
-    U = -np.triu(A, k=1)
-    D_L_inv = np.linalg.inv(D - L)
-    T = D_L_inv @ U
-    c = D_L_inv @ b
-    return fixed_point_iteration(T, c, n_iters)
+
+    ##########################
+    ### PUT YOUR CODE HERE ###
+    ##########################
+
+    pass
 
 
 def relaxation_method(
     A: NDArrayFloat, b: NDArrayFloat, omega: float, n_iters: int
 ) -> NDArrayFloat:
-
-    # x_{k+1} = (D - omega * L)^{-1} ((1 - omega) * D + omega * U) x_k
-    #         + omega * (D - omega * L)^{-1} b
-
-    D = np.diag(np.diag(A))
-    L = -np.tril(A, k=-1)
-    U = -np.triu(A, k=1)
-    D_L_inv = np.linalg.inv(D - omega * L)
-    T = D_L_inv @ ((1 - omega) * D + omega * U)
-    c = omega * D_L_inv @ b
-    return fixed_point_iteration(T, c, n_iters)
 
     ##########################
     ### PUT YOUR CODE HERE ###
@@ -81,7 +67,7 @@ if __name__ == "__main__":
     # bcsstk14.mtx.gz (pos.def., K = O(10^10))
 
     path_to_matrix = os.path.join(
-        "practicum_6", "homework", "advanced", "matrices", "bcsstk14.mtx.gz"
+        "practicum_6", "homework", "advanced", "matrices", "orsirr_1.mtx.gz"
     )
     A = scipy.io.mmread(path_to_matrix).todense().A
     b = np.ones((A.shape[0],))
@@ -125,5 +111,3 @@ if __name__ == "__main__":
         )
     make_axis_pretty(ax)
     plt.show()
-
-    print()
