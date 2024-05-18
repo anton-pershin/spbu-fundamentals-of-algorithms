@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 
 from src.common import NDArrayFloat
 
-
 def power_method(A: NDArrayFloat, n_iters: int) -> tuple[NDArrayFloat, NDArrayFloat]:
     dominant_eigenvalue_history = np.zeros((n_iters,))
     dominant_eigenvector_history = np.zeros((n_iters, A.shape[0]))
