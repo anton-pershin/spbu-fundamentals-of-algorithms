@@ -19,13 +19,36 @@ class Performance:
     relative_error: float = 0.0
 
 
+def qr(A: np.array):
+    rows, cols = A.shape
+    Q = A.copy()
+    R = np.zeros((cols, cols))
+
+    for i in range(cols):
+        # Нормализация i-го столбца
+        norm = np.linalg.norm(Q[:, i])
+        R[i, i] = norm
+        Q[:, i] = Q[:, i] / norm
+
+        for j in range(i + 1, cols):
+            # Проекция j-го столбца на i-й столбец
+            proj = np.dot(Q[:, i], Q[:, j])
+            R[i, j] = proj
+            Q[:, j] = Q[:, j] - proj * Q[:, i]
+
+    return Q, R
+
+
 def get_all_eigenvalues(A: NDArrayFloat) -> NDArrayFloat:
+    max_iter = 100
+    A_k = A.copy()
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    for k in range(max_iter):
+        Q, R = qr(A_k)
+        A_k = R @ Q
 
-    pass
+    return np.array(np.diag(A_k))
+
 
 
 def run_test_cases(
