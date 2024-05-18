@@ -18,14 +18,28 @@ class Performance:
     time: float = 0.0
     relative_error: float = 0.0
 
+def qr_decomposition(A: np.array):
+
+    m, n = A.shape  # Get both dimensions of A
+    Q = A.copy()
+    R = np.zeros((n, n))  # Initialize R with zeros
+
+    for k in range(n): # Orthogonalize the k-th column
+        R[k, k] = np.linalg.norm(Q[:, k]) # Normalize the k-th column
+        Q[:, k] /= R[k, k]
+        for j in range(k + 1, n): # Subtract the projection from subsequent columns
+            R[k, j] = np.dot(Q[:, k], Q[:, j])
+            Q[:, j] -= R[k, j] * Q[:, k]
+    return Q, R
 
 def get_all_eigenvalues(A: NDArrayFloat) -> NDArrayFloat:
-
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-
-    pass
+    print("starting")
+    A_k = A.copy()
+    for k in range(100):
+        Q, R = qr_decomposition(A_k)
+        A_k = R @ Q
+    my_eigenvalues = np.array(np.diag(A_k))
+    return my_eigenvalues
 
 
 def run_test_cases(
