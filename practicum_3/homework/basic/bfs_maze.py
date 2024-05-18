@@ -38,13 +38,36 @@ class Maze:
 
 def solve(maze: Maze) -> None:
     path = ""  # solution as a string made of "L", "R", "U", "D"
+    start_i = 0  # начальная строка
+    start_j = maze.start_j  # начальный столбец
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    def dfs(i, j, path):
+        nonlocal solution_found
+        if solution_found:
+            return
+
+        if maze.list_view[i][j] == "X":  # достигнут выход
+            solution_found = True
+            nonlocal path
+            path = path
+            return
+
+        maze.list_view[i][j] = "."  # пометить текущую клетку как посещенную
+
+        # Попробовать все возможные направления
+        for move in "LRUD":
+            new_i, new_j = _shift_coordinate(i, j, move)
+            if 0 <= new_i < len(maze.list_view) and 0 <= new_j < len(maze.list_view[new_i]) and maze.list_view[new_i][new_j] == " ":
+                dfs(new_i, new_j, path + move)
+
+        maze.list_view[i][j] = " "  # вернуть исходное значение клетки
+
+    solution_found = False
+    dfs(start_i, start_j, path)
 
     print(f"Found: {path}")
     maze.print(path)
+
 
 
 def _shift_coordinate(i: int, j: int, move: str) -> tuple[int, int]:

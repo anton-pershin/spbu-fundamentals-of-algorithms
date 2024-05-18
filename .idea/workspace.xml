@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="691d21bd-0ddc-4b5a-a38f-9183e428af5c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/practicum_2/homework/basic/cycles_in_undirected_graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/practicum_2/homework/basic/cycles_in_undirected_graph.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/practicum_3/homework/basic/bfs_maze.py" beforeDir="false" afterPath="$PROJECT_DIR$/practicum_3/homework/basic/bfs_maze.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/practicum_3/homework/basic/valid_parentheses.py" beforeDir="false" afterPath="$PROJECT_DIR$/practicum_3/homework/basic/valid_parentheses.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/practicum_5/homework/basic/binary_tree_zigzag_level_order_traversal.py" beforeDir="false" afterPath="$PROJECT_DIR$/practicum_5/homework/basic/binary_tree_zigzag_level_order_traversal.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/practicum_6/homework/basic/cholesky.py" beforeDir="false" afterPath="$PROJECT_DIR$/practicum_6/homework/basic/cholesky.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/practicum_7/homework/basic/inverse_power_method.py" beforeDir="false" afterPath="$PROJECT_DIR$/practicum_7/homework/basic/inverse_power_method.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="2gbJLzRlMmwzO78jnY2ySmbSLo9" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.bfs_maze.executor": "Run",
+    "Python.binary_tree_zigzag_level_order_traversal.executor": "Run",
+    "Python.cholesky.executor": "Run",
+    "Python.cycles_in_undirected_graph.executor": "Run",
+    "Python.inverse_power_method.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "common",
+    "last_opened_file_path": "C:/prog/algoritms/clone",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="cycles_in_undirected_graph" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="spbu-fundamentals-of-algorithms" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/practicum_2/homework/basic" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/practicum_2/homework/basic/cycles_in_undirected_graph.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.cycles_in_undirected_graph" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-74d2a5396914-JavaScript-PY-241.14494.241" />
+        <option value="bundled-python-sdk-0509580d9d50-28c9f5db9ffe-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-241.14494.241" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="691d21bd-0ddc-4b5a-a38f-9183e428af5c" name="Changes" comment="" />
+      <created>1715960291878</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1715960291878</updated>
+      <workItem from="1715960293277" duration="806000" />
+      <workItem from="1715961109519" duration="3800000" />
+      <workItem from="1715981352805" duration="61000" />
+      <workItem from="1715982199569" duration="111000" />
+      <workItem from="1716032701773" duration="1721000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/spbu_fundamentals_of_algorithms$cycles_in_undirected_graph.coverage" NAME="cycles_in_undirected_graph Coverage Results" MODIFIED="1716034107362" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/practicum_2/homework/basic" />
+    <SUITE FILE_PATH="coverage/spbu_fundamentals_of_algorithms$inverse_power_method.coverage" NAME="inverse_power_method Coverage Results" MODIFIED="1715981359647" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/practicum_7/homework/basic" />
+    <SUITE FILE_PATH="coverage/spbu_fundamentals_of_algorithms$bfs_maze.coverage" NAME="bfs_maze Coverage Results" MODIFIED="1715969847287" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/practicum_3/homework/basic" />
+    <SUITE FILE_PATH="coverage/spbu_fundamentals_of_algorithms$cholesky.coverage" NAME="cholesky Coverage Results" MODIFIED="1715982206953" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/practicum_6/homework/basic" />
+    <SUITE FILE_PATH="coverage/spbu_fundamentals_of_algorithms$binary_tree_zigzag_level_order_traversal.coverage" NAME="binary_tree_zigzag_level_order_traversal Coverage Results" MODIFIED="1716032753645" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/practicum_5/homework/basic" />
+  </component>
+</project>
