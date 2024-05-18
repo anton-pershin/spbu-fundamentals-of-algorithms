@@ -81,6 +81,7 @@ class QuadraticEquationRoots(Evaluator):
         a = self.coeffs[2]
         b = self.coeffs[1]
         c = self.coeffs[0]
+
         root_of_d = np.sqrt(
             np.power(b, 2, dtype=self.dtype) - self.dtype(4.0) * a * c, dtype=self.dtype
         )
@@ -97,6 +98,7 @@ class QuadraticEquationRoots(Evaluator):
         )
         x1 = -(self.dtype(2.0) * c) / (b + root_of_d)
         x2 = -(self.dtype(2.0) * c) / (b - root_of_d)
+        
         return x1, x2
 
 

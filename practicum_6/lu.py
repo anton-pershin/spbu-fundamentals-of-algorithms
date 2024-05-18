@@ -15,6 +15,8 @@ def lu(A: NDArray, permute: bool) -> tuple[NDArray, NDArray, NDArray]:
             L[i, k] = m
         U = U_0 @ U
     return L, U, P
+    
+    pass
 
 
 def solve(L: NDArray, U: NDArray, P: NDArray, b: NDArray) -> NDArray:

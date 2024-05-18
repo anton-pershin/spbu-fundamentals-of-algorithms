@@ -9,6 +9,7 @@ def power_method(A: NDArrayFloat, n_iters: int) -> tuple[NDArrayFloat, NDArrayFl
     dominant_eigenvector_history = np.zeros((n_iters, A.shape[0]))
     u_k = np.random.random(A.shape[0])
     u_kk = np.zeros_like(u_k)
+    
     for k in range(n_iters):
         pre_u_kk = A @ u_k
         A_u_k_norm = np.linalg.norm(pre_u_kk)
@@ -17,6 +18,7 @@ def power_method(A: NDArrayFloat, n_iters: int) -> tuple[NDArrayFloat, NDArrayFl
         u_k = u_kk
         dominant_eigenvalue_history[k] = dominant_eigenvalue
         dominant_eigenvector_history[k] = u_kk
+    
     return dominant_eigenvalue_history, dominant_eigenvector_history
 
 
