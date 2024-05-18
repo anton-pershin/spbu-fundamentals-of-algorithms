@@ -12,7 +12,11 @@ class Node:
     data: Any = None
     left: Node = None
     right: Node = None
-
+    
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
 
 class BinaryTree:
     def __init__(self) -> None:
@@ -20,24 +24,60 @@ class BinaryTree:
 
     def empty(self) -> bool:
         return self.root is None
+            
+    def build_tree(self, values: list[int]) -> None:
+        if not values:
+            return
+        self.root = Node(values[0])
+        queue = [self.root]
+        i = 1
+        while queue:
+            node = queue.pop(0)
+            if i < len(values):
+                if values[i] is not None:
+                    node.left = Node(values[i])
+                    queue.append(node.left)
+            i += 1
+            if i < len(values):
+                if values[i] is not None:
+                    node.right = Node(values[i])
+                    queue.append(node.right)
+            i += 1
 
     def zigzag_level_order_traversal(self) -> list[Any]:
+        if self.empty():
+            return []
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        result, level = [], 0
+        queue = [self.root]
 
-        pass
+        while queue:
+            level_nodes = []
+            level_size = len(queue)
 
+            if level % 2 == 0:
+                for _ in range(level_size):
+                    node = queue.pop(0)
+                    
+                    level_nodes.append(node.val)
+                    if node.left:
+                        queue.append(node.left)
+                    if node.right:
+                        queue.append(node.right)
 
-def build_tree(list_view: list[Any]) -> BinaryTree:
-    bt = BinaryTree()
+            else:
+                for _ in range(level_size):
+                    node = queue.pop()
+                    level_nodes.append(node.val)
+                    if node.right:
+                        queue.insert(0, node.right)
+                    if node.left:
+                        queue.insert(0, node.left)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+            result.append(level_nodes)
+            level += 1
 
-    pass
+        return result
 
 
 if __name__ == "__main__":
@@ -59,6 +99,8 @@ if __name__ == "__main__":
         cases = yaml.safe_load(f)
 
     for i, c in enumerate(cases):
-        bt = build_tree(c["input"])
+        bt = BinaryTree()
+        bt.build_tree(c["input"])
+        
         zz_traversal = bt.zigzag_level_order_traversal()
         print(f"Case #{i + 1}: {zz_traversal == c['output']}")

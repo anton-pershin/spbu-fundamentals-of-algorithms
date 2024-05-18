@@ -12,30 +12,27 @@ class Stack:
 
     def __init__(self, max_n: int, dtype: Any) -> None:
         self._array: NDArray = np.zeros((max_n,), dtype=dtype)  # internal array
+        self._array=np.array(self._array).astype('str').tolist()
         self._top_i: int = -1  # index of the most recently inserted element
 
     def empty(self) -> bool:
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        self._array == []
+        return self._top_i == -1
 
-        pass
 
     def push(self, x: Any) -> None:
         """Complexity: O(1)"""
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        self._top_i += 1
+        self._array[self._top_i] = x
 
-        pass
 
     def pop(self) -> Any:
         """Complexity: O(1)"""
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        if self.empty():
+            raise IndexError("Stack is empty")
+        x = self._array[self._top_i]
+        self._top_i -= 1
+        return x
 
 
 class StackUnderflowException(BaseException):
@@ -58,11 +55,20 @@ def get_starting_symbol(sym: str) -> str:
 
 
 def are_parentheses_valid(s: str) -> bool:
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    stack = Stack(len(s), Any)
 
-    pass
+    for char in s:
+        if char in "([{":
+            stack.push(char)
+
+        else:
+            if stack.empty():
+                return False
+            top = stack.pop()
+            if top != get_starting_symbol(char):
+                return False
+
+    return stack.empty()
 
 
 if __name__ == "__main__":
