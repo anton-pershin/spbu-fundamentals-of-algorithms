@@ -9,7 +9,6 @@ from src.plotting import plot_graph
 def visit(node: Any):
     print(f"Wow, it is {node} right here!")
 
-
 def dfs_recursive(G: nx.Graph, node: Any, visited: dict[Any]):
     visit(node)
     visited[node] = True
@@ -61,9 +60,9 @@ if __name__ == "__main__":
     # If a directed graph represent tasks to be done, the topological sort tells
     # us what the task order should be, i.e. scheduling
     # Postorder DFS outputs the reversed order!
-    G = nx.read_edgelist("practicum_3/graph_2.edgelist", create_using=nx.DiGraph)
+    G = nx.read_edgelist("practicum_2/graph_2.edgelist", create_using=nx.DiGraph)
     plot_graph(G)
-    print("Postorder recursive DFS")
+    print("Postorder iterative DFS")
     print("-" * 32)
     visited = {n: False for n in G}
     dfs_recursive_postorder(G, node="0", visited=visited)

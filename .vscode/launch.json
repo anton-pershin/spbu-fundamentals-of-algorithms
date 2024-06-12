@@ -11,6 +11,8 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": true,
+            "envFile": "${workspaceFolder}/.env",
+            "debugOptions": ["RedirectOutput"],
             "env": {
                 "PYTHONPATH": "${workspaceFolder}${pathSeparator}${env:PYTHONPATH}"
             }
