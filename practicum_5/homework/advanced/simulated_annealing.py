@@ -1,9 +1,8 @@
 import numpy as np
 from numpy.typing import NDArray
 import networkx as nx
-
-from src.plotting import plot_graph, plot_loss_history
-
+from random import random
+from math import e, log
 
 NDArrayInt = NDArray[np.int_]
 
@@ -22,14 +21,36 @@ def set_colors(G, colors):
         G.nodes[n]["color"] = color
 
 
+def tweak(colors, n_max_colors):
+    new_colors = colors.copy()
+    n_nodes = len(new_colors)
+    random_i = np.random.randint(low=0, high=n_nodes)
+    random_color = np.random.randint(low=0, high=n_max_colors)
+    new_colors[random_i] = random_color
+    return new_colors
+
+
 def solve_via_simulated_annealing(
-    G: nx.Graph, n_max_colors: int, initial_colors: NDArrayInt, n_iters: int
+        G: nx.Graph, n_max_colors: int, initial_colors: NDArrayInt, n_iters: int
 ):
     loss_history = np.zeros((n_iters,), dtype=np.int_)
+    temperature = n_iters
+    cur_colors = initial_colors.copy()
+    next_colors = initial_colors.copy()
+    n_conflicts_best = number_of_conflicts(G, cur_colors)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    for i in range(n_iters):
+        loss_history[i] = number_of_conflicts(G, cur_colors)
+        next_colors = tweak(cur_colors.copy(), n_max_colors)
+        delta_conflicts = n_conflicts_best - number_of_conflicts(G, next_colors)
+        eps = random()
+
+        if (delta_conflicts > 0) or (eps < e ** (delta_conflicts / temperature)):
+            cur_colors = next_colors
+            n_conflicts_best = number_of_conflicts(G, cur_colors)
+
+        if temperature / log(i + 2) != 0:
+            temperature /= log(i + 2)
 
     return loss_history
 
@@ -38,7 +59,6 @@ if __name__ == "__main__":
     seed = 42
     np.random.seed(seed)
     G = nx.erdos_renyi_graph(n=100, p=0.05, seed=seed)
-    plot_graph(G)
 
     n_max_iters = 500
     n_max_colors = 3
@@ -47,4 +67,3 @@ if __name__ == "__main__":
     loss_history = solve_via_simulated_annealing(
         G, n_max_colors, initial_colors, n_max_iters
     )
-    plot_loss_history(loss_history)

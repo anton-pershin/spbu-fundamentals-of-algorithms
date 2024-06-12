@@ -4,9 +4,9 @@ from typing import Protocol
 import numpy as np
 import networkx as nx
 
-from src.common import NDArrayInt
-from src.plotting import plot_graph, plot_loss_history
 
+from common import NDArrayInt
+from plotting import plot_graph, plot_loss_history
 
 class GraphColoringSolver(Protocol):
     def __call__(

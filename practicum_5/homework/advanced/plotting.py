@@ -6,7 +6,7 @@ from networkx.drawing.nx_pydot import graphviz_layout
 import numpy as np
 from numpy.typing import NDArray
 
-from src.common import NDArrayInt
+from common import NDArrayInt
 
 
 def plot_graph(
