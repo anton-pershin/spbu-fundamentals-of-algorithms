@@ -22,14 +22,40 @@ def set_colors(G, colors):
         G.nodes[n]["color"] = color
 
 
+def tweak(colors, n_max_colors, temperature:float):
+    new_colors = colors.copy()
+    n_nodes = len(new_colors)
+    coeff = 40
+    for _ in range(int(1+temperature*coeff)):
+        random_i = np.random.randint(low=0, high=n_nodes)
+        random_color = np.random.randint(low=0, high=n_max_colors-1)
+        new_colors[random_i] = random_color
+    return new_colors
+
+
 def solve_via_simulated_annealing(
     G: nx.Graph, n_max_colors: int, initial_colors: NDArrayInt, n_iters: int
 ):
     loss_history = np.zeros((n_iters,), dtype=np.int_)
-
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    n_tweaks = 10
+    cur_colors = initial_colors
+    next_colors = initial_colors.copy()
+    next_colors_best = initial_colors.copy()
+    temperature = 1
+    for i in range(n_iters):
+        temperature *= 0.9
+        loss_history[i] = number_of_conflicts(G, cur_colors)
+        next_colors_best = tweak(cur_colors, n_max_colors, temperature)
+        n_conflicts_best = number_of_conflicts(G, next_colors_best)
+        for _ in range(n_tweaks):
+            next_colors = tweak(cur_colors, n_max_colors, temperature)
+            if number_of_conflicts(G, next_colors) < n_conflicts_best:
+                next_colors_best = next_colors
+                n_conflicts_best = number_of_conflicts(G, next_colors)
+        acceptance_coeff = temperature*100 
+        random_coeff = np.random.random_sample()
+        if n_conflicts_best < number_of_conflicts(G, cur_colors) or (n_conflicts_best-number_of_conflicts(G, cur_colors)) < acceptance_coeff*random_coeff:
+            cur_colors = next_colors_best
 
     return loss_history
 
