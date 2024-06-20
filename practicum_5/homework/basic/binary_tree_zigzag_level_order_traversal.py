@@ -22,23 +22,58 @@ class BinaryTree:
         return self.root is None
 
     def zigzag_level_order_traversal(self) -> list[Any]:
+        if self.root is None:
+            return []
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        result = []
+        current_level = [self.root]
+        level_num = 0
 
-        pass
+        while current_level:
+            next_level = []
+            values = []
 
+            for node in current_level:
+                values.append(node.key)
 
+                if node.left:
+                    next_level.append(node.left)
+                if node.right:
+                    next_level.append(node.right)
+
+            if level_num % 2 == 0:
+                result.extend(values)
+            else:
+                result.extend(values[::-1])
+
+            current_level = next_level
+            level_num += 1
+
+        return result
+    
 def build_tree(list_view: list[Any]) -> BinaryTree:
     bt = BinaryTree()
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    if not list_view:
+        return bt
 
-    pass
+    nodes = [None if val is None else Node(val) for val in list_view]
+    bt.root = nodes[0]
 
+    for i, node in enumerate(nodes):
+        if node is None:
+            continue
+
+        left_child_index = 2 * i + 1
+        right_child_index = 2 * i + 2
+
+        if left_child_index < len(nodes):
+            node.left = nodes[left_child_index]
+
+        if right_child_index < len(nodes):
+            node.right = nodes[right_child_index]
+
+    return bt
 
 if __name__ == "__main__":
     # Let's solve Binary Tree Zigzag Level Order Traversal problem from leetcode.com:

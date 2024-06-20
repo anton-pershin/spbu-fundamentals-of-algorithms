@@ -38,10 +38,29 @@ class Maze:
 
 def solve(maze: Maze) -> None:
     path = ""  # solution as a string made of "L", "R", "U", "D"
+    def dfs(i, j, current_path):
+        if i == len(maze.list_view) - 1:
+            nonlocal path
+            path = current_path
+            return True
+        moves = ["L", "R", "U", "D"]
+        for move in moves:
+            new_i, new_j = _shift_coordinate(i, j, move)
+            if (
+                0 <= new_i < len(maze.list_view)
+                and 0 <= new_j < len(maze.list_view[new_i])
+                and maze.list_view[new_i][new_j] != "#"
+                and (new_i, new_j) not in visited
+            ):
+                visited.add((new_i, new_j))
+                if dfs(new_i, new_j, current_path + move):
+                    return True
+                visited.remove((new_i, new_j))
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+        return False
+    visited = set()
+    visited.add((0, maze.start_j))
+    dfs(0, maze.start_j, "")
 
     print(f"Found: {path}")
     maze.print(path)
@@ -60,7 +79,7 @@ def _shift_coordinate(i: int, j: int, move: str) -> tuple[int, int]:
 
 
 if __name__ == "__main__":
-    maze = Maze.from_file("practicum_3/homework/basic/maze_2.txt")
+    maze = Maze.from_file("maze_1.txt")
     t_start = perf_counter()
     solve(maze)
     t_end = perf_counter()
