@@ -14,13 +14,15 @@ class CentralityMeasure(Protocol):
 
 
 def closeness_centrality(G: AnyNxGraph) -> dict[Any, float]:
+    result = {}
+    n = len(G)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
+    for node in G.nodes():
+        distances = nx.shortest_path_length(G, source=node)
+        sum_dist = sum(distances[j] for j in range(n))
+        result[node] = (n-1) / sum_dist
 
-    pass
-
+    return result
 
 def betweenness_centrality(G: AnyNxGraph) -> dict[Any, float]: 
 
@@ -51,7 +53,9 @@ def plot_centrality_measure(G: AnyNxGraph, measure: CentralityMeasure) -> None:
 if __name__ == "__main__":
     G = nx.karate_club_graph()
     
-    plot_centrality_measure(G, closeness_centrality)
-    plot_centrality_measure(G, betweenness_centrality)
-    plot_centrality_measure(G, eigenvector_centrality)
+    #plot_centrality_measure(G, closeness_centrality)
+    #plot_centrality_measure(G, betweenness_centrality)
+    #plot_centrality_measure(G, eigenvector_centrality)
+    print(nx.closeness_centrality(G))
+    print(closeness_centrality(G))
 
