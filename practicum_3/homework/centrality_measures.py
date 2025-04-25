@@ -59,3 +59,4 @@ def eigenvector_centrality(G: nx.Graph, max_iter=50) -> dict[Any, float]:
         centrality = {n: new_centrality[n]/norm for n in nodes}
     
     return centrality
+
