@@ -1,5 +1,6 @@
 from typing import Any
 from collections import deque
+from itertools import combinations
 import networkx as nx
 
 def closeness_centrality(G: nx.Graph) -> dict[Any, float]:
@@ -19,11 +20,7 @@ def closeness_centrality(G: nx.Graph) -> dict[Any, float]:
                     queue.append(neighbor)
         
         total_distance = sum(d for n, d in distances.items() if n != node)
-        
-        if total_distance == 0:
-            centrality[node] = 0.0
-        else:
-            centrality[node] = 1 / total_distance 
+        centrality[node] = (len(nodes) - 1) / total_distance if total_distance > 0 else 0.0
     
     return centrality
 
