@@ -92,14 +92,31 @@ def betweenness_centrality(G: AnyNxGraph) -> dict[Any, float]:
 
     return betweenness
 
-def eigenvector_centrality(G: AnyNxGraph) -> dict[Any, float]: 
+def eigenvector_centrality(G: AnyNxGraph) -> dict[Any, float]:
+    nodes = list(G.nodes())
+    n = len(nodes)
+    idx = {node: i for i, node in enumerate(nodes)}
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
+    # Строим матрицу смежности
+    A = np.zeros((n, n), dtype=float)
+    for u, v in G.edges():
+        i, j = idx[u], idx[v]
+        A[i,j] = 1.0
+        if not G.is_directed():
+            A[j,i] = 1.0
 
-    pass
+    # Вычисляем собственные значения и собственные векторы
+    eigenvalues, eigenvectors = np.linalg.eig(A)
 
+    # Ищем индекс максимального по модулю собственного значения
+    principal = np.argmax(np.abs(eigenvalues))
+    principal_vector = np.real(eigenvectors[:, principal])
+
+    # Нормируем вектор
+    principal_vector /= np.linalg.norm(principal_vector)
+
+    # Возвращаем значения по узлам
+    return {nodes[i]: float(principal_vector[i]) for i in range(n)}
 
 def plot_centrality_measure(G: AnyNxGraph, measure: CentralityMeasure) -> None:
     values = measure(G)
@@ -114,7 +131,7 @@ if __name__ == "__main__":
 
     plot_centrality_measure(G, closeness_centrality)
     plot_centrality_measure(G, betweenness_centrality)
-    # plot_centrality_measure(G, eigenvector_centrality)
+    plot_centrality_measure(G, eigenvector_centrality)
 
     # Степень близости | совпадают
     # print(nx.closeness_centrality(G))
@@ -124,4 +141,6 @@ if __name__ == "__main__":
     # print(nx.betweenness_centrality(G))
     # print(betweenness_centrality(G))
 
-
+    # Степень влиятельности | совпадают
+    # print(nx.eigenvector_centrality(G))
+    # print(eigenvector_centrality(G))
