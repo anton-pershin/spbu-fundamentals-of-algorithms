@@ -3,8 +3,6 @@ from itertools import combinations
 import matplotlib.pyplot as plt
 original_colorbar = plt.colorbar
 from collections import deque
-import sys
-sys.path.append(r"C:\Users\vital\OneDrive\Документы\GitHub\spbu-fundamentals-of-algorithms-2")
  
 import numpy as np
 import networkx as nx
