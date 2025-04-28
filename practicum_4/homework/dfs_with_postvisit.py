@@ -1,4 +1,9 @@
+import sys
 from pathlib import Path
+
+project_root = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(project_root))
+
 from collections import deque
 from typing import Any
 from abc import ABC, abstractmethod
@@ -12,12 +17,33 @@ from src.common import AnyNxGraph
 
 class DfsViaLifoQueueWithPostvisit(GraphTraversal):
     def run(self, node: Any) -> None:
+        # множество посещенных вершин
+        visited: set[Any] = set()
+        # вершина, итератор по соседям, путь до вершины
+        stack: list[tuple[Any, Any, list[Any]]] = []
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        visited.add(node)
+        initial_path = [node]
+        self.previsit(node, path=initial_path)
 
-        pass
+        stack.append((node, iter(self.G.neighbors(node)), initial_path))
+
+        while stack:
+            current, neighbors_iter, path_to_current = stack[-1]
+            try:
+                neighbor = next(neighbors_iter)
+                # если не посетили - обрабатываем
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    new_path = path_to_current + [neighbor]
+                    self.previsit(neighbor, path=new_path)
+                    stack.append((neighbor, iter(self.G.neighbors(neighbor)), new_path))
+                # если посетили - пропускаем
+            except StopIteration:
+                # если все соседи рассмотрены
+                self.postvisit(current, path=path_to_current)
+                stack.pop()
+
 
 
 class DfsViaLifoQueueWithPrinting(DfsViaLifoQueueWithPostvisit):
@@ -31,7 +57,7 @@ class DfsViaLifoQueueWithPrinting(DfsViaLifoQueueWithPostvisit):
 if __name__ == "__main__":
     # Load and plot the graph
     G = nx.read_edgelist(
-        Path("practicum_4") / "simple_graph_10_nodes.edgelist",
+        project_root / "practicum_4" / "simple_graph_10_nodes.edgelist",
         create_using=nx.Graph
     )
     # plot_graph(G)
