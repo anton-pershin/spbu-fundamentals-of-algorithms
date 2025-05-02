@@ -1,6 +1,8 @@
 import sys
 from pathlib import Path
 
+from networkx.classes import neighbors
+
 project_root = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(project_root))
 
@@ -19,32 +21,26 @@ class DfsViaLifoQueueWithPostvisit(GraphTraversal):
     def run(self, node: Any) -> None:
         # множество посещенных вершин
         visited: set[Any] = set()
-        # вершина, итератор по соседям, путь до вершины
-        stack: list[tuple[Any, Any, list[Any]]] = []
-
-        visited.add(node)
-        initial_path = [node]
-        self.previsit(node, path=initial_path)
-
-        stack.append((node, iter(self.G.neighbors(node)), initial_path))
+        # вершина, состояние(enter, exit), путь до вершины
+        stack: list[ tuple[ Any, str, list[Any] ] ] = [ ( node, 'enter', [node] ) ]
 
         while stack:
-            current, neighbors_iter, path_to_current = stack[-1]
-            try:
-                neighbor = next(neighbors_iter)
-                # если не посетили - обрабатываем
-                if neighbor not in visited:
-                    visited.add(neighbor)
-                    new_path = path_to_current + [neighbor]
-                    self.previsit(neighbor, path=new_path)
-                    stack.append((neighbor, iter(self.G.neighbors(neighbor)), new_path))
-                # если посетили - пропускаем
-            except StopIteration:
-                # если все соседи рассмотрены
-                self.postvisit(current, path=path_to_current)
-                stack.pop()
+            current, state, path = stack.pop()
 
+            if state == 'enter':
+                if current in visited:
+                    continue
+                visited.add(current)
+                self.previsit(current, path=path)
+                stack.append( (current, 'exit', path) )
+                neighbors = list(self.G.neighbors(current))
+                for neighbor in reversed(neighbors): # фикс порядка обхода (reversed)
+                    if neighbor not in visited:
+                        new_path = path + [neighbor]
+                        stack.append( (neighbor, 'enter', new_path) )
 
+            else:
+                self.postvisit(current, path=path)
 
 class DfsViaLifoQueueWithPrinting(DfsViaLifoQueueWithPostvisit):
     def previsit(self, node: Any, **params) -> None:
@@ -60,7 +56,7 @@ if __name__ == "__main__":
         project_root / "practicum_4" / "simple_graph_10_nodes.edgelist",
         create_using=nx.Graph
     )
-    # plot_graph(G)
+    plot_graph(G)
 
     dfs = DfsViaLifoQueueWithPrinting(G)
     dfs.run(node="0")
