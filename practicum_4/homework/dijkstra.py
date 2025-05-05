@@ -5,9 +5,14 @@ from abc import ABC, abstractmethod
 import numpy as np
 import networkx as nx
 
+import sys
+sys.path.append(r"/home/viktoria/algoritms/spbu-fundamentals-of-algorithms")
+
 from practicum_4.dfs import GraphTraversal 
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
+
+import heapq
 
 
 class DijkstraAlgorithm(GraphTraversal):
@@ -24,13 +29,26 @@ class DijkstraAlgorithm(GraphTraversal):
     def postvisit(self, node: Any, **params) -> None:
         pass
 
-    def run(self, node: Any) -> None:
+def run(self, node: Any) -> None:
+        dist = {n: float('inf') for n in self.G.nodes}
+        dist[node] = 0
+        heap = [(0, node, [node])]
+        visited = set()
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        while heap:
+            curr_dist, curr_node, path = heapq.heappop(heap)
+            if curr_node in visited:
+                continue
+            visited.add(curr_node)
+            self.previsit(curr_node, path=path)
+            for neighbor in self.G.neighbors(curr_node):
+                edge_attr = self.G.get_edge_data(curr_node, neighbor)
+                weight = edge_attr.get('weight', 1)
+                new_dist = curr_dist + weight
+                if new_dist < dist[neighbor]:
+                    dist[neighbor] = new_dist
+                    heapq.heappush(heap, (new_dist, neighbor, path + [neighbor]))
 
-        pass
 
 
 if __name__ == "__main__":
