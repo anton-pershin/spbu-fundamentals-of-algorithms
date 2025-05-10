@@ -11,13 +11,43 @@ from src.common import AnyNxGraph
 
 
 class BfsViaFifoQueue(GraphTraversal):
+    def __init__(self, graph: AnyNxGraph):
+        self.graph = graph
+
     def run(self, node: Any) -> None:
+        """
+        Iterative breadth-first search starting at `node`.
+        Nodes are discovered level by level by means of a FIFO queue.
+        """
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        # Safety check – start node must exist
+        if node not in self.graph:
+            raise ValueError(f"Start node {node!r} is not contained in the graph.")
 
-        pass
+        # Reset/initialise bookkeeping
+        self.visited: set[Any] = set()
+
+        # FIFO queue (left = pop side, right = push side)
+        queue: deque[Any] = deque()
+
+        # Discover the start node
+        self.visited.add(node)
+        self.previsit(node)
+        queue.append(node)
+
+        # Main loop
+        while queue:
+            current = queue.popleft()
+
+            # Explore all undiscovered neighbours
+            for neighbour in self.graph.neighbors(current):
+                if neighbour not in self.visited:
+                    self.visited.add(neighbour)
+                    self.previsit(neighbour)
+                    queue.append(neighbour)
+
+            # All neighbours processed → finish current node
+            self.postvisit(current)
 
 
 class BfsViaLifoQueueWithPrinting(BfsViaFifoQueue):
