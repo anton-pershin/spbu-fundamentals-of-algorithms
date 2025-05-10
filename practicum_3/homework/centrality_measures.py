@@ -14,28 +14,37 @@ class CentralityMeasure(Protocol):
 
 
 def closeness_centrality(G: AnyNxGraph) -> dict[Any, float]:
-
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
-
-    pass
+    centrality = {}
+    nodes = list(G.nodes())
+    for node in nodes:
+        path = nx.shortest_path_length(G, source=node)
+        sum_of_dist = sum(path.values())
+        centrality[node] = (len(nodes) - 1) / sum_of_dist
+    return centrality
 
 
 def betweenness_centrality(G: AnyNxGraph) -> dict[Any, float]: 
+    centrality = {v: 0.0 for v in G.nodes()}
+    nodes = list(G.nodes())
+    s_list = []
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
+    for t in nodes:
+        for s in s_list:
+            path_without_v = len(list(nx.all_shortest_paths(G, s, t)))
+            for v in nodes:
+                if v != s and v != t:
+                    sv = nx.shortest_path_length(G, s, v)
+                    vt = nx.shortest_path_length(G, v, t)
+                    st = nx.shortest_path_length(G, s, t)
+                    if sv + vt == st:
+                        path_sv = len(list(nx.all_shortest_paths(G, s, v)))
+                        path_vt = len(list(nx.all_shortest_paths(G, v, t)))
+                        centrality[v] += (path_sv * path_vt) / path_without_v
+        s_list.append(t)
 
-    pass
 
 
-def eigenvector_centrality(G: AnyNxGraph) -> dict[Any, float]: 
-
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
+def eigenvector_centrality(G: AnyNxGraph) -> dict[Any, float]:
 
     pass
 
@@ -50,7 +59,7 @@ def plot_centrality_measure(G: AnyNxGraph, measure: CentralityMeasure) -> None:
 
 if __name__ == "__main__":
     G = nx.karate_club_graph()
-    
+    #plot_graph(G)
     plot_centrality_measure(G, closeness_centrality)
     plot_centrality_measure(G, betweenness_centrality)
     plot_centrality_measure(G, eigenvector_centrality)
