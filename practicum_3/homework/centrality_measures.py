@@ -14,30 +14,52 @@ class CentralityMeasure(Protocol):
 
 
 def closeness_centrality(G: AnyNxGraph) -> dict[Any, float]:
-
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
-
-    pass
+    closeness = {}
+    for node in G.nodes():
+        # Находим кратчайшие расстояния от узла до всех остальных узлов
+        lengths = bfs_shortest_path_lengths(G, node)
+        # Вычисляем близость как обратное среднее расстояние
+        total_length = sum(lengths.values())
+        if len(lengths) > 1:
+            closeness[node] = (len(lengths) - 1) / total_length
+        else:
+            closeness[node] = 0.0
+    return closeness
 
 
 def betweenness_centrality(G: AnyNxGraph) -> dict[Any, float]: 
-
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
-
-    pass
+    betweenness = defaultdict(float)
+    
+    for s in G.nodes():
+        for t in G.nodes():
+            if s != t:
+                # Находим все кратчайшие пути от s до t
+                paths = all_shortest_paths(G, s, t)
+                num_paths = len(paths)
+                
+                for path in paths:
+                    for node in path[1:-1]:  # Исключаем начальный и конечный узлы
+                        betweenness[node] += 1 / num_paths
+    
+    return betweenness
 
 
 def eigenvector_centrality(G: AnyNxGraph) -> dict[Any, float]: 
+    n_nodes = len(G.nodes())
+    eigenvector = {node: 1.0 for node in G.nodes()}  # Начальное значение
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
+    for _ in range(100):  # Итерации для сходимости
+        new_eigenvector = {}
+        for node in G.nodes():
+            new_eigenvector[node] = sum(eigenvector[neighbor] for neighbor in G.neighbors(node))
+        
+        # Нормируем вектор
+        norm_factor = np.linalg.norm(list(new_eigenvector.values()))
+        new_eigenvector = {node: value / norm_factor for node, value in new_eigenvector.items()}
+        
+        eigenvector = new_eigenvector
 
-    pass
+    return eigenvector
 
 
 def plot_centrality_measure(G: AnyNxGraph, measure: CentralityMeasure) -> None:
