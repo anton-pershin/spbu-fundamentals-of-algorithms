@@ -1,57 +1,62 @@
-from typing import Any, Protocol
+from typing import Any
+from collections import deque
 from itertools import combinations
-
-import numpy as np
 import networkx as nx
 
-from src.plotting.graphs import plot_graph, plot_network_via_plotly
-from src.common import AnyNxGraph 
-
-
-class CentralityMeasure(Protocol):
-    def __call__(self, G: AnyNxGraph) -> dict[Any, float]:
-        ...
-
-
-def closeness_centrality(G: AnyNxGraph) -> dict[Any, float]:
-
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
-
-    pass
-
-
-def betweenness_centrality(G: AnyNxGraph) -> dict[Any, float]: 
-
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
-
-    pass
-
-
-def eigenvector_centrality(G: AnyNxGraph) -> dict[Any, float]: 
-
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
-
-    pass
-
-
-def plot_centrality_measure(G: AnyNxGraph, measure: CentralityMeasure) -> None:
-    values = measure(G)
-    if values is not None:
-        plot_graph(G, node_weights=values, figsize=(14, 8), name=measure.__name__)
-    else:
-        print(f"Implement {measure.__name__}")
-
-
-if __name__ == "__main__":
-    G = nx.karate_club_graph()
+def closeness_centrality(G: nx.Graph) -> dict[Any, float]:
+    centrality = {}
+    nodes = list(G.nodes())
     
-    plot_centrality_measure(G, closeness_centrality)
-    plot_centrality_measure(G, betweenness_centrality)
-    plot_centrality_measure(G, eigenvector_centrality)
+    for node in nodes:
+        distances = {n: -1 for n in nodes}
+        distances[node] = 0
+        queue = deque([node])
+        
+        while queue:
+            current = queue.popleft()
+            for neighbor in G.neighbors(current):
+                if distances[neighbor] == -1:
+                    distances[neighbor] = distances[current] + 1
+                    queue.append(neighbor)
+        
+        total_distance = sum(d for n, d in distances.items() if n != node)
+        centrality[node] = (len(nodes) - 1) / total_distance if total_distance > 0 else 0.0
+    
+    return centrality
+
+def betweenness_centrality(G: nx.Graph) -> dict[Any, float]:
+    nodes = list(G.nodes())
+    betweenness = {n: 0.0 for n in nodes}
+    
+    for s, t in combinations(nodes, 2):
+        try:
+            all_paths = list(nx.all_shortest_paths(G, s, t))
+        except nx.NetworkXNoPath:
+            continue
+            
+        for path in all_paths:
+            for node in path[1:-1]:
+                betweenness[node] += 1 / len(all_paths)
+    
+    max_value = max(betweenness.values()) if betweenness else 1
+    if max_value > 0:
+        betweenness = {n: v/max_value for n, v in betweenness.items()}
+    
+    return betweenness
+
+def eigenvector_centrality(G: nx.Graph, max_iter=50) -> dict[Any, float]:
+    nodes = list(G.nodes())
+    centrality = {n: 1.0 for n in nodes}
+    
+    for _ in range(max_iter):
+        new_centrality = {}
+        for node in nodes:
+            new_centrality[node] = sum(centrality[neighbor] for neighbor in G.neighbors(node))
+        
+        norm = sum(new_centrality.values())
+        if norm == 0:
+            norm = 1
+        centrality = {n: new_centrality[n]/norm for n in nodes}
+    
+    return centrality
 
