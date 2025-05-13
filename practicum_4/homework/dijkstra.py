@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 import networkx as nx
 
-from practicum_4.dfs import GraphTraversal 
+from dfs import GraphTraversal 
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
@@ -25,12 +25,29 @@ class DijkstraAlgorithm(GraphTraversal):
         pass
 
     def run(self, node: Any) -> None:
+        dist: dict[Any, float] = {n: float('inf') for n in self.G.nodes()}
+        dist[node] = 0.0
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        self.shortest_paths = {}
+        self.previsit(node, path=[node])
 
-        pass
+        unvisited = set(self.G.nodes())
+
+        while unvisited:
+            u = min(unvisited, key=lambda v: dist[v])
+            if dist[u] == float('inf'):
+                break
+
+            unvisited.remove(u)
+
+            for v, data in self.G[u].items():
+                if v in unvisited:
+                    weight = data.get('weight', 1.0)
+                    alt = dist[u] + weight
+                    if alt < dist[v]:
+                        dist[v] = alt
+                        new_path = self.shortest_paths[u] + [v]
+                        self.previsit(v, path=new_path)
 
 
 if __name__ == "__main__":

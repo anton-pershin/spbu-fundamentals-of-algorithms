@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 
 import networkx as nx
 
-from practicum_4.dfs import GraphTraversal
+from dfs import GraphTraversal
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
@@ -13,11 +13,23 @@ from src.common import AnyNxGraph
 class DfsViaLifoQueueWithPostvisit(GraphTraversal):
     def run(self, node: Any) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        visited = set()
+        lifo = deque()
+        lifo.append((node, False))
 
-        pass
+        while lifo:
+            current, is_post = lifo.pop()
+            if not is_post:
+                if current in visited:
+                    continue
+                visited.add(current)
+                self.previsit(current)
+                lifo.append((current, True))
+                for neighbor in reversed(list(self.G.neighbors(current))):
+                    if neighbor not in visited:
+                        lifo.append((neighbor, False))
+            else:
+                self.postvisit(current)
 
 
 class DfsViaLifoQueueWithPrinting(DfsViaLifoQueueWithPostvisit):
