@@ -1,9 +1,11 @@
 from pathlib import Path
 from typing import Any
+from collections import defaultdict
 
 import networkx as nx
 import numpy as np
 
+from practicum_4.dfs_solved import TopologicalSorting
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
@@ -14,41 +16,70 @@ class DpAlgorithmForShortestPath:
     """ 
     def __init__(self, G: nx.DiGraph) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.G: nx.DiGraph = G
+        self.topo_sorting = TopologicalSorting(G)
+        self.dist: dict[Any, int] = {}
+        self.shortest_paths: dict[Any, set[tuple[Any, Any]]] = {}
 
     def run(self, node: Any) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        self.dist[node] = 0
+        self.shortest_paths[node] = set()
 
-        pass
+        sorted_nodes = self.topo_sorting.sort(node)
+        for cur_node in sorted_nodes[1:]:
+            predecessot_node = None
+            min_path_weight = np.inf
+            for n_neigh in self.G.predecessors(cur_node):
+                path_weight = self.dist[n_neigh] + self.G.edges[n_neigh, cur_node]["weight"]
+                if path_weight < min_path_weight:
+                    min_path_weight = path_weight
+                    predecessot_node = n_neigh
+            
+            self.dist[cur_node] = min_path_weight
+            self.shortest_paths[cur_node] = self.shortest_paths[predecessot_node] | {(predecessot_node, cur_node)}
+            
 
 
-class DpAlgorithmForShortestPath:
+
+        
+
+            
+
+class DpAlgorithmForShortestReliablePath:
     """
     Shortest path algorithm for directed acyclic graphs with additional
     constraint: the path cannot contain more than k edges
     """ 
-    def __init__(self, G: nx.DiGraph) -> None:
+    def __init__(self, G: nx.DiGraph, k: int) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.k: int = k
+        self.G: nx.DiGraph = G
+        self.topo_sorting = TopologicalSorting(G)
+        self.dist: dict[Any, list[int]] = defaultdict(lambda: [np.inf] * (k + 1))
+        self.shortest_paths: dict[Any, list[set[tuple[Any, Any]]]] = defaultdict(lambda: [set()] * (k + 1))
 
     def run(self, node: Any) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        self.dist[node][0] = [0]
+        self.shortest_paths[node][0] = set()
 
-        pass
+        sorted_nodes = self.topo_sorting.sort(node)
+
+        for i in range(1, self.k+1):
+
+            for cur_node in sorted_nodes[1:]:
+                predecessot_node = None
+                min_path_weight = np.inf
+                for n_neigh in self.G.predecessors(cur_node):
+                    path_weight = self.dist[n_neigh][i-1] + self.G.edges[n_neigh, cur_node]["weight"]
+                    if path_weight < min_path_weight:
+                        min_path_weight = path_weight
+                        predecessot_node = n_neigh
+                
+                self.dist[cur_node][i] = min_path_weight
+                self.shortest_paths[cur_node][i] = self.shortest_paths[predecessot_node][i-1] | {(predecessot_node, cur_node)}
+            
 
 
 if __name__ == "__main__":
