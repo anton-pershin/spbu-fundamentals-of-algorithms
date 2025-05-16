@@ -12,20 +12,19 @@ from src.common import AnyNxGraph
 
 class PrimAlgorithm:
     def __init__(self, G: AnyNxGraph) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.G: AnyNxGraph = G
+        self.mst_set: set[Any] = set()
+        self.rest_set: set[Any] = set(G.nodes())
+        self.mst_edges: set[tuple[Any, Any]] = set()
 
     def run(self, node: Any) -> None:
+        self.mst_set.add(node)
+        h = []
+        for i in self.G.neighbors(node):
+            self.rest_egdes
+            heapq.heappush(h, i)
+        
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
 
 
 if __name__ == "__main__":
