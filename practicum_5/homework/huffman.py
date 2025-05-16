@@ -39,28 +39,29 @@ class HuffmanCoding:
 
 class LossyCompression:
     def __init__(self) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.n = 8
+        self.min_value = None
+        self.max_value = None
+        self.edges = None
+        self.centers = None
 
     def compress(self, time_series: NDArrayFloat) -> str:
+        self.min_value = np.min(time_series)
+        self.max_value = np.max(time_series)
+        self.edges = np.linspace(self.min_value, self.max_value, self.n + 1)
+        self.centers = (self.edges[:-1] + self.edges[1:]) / 2
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
-
+        indices = np.digitize(time_series, self.edges[1:-1], right=True)
+        bits_per_symbol = int(np.ceil(np.log2(self.n)))
+        bits = ''.join([format(idx, f'0{bits_per_symbol}b') for idx in indices])
+        return bits
+        
     def decompress(self, bits: str) -> NDArrayFloat:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        bits_per_symbol = int(np.ceil(np.log2(self.n)))
+        indices = [int(bits[i:i+bits_per_symbol], 2) 
+                  for i in range(0, len(bits), bits_per_symbol)]
+        indices = np.clip(indices, 0, len(self.centers)-1)
+        return np.array([self.centers[i] for i in indices])
 
 
 if __name__ == "__main__":

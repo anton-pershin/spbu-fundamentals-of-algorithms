@@ -56,12 +56,13 @@ def plot_graph(
     if node_weights is not None:
         sm = plt.cm.ScalarMappable(cmap=truncated_cmap, norm=norm)
         sm.set_array([])
-        plt.colorbar(sm)
+        #plt.colorbar(sm)
 
     if name is not None:
         ax.set_title(name)
 
     plt.show()
+    fig.savefig("graph.png")
 
 
 def plot_tree(G: nx.DiGraph) -> None:
@@ -156,4 +157,3 @@ def plot_network_via_plotly(G, pos, name):
                  )
     )
     fig.write_html(f"{name}.html")
-
