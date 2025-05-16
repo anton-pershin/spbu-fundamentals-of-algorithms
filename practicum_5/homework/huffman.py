@@ -9,32 +9,77 @@ import numpy as np
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph, NDArrayFloat
 
+class Node:
+    def __init__(self, ch, freq, left=None, right=None):
+        self.ch = ch
+        self.freq = freq
+        self.left = left
+        self.right = right
+
+    def __lt__(self, other):
+        return self.freq < other.freq
 
 class HuffmanCoding:
     def __init__(self) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.root = None
+        self.huffman_code = {}
+        self.reverse_huffman_code = {}
 
     def encode(self, sequence: list[Any]) -> str:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        if not any(sequence):
+            return ""
         
+        freq = {}
+        for item in sequence:
+            freq[item] = freq.get(item, 0) + 1
+
+        pq = [Node(k, v) for k, v in freq.items()]
+        heapq.heapify(pq)
+
+        while len(pq) > 1:
+            left = heapq.heappop(pq)
+            right = heapq.heappop(pq)
+            total = left.freq + right.freq
+            heapq.heappush(pq, Node(None, total, left, right))
+
+        self.root = pq[0] if pq else None
+        self.huffman_code = {}
+        self.reverse_huffman_code = {}
+
+        if self.root:
+            stack = [(self.root, "")]
+            while stack:
+                node, code = stack.pop()
+                if node.left is None and node.right is None:
+                    self.huffman_code[node.ch] = code if code else '1'
+                    self.reverse_huffman_code[code] = node.ch
+                if node.right:
+                    stack.append((node.right, code + '1'))
+                if node.left:
+                    stack.append((node.left, code + '0'))
+
+        return ''.join([self.huffman_code[item] for item in sequence])
 
     def decode(self, encoded_sequence: str) -> list[Any]:
+        if not any(encoded_sequence) or not self.root:
+            return []
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        if self.root.left is None and self.root.right is None:
+            return [self.root.ch] * self.root.freq
 
-        pass
+        decoded = []
+        current_node = self.root
+        for bit in encoded_sequence:
+            if bit == '0':
+                current_node = current_node.left
+            else:
+                current_node = current_node.right
+
+            if current_node.left is None and current_node.right is None:
+                decoded.append(current_node.ch)
+                current_node = self.root
+
+        return decoded
 
 
 class LossyCompression:
@@ -67,9 +112,12 @@ class LossyCompression:
 if __name__ == "__main__":
     ts = np.loadtxt("ts_homework_practicum_5.txt")
 
-    compressor = LossyCompression()
-    bits = compressor.compress(ts)
-    decompressed_ts = compressor.decompress(bits)
+    # compressor = LossyCompression()
+    # bits = compressor.compress(ts)
+    # decompressed_ts = compressor.decompress(bits)
+    compressor = HuffmanCoding()
+    bits = compressor.encode(ts)
+    decompressed_ts = compressor.decode(bits)
 
     compression_ratio = (len(ts) * 32 * 8) / len(bits) 
     print(f"Compression ratio: {compression_ratio:.2f}")
