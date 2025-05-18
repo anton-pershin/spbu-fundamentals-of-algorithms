@@ -25,13 +25,42 @@ class DijkstraAlgorithm(GraphTraversal):
         pass
 
     def run(self, node: Any) -> None:
+        # Инициализация расстояний и предшественников
+        distances = {node: float('inf') for node in self.G.nodes()}
+        distances[start_node] = 0
+        predecessors = {start_node: None}
+        # Множество непросмотренных узлов
+        unvisited = set(self.G.nodes()) 
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
-
+        while unvisited:
+            # Выбор ближайшего незакрытого узла
+            current_node = min(unvisited, key=lambda x: distances[x])
+            
+            # Убрать узел из множества неоптимальных
+            unvisited.remove(current_node)
+            
+            # Пройти по соседям текущего узла
+            for neighbor in self.G.neighbors(current_node):
+                if neighbor not in unvisited:
+                    continue
+                
+                # Рассчитать потенциальное улучшение пути
+                edge_weight = self.G[current_node][neighbor].get('weight', 1)
+                alternative_distance = distances[current_node] + edge_weight
+                
+                # Если найден лучший путь, обновить дистанцию и предшественника
+                if alternative_distance < distances[neighbor]:
+                    distances[neighbor] = alternative_distance
+                    predecessors[neighbor] = current_node
+        
+        # Собрать кратчайшие пути
+        for node in self.G.nodes():
+            path = []
+            current = node
+            while current is not None:
+                path.insert(0, current)
+                current = predecessors.get(current)
+            self.previsit(node, path=path)
 
 if __name__ == "__main__":
     G = nx.read_edgelist(
