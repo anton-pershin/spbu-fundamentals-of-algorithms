@@ -3,6 +3,7 @@ import heapq
 from typing import Any
 from abc import ABC, abstractmethod
 
+
 import networkx as nx
 import numpy as np
 
@@ -13,19 +14,33 @@ from src.common import AnyNxGraph
 class PrimAlgorithm:
     def __init__(self, G: AnyNxGraph) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.G: AnyNxGraph = G
+        self.mst_set: set[Any] = set()
+        self.rest_set: set[Any] = set(G.nodes())
+        self.mst_edges: set[tuple[Any, Any]] = set()
 
     def run(self, node: Any) -> None:
+        node_to_add = node
+        edge = None
+        priority_queue = []
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        while self.rest_set:
+            if node_to_add not in self.mst_set:
+                if edge is not None:
+                    self.mst_edges.add(edge)
+                
+                self.mst_set.add(node_to_add)
+                self.rest_set.add(node_to_add)
+            
+            for n_start, n_end, data in self.G.edges(node_to_add, data=True):
+                heapq.heappush(priority_queue, (data["weight"], (n_start, n_end,)))
 
-        pass
+            _, edge = heapq.heappop(priority_queue)
+            node_to_add = edge[1]
+
+
+            
+        
 
 
 if __name__ == "__main__":
