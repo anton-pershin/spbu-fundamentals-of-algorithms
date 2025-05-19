@@ -1,4 +1,5 @@
 from pathlib import Path
+file_path = "USairport500.txt"
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -19,7 +20,7 @@ if __name__ == "__main__":
     # USairport500.txt stores a network of the most active US airports.
     # This is a typical example of a scale-free network as some airports
     # are known to be hubs
-    G_airports = nx.read_edgelist(Path("practicum_3") / "USairport500.txt", nodetype=int, data=(("weight", float),))
+    G_airports = nx.read_edgelist(file_path, nodetype=int, data=(("weight", float),))
     pos = nx.spring_layout(G_airports)
     plot_network_via_plotly(G=G_airports, pos=pos, name="airports")
 
