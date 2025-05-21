@@ -4,6 +4,7 @@ from typing import Any
 from abc import ABC, abstractmethod
 
 import networkx as nx
+from networkx.classes import neighbors
 
 from practicum_4.dfs import GraphTraversal
 from src.plotting.graphs import plot_graph
@@ -12,12 +13,30 @@ from src.common import AnyNxGraph
 
 class DfsViaLifoQueueWithPostvisit(GraphTraversal):
     def run(self, node: Any) -> None:
+        visited = set()
+        stack = deque()
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        stack.append((node, False))
 
-        pass
+        while stack:
+            cur_node, processed = stack.pop()
+
+            if processed:
+                self.postvisit(cur_node)
+                continue
+
+            if cur_node in visited:
+                continue
+
+            visited.add(cur_node)
+            self.previsit(cur_node)
+
+            stack.append((cur_node, True))
+
+            neighbors = sorted(self.G.neighbors(cur_node), reverse=True)
+            for neigh in neighbors:
+                if neigh not in visited:
+                    stack.append((neigh, False))
 
 
 class DfsViaLifoQueueWithPrinting(DfsViaLifoQueueWithPostvisit):
