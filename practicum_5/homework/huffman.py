@@ -12,55 +12,62 @@ from src.common import AnyNxGraph, NDArrayFloat
 
 class HuffmanCoding:
     def __init__(self) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.codebook = {}
+        self.reverse_codebook = {}
 
     def encode(self, sequence: list[Any]) -> str:
+        if not sequence:
+            return ""
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        frequency = {}
+        for item in sequence:
+            frequency[item] = frequency.get(item, 0) + 1
 
-        pass
-        
+        heap = [[weight, [symbol, ""]] for symbol, weight in frequency.items()]
+        heapq.heapify(heap)
+
+        while len(heap) > 1:
+            low = heapq.heappop(heap)
+            high = heapq.heappop(heap)
+            for pair in low[1:]:
+                pair[1] = '0' + pair[1]
+            for pair in high[1:]:
+                pair[1] = '1' + pair[1]
+            heapq.heappush(heap, [low[0] + high[0]] + low[1:] + high[1:])
+
+        self.codebook = {symbol: code for symbol, code in heap[0][1:]}
+        self.reverse_codebook = {code: symbol for symbol, code in self.codebook.items()}
+
+        return ''.join([self.codebook[item] for item in sequence])
 
     def decode(self, encoded_sequence: str) -> list[Any]:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        cur_code = ""
+        decoded = []
+        for bit in encoded_sequence:
+            cur_code += bit
+            if cur_code in self.reverse_codebook:
+                decoded.append(self.reverse_codebook[cur_code])
+                cur_code = ""
+        return decoded
 
 
 class LossyCompression:
     def __init__(self) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.bins = None
+        self.huffman = HuffmanCoding()
 
     def compress(self, time_series: NDArrayFloat) -> str:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        min_val, max_val = np.min(time_series), np.max(time_series)
+        n_bins = 16
+        bin_edges = np.linspace(min_val, max_val, n_bins + 1)
+        bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+        quantized_idx = np.digitize(time_series, bin_edges[1:-1], right=True)
+        self.bins = bin_centers
+        return self.huffman.encode(quantized_idx.tolist())
 
     def decompress(self, bits: str) -> NDArrayFloat:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        decoded_idx = self.huffman.decode(bits)
+        return np.array([self.bins[int(idx)] for idx in decoded_idx])
 
 
 if __name__ == "__main__":
