@@ -5,19 +5,42 @@ from abc import ABC, abstractmethod
 
 import networkx as nx
 
-from practicum_4.dfs import GraphTraversal
+import sys
+sys.path.append(r"/home/viktoria/algoritms/spbu-fundamentals-of-algorithms")
+
+from practicum_4.homework.dfs import GraphTraversal
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
 
+from collections import deque
+from typing import Any
+
 class DfsViaLifoQueueWithPostvisit(GraphTraversal):
     def run(self, node: Any) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        visited = set()
+        stack = deque()
+        
+        stack.append((node, 'enter'))
+        
+        while len(stack) != 0: 
+            current_node, current_state = stack.pop()
+            
+            if current_state == 'enter':
+                if current_node in visited:
+                    continue
+                    
+                self.previsit(current_node)
+                visited.add(current_node)
+                stack.append((current_node, 'exit'))
+                
+                neighbors = list(self.G.neighbors(current_node))  
+                for neighbor in neighbors:
+                    if neighbor not in visited:
+                        stack.append((neighbor, 'enter'))
+                        
+            elif current_state == 'exit':
+                self.postvisit(current_node)
 
 
 class DfsViaLifoQueueWithPrinting(DfsViaLifoQueueWithPostvisit):
@@ -34,8 +57,7 @@ if __name__ == "__main__":
         Path("practicum_4") / "simple_graph_10_nodes.edgelist",
         create_using=nx.Graph
     )
-    # plot_graph(G)
-
+    plot_graph(G)
     dfs = DfsViaLifoQueueWithPrinting(G)
     dfs.run(node="0")
 
