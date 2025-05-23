@@ -10,23 +10,20 @@ from src.common import AnyNxGraph
 
 class MatrixChainMultiplication:
     def __init__(self) -> None:
+        self.graph = nx.Graph()
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
-
-    def run(
-        self,
-        matrices: list[dict[str, Union[str, tuple[int, int]]]]
-    ) -> tuple[AnyNxGraph, Any]:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+    def run(self, matrices: list[dict[str, Union[str, tuple[int, int]]]]) -> tuple[AnyNxGraph, str]:
+        mats = matrices.copy()
+        while len(mats) > 1:
+            idx = max(range(len(mats) - 1), key=lambda i: mats[i]["shape"][1])
+            left, right = mats[idx], mats[idx + 1]
+            parent = left["matrix_name"] + right["matrix_name"]
+            self.graph.add_edge(parent, left["matrix_name"])
+            self.graph.add_edge(parent, right["matrix_name"])
+            mats[idx:idx + 2] = [{"matrix_name": parent,
+                                  "shape": (left["shape"][0], right["shape"][1])}]
+        root = mats[0]["matrix_name"]
+        return self.graph, root
 
 
 if __name__ == "__main__":
