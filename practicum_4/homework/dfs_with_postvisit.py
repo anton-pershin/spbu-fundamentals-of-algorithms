@@ -12,13 +12,22 @@ from src.common import AnyNxGraph
 
 class DfsViaLifoQueueWithPostvisit(GraphTraversal):
     def run(self, node: Any) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
-
+        visited = set()
+        stack = deque()
+        stack.append((node, 'in'))
+        while stack:
+            curr, stage = stack.pop()
+            if stage == 'in':
+                if curr in visited:
+                    continue
+                self.previsit(curr)
+                visited.add(curr)
+                stack.append((curr, 'out'))
+                for neighbor in reversed(list(self.G.neighbors(curr))):
+                    if neighbor not in visited:
+                        stack.append((neighbor, 'in'))
+            elif stage == 'out':
+                self.postvisit(curr)
 
 class DfsViaLifoQueueWithPrinting(DfsViaLifoQueueWithPostvisit):
     def previsit(self, node: Any, **params) -> None:
@@ -29,13 +38,11 @@ class DfsViaLifoQueueWithPrinting(DfsViaLifoQueueWithPostvisit):
 
 
 if __name__ == "__main__":
-    # Load and plot the graph
     G = nx.read_edgelist(
         Path("practicum_4") / "simple_graph_10_nodes.edgelist",
         create_using=nx.Graph
     )
-    # plot_graph(G)
+    plot_graph(G)
 
     dfs = DfsViaLifoQueueWithPrinting(G)
     dfs.run(node="0")
-
