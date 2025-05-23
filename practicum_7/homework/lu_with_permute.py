@@ -13,20 +13,35 @@ class LuSolverWithPermute(LinearSystemSolver):
         self.L, self.U, self.P = self._decompose(permute)
 
     def solve(self, b: NDArrayFloat) -> NDArrayFloat:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        n = self.A.shape[0]
+        d = self.P @ b
+        y = np.zeros(n, dtype=self.dtype)
+        for i in range(n):
+            y[i] = d[i] - np.dot(self.L[i, :i], y[:i])
+        x = np.zeros(n, dtype=self.dtype)
+        for i in range(n - 1, -1, -1):
+                x[i] = (y[i] - np.dot(self.U[i, i + 1:], x[i + 1:])) / self.U[i, i]
+        return x
 
     def _decompose(self, permute: bool) -> tuple[NDArrayFloat, NDArrayFloat, NDArrayFloat]:
+        n = self.A.shape[0]
+        U = self.A.copy().astype(self.dtype)
+        L = np.eye(n, dtype=self.dtype)
+        P = np.eye(n, dtype=self.dtype)
+        for k in range(n - 1):
+            if permute:
+                pivot_idx = np.argmax(np.abs(U[k:, k])) + k
+                if pivot_idx != k:
+                    U[[k, pivot_idx], :] = U[[pivot_idx, k], :]
+                    P[[k, pivot_idx], :] = P[[pivot_idx, k], :]
+                    if k > 0:
+                        L[[k, pivot_idx], :k] = L[[pivot_idx, k], :k]
+            for j in range(k + 1, n):
+                m = U[j, k] / U[k, k]
+                L[j, k] = m
+                U[j, k:] -= m * U[k, k:]
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        return L, U, P
 
 
 def get_A_b(a_11: float, b_1: float) -> tuple[NDArrayFloat, NDArrayFloat]:
@@ -41,7 +56,7 @@ if __name__ == "__main__":
     b_1 = -16 + 10 ** (-p)  # add/remove 10**(-p) to check instability
     A, b = get_A_b(a_11, b_1)
 
-    solver = LuSolver(A, np.float64, permute=True)
+    solver = LuSolverWithPermute(A, np.float64, permute=True)
     x = solver.solve(b)
     assert np.all(np.isclose(x, [1, -7, 4])), f"The anwser {x} is not accurate enough"
 
