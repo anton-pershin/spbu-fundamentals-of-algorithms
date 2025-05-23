@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 from numpy.typing import DTypeLike
+import sys
+sys.path.append(r"/home/viktoria/algoritms/spbu-fundamentals-of-algorithms")
+sys.path.append(r"/home/viktoria/algoritms/spbu-fundamentals-of-algorithms/practicum_7")
 
 from practicum_7.lu import LinearSystemSolver
 from src.common import NDArrayFloat
