@@ -12,6 +12,7 @@ from src.common import AnyNxGraph
 
 class DfsViaLifoQueueWithPostvisit(GraphTraversal):
     def run(self, node: Any) -> None:
+        G = self.G
         stack = [(node, False)]
         while len(stack) > 0:
             node, post = stack.pop()

@@ -25,6 +25,7 @@ class DijkstraAlgorithm(GraphTraversal):
         pass
 
     def run(self, node: Any) -> None:
+        G = self.G
         self.dist = {nd: float("inf") for nd in G.nodes()}
         self.dist[node] = 0
         self.shortest_paths[node] = [node]
