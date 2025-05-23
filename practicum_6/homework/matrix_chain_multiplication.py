@@ -3,7 +3,8 @@ from typing import Any, Union
 
 import numpy as np
 import networkx as nx
-
+import sys
+sys.path.append(r"/home/viktoria/algoritms/spbu-fundamentals-of-algorithms")
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
