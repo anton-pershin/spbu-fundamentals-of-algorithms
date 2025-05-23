@@ -13,20 +13,47 @@ class LuSolverWithPermute(LinearSystemSolver):
         self.L, self.U, self.P = self._decompose(permute)
 
     def solve(self, b: NDArrayFloat) -> NDArrayFloat:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        # Прямой ход: решаем Ly = Pb
+        Pb = self.P @ b
+        y = np.zeros_like(b, dtype=self.dtype)
+        n = self.L.shape[0]
+        for i in range(n):
+            y[i] = Pb[i] - np.dot(self.L[i, :i], y[:i])
+        # Обратный ход: решаем Ux = y
+        x = np.zeros_like(b, dtype=self.dtype)
+        for i in reversed(range(n)):
+            x[i] = (y[i] - np.dot(self.U[i, i+1:], x[i+1:])) / self.U[i, i]
+        return x
 
     def _decompose(self, permute: bool) -> tuple[NDArrayFloat, NDArrayFloat, NDArrayFloat]:
+        A = self.A.astype(self.dtype).copy()
+        n = A.shape[0]
+        L = np.zeros((n, n), dtype=self.dtype)
+        U = A.copy()
+        P = np.eye(n, dtype=self.dtype)
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        for k in range(n):
+            if permute:
+                # Находим индекс строки с максимальным элементом в столбце k начиная с k
+                max_row = np.argmax(np.abs(U[k:, k])) + k
+                if max_row != k:
+                    # Переставляем строки в U
+                    U[[k, max_row], :] = U[[max_row, k], :]
+                    # Переставляем строки в P
+                    P[[k, max_row], :] = P[[max_row, k], :]
+                    # Переставляем строки в L (только до k столбца)
+                    if k > 0:
+                        L[[k, max_row], :k] = L[[max_row, k], :k]
+            # Строим L и U
+            for i in range(k+1, n):
+                if U[k, k] == 0:
+                    raise np.linalg.LinAlgError("Zero pivot encountered.")
+                L[i, k] = U[i, k] / U[k, k]
+                U[i, :] = U[i, :] - L[i, k] * U[k, :]
+        # Заполняем диагональ L единицами
+        for i in range(n):
+            L[i, i] = 1.0
+        return L, U, P
 
 
 def get_A_b(a_11: float, b_1: float) -> tuple[NDArrayFloat, NDArrayFloat]:
@@ -41,7 +68,7 @@ if __name__ == "__main__":
     b_1 = -16 + 10 ** (-p)  # add/remove 10**(-p) to check instability
     A, b = get_A_b(a_11, b_1)
 
-    solver = LuSolver(A, np.float64, permute=True)
+    solver = LuSolverWithPermute(A, np.float64, permute=True)
     x = solver.solve(b)
     assert np.all(np.isclose(x, [1, -7, 4])), f"The anwser {x} is not accurate enough"
 
