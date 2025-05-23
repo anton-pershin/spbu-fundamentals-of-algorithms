@@ -1,4 +1,7 @@
+import sys
 from pathlib import Path
+project_root = Path(__file__).absolute().parent.parent
+sys.path.insert(0, str(project_root))
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -40,4 +43,3 @@ if __name__ == "__main__":
     ax.legend(fontsize=12)
     fig.tight_layout()
     plt.show()
-
