@@ -13,20 +13,47 @@ class LuSolverWithPermute(LinearSystemSolver):
         self.L, self.U, self.P = self._decompose(permute)
 
     def solve(self, b: NDArrayFloat) -> NDArrayFloat:
+        if self.P is not None:
+            b = self.P @ b
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        y = np.zeros_like(b, dtype=self.dtype)
+        for i in range(len(b)):
+            y[i] = (b[i] - np.dot(self.L[i, :i], y[:i])) / self.L[i, i]
 
-        pass
+        x = np.zeros_like(b, dtype=self.dtype)
+        for i in range(len(b) - 1, -1, -1):
+            x[i] = (y[i] - np.dot(self.U[i, i+1:], x[i+1:])) / self.U[i, i]
+
+        return x
 
     def _decompose(self, permute: bool) -> tuple[NDArrayFloat, NDArrayFloat, NDArrayFloat]:
+        n = self.A.shape[0]
+        A = self.A.copy()
+        L = np.eye(n, dtype=self.dtype)
+        P = np.eye(n, dtype=self.dtype) if permute else None
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        for k in range(n):
+            if permute:
+                max_idx = np.argmax(np.abs(A[k:, k])) + k
+                if max_idx != k:
+                    A[[k, max_idx]] = A[[max_idx, k]]
+                    L[[k, max_idx], :k] = L[[max_idx, k], :k]
 
-        pass
+                    if P is not None:
+                        P[[k, max_idx]] = P[[max_idx, k]]
+
+            if np.abs(A[k, k]) < 1e-12:
+                raise np.linalg.LinAlgError("Singular matrix")
+
+            for i in range(k + 1, n):
+                L[i, k] = A[i, k] / A[k, k]
+                A[i, :] = A[i, :] - L[i, k] * A[k, :]
+
+        U = np.triu(A)
+        if not permute:
+            P = None
+
+        return L, U, P
 
 
 def get_A_b(a_11: float, b_1: float) -> tuple[NDArrayFloat, NDArrayFloat]:
@@ -41,7 +68,10 @@ if __name__ == "__main__":
     b_1 = -16 + 10 ** (-p)  # add/remove 10**(-p) to check instability
     A, b = get_A_b(a_11, b_1)
 
-    solver = LuSolver(A, np.float64, permute=True)
+    solver = LuSolverWithPermute(A, np.float64, permute=True)
     x = solver.solve(b)
-    assert np.all(np.isclose(x, [1, -7, 4])), f"The anwser {x} is not accurate enough"
 
+    print("Solution x:", x)
+    print("A @ x:", A @ x)
+    print("b:", b)
+    assert np.all(np.isclose(x, [1, -7, 4])), f"The answer {x} is not accurate enough"
