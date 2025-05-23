@@ -1,5 +1,6 @@
 from pathlib import Path
 from queue import PriorityQueue
+import heapq
 from typing import Any
 from abc import ABC, abstractmethod
 
@@ -26,12 +27,26 @@ class DijkstraAlgorithm(GraphTraversal):
         pass
 
     def run(self, node: Any) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        self.dist = {nd: float("inf") for nd in G.nodes()}
+        self.dist[node] = 0
+        self.shortest_paths[node] = [node]
+        priorQue = [(0, node)]
+        
+        while len(priorQue) > 0:
+            curr_dist, curr_node = heapq.heappop(priorQue)
+            if curr_node in self.visited:
+                continue
+            self.visited.add(curr_node)
+            
+            for n_neigh in self.G.neighbors(curr_node):
+                weight = self.G[curr_node][n_neigh].get('weight', 1)
+                
+                dist = curr_dist + weight
+                
+                if dist < self.dist[n_neigh]:
+                    self.dist[n_neigh] = dist
+                    self.shortest_paths[n_neigh] = self.shortest_paths[curr_node] + [n_neigh]
+                    heapq.heappush(priorQue, (dist, n_neigh))
 
 
 if __name__ == "__main__":

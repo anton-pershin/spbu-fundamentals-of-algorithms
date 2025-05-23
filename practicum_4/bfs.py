@@ -9,16 +9,20 @@ from practicum_4.dfs import GraphTraversal
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
-
 class BfsViaFifoQueue(GraphTraversal):
     def run(self, node: Any) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
-
+        stack = deque()
+        stack.appendleft(node)
+        self.previsit(node)
+        self.visited.add(node)
+        while len(stack) > 0:
+            node = stack.popleft()
+            for n_neigh in G.neighbors(node):
+                if n_neigh not in self.visited:
+                    self.previsit(n_neigh)
+                    self.visited.add(n_neigh)
+                    stack.append(n_neigh)
+            self.postvisit(node)
 
 class BfsViaLifoQueueWithPrinting(BfsViaFifoQueue):
     def previsit(self, node: Any, **params) -> None:
@@ -26,7 +30,6 @@ class BfsViaLifoQueueWithPrinting(BfsViaFifoQueue):
 
     def postvisit(self, node: Any, **params) -> None:
         print(f"Postvisit node {node}")
-
 
 if __name__ == "__main__":
     # Load and plot the graph
