@@ -13,20 +13,37 @@ class LuSolverWithPermute(LinearSystemSolver):
         self.L, self.U, self.P = self._decompose(permute)
 
     def solve(self, b: NDArrayFloat) -> NDArrayFloat:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        b_2 = self.P @ b
+        n=self.L.shape[0]
+        y=np.zeros_like(b_2,dtype=self.dtype)
+        
+        for i in range(n):
+            y[i]=(b_2[i]-(self.L[i,:i]@y[:i]))/self.L[i,i]
+        x=np.zeros_like(b,dtype=self.dtype)
+        
+        for i in range(n-1,-1,-1):
+            x[i]=(y[i]-(self.U[i,i+1:]@x[i+1:]))/self.U[i,i]
+        return x
 
     def _decompose(self, permute: bool) -> tuple[NDArrayFloat, NDArrayFloat, NDArrayFloat]:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        n=self.A.shape[0]
+        U = self.A.copy()
+        L=np.eye(n,dtype=self.dtype)
+        P = np.eye(n, dtype=self.dtype)
 
-        pass
+        for k in range(n-1):
+            if permute:
+                maxl = np.argmax(np.abs(U[k:, k])) + k
+                if maxl != k:
+                    U[[k, maxl], k:] = U[[maxl, k], k:]
+                    L[[k, maxl], :k] = L[[maxl, k], :k]
+                    P[[k, maxl]] = P[[maxl, k]]
+            if U[k,k]==0:
+                raise ValueError("Zero pivot")
+            L[k+1:,k]=U[k+1:,k]/U[k,k]
+            U[k+1:,k:]-= np.outer(L[k+1:,k],U[k,k:])
+        return L, U,P
 
 
 def get_A_b(a_11: float, b_1: float) -> tuple[NDArrayFloat, NDArrayFloat]:
@@ -41,7 +58,7 @@ if __name__ == "__main__":
     b_1 = -16 + 10 ** (-p)  # add/remove 10**(-p) to check instability
     A, b = get_A_b(a_11, b_1)
 
-    solver = LuSolver(A, np.float64, permute=True)
+    solver = LuSolverWithPermute(A, np.float64, permute=True)
     x = solver.solve(b)
     assert np.all(np.isclose(x, [1, -7, 4])), f"The anwser {x} is not accurate enough"
 
