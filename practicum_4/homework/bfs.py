@@ -7,7 +7,7 @@ sys.path.append(r"/home/viktoria/algoritms/spbu-fundamentals-of-algorithms")
 
 import networkx as nx
 
-from practicum_4.dfs import GraphTraversal 
+from practicum_4.homework.dfs import GraphTraversal 
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
@@ -52,13 +52,11 @@ class BfsViaLifoQueueWithPrinting(BfsViaFifoQueue):
 
 
 if __name__ == "__main__":
-    # Load and plot the graph
     G = nx.read_edgelist(
         Path("practicum_4") / "simple_graph_10_nodes.edgelist",
         create_using=nx.Graph
     )
 
-    # Iterative BFS. Makes use of FIFO data structure
     print("Iterative BFS")
     print("-" * 32)
     dfs = BfsViaLifoQueueWithPrinting(G)

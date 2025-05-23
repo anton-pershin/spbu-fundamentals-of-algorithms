@@ -8,7 +8,7 @@ import networkx as nx
 import sys
 sys.path.append(r"/home/viktoria/algoritms/spbu-fundamentals-of-algorithms")
 
-from practicum_4.dfs import GraphTraversal
+from practicum_4.homework.dfs import GraphTraversal
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
@@ -17,9 +17,6 @@ from collections import deque
 from typing import Any
 
 class DfsViaLifoQueueWithPostvisit(GraphTraversal):
-    def __init__(self, graph):
-        self.graph = graph
-        
     def run(self, node: Any) -> None:
         visited = set()
         stack = deque()
@@ -37,7 +34,7 @@ class DfsViaLifoQueueWithPostvisit(GraphTraversal):
                 visited.add(current_node)
                 stack.append((current_node, 'exit'))
                 
-                neighbors = list(self.graph.neighbors(current_node))  
+                neighbors = list(self.G.neighbors(current_node))  
                 for neighbor in neighbors:
                     if neighbor not in visited:
                         stack.append((neighbor, 'enter'))

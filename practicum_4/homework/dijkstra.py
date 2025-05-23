@@ -8,7 +8,7 @@ import networkx as nx
 import sys
 sys.path.append(r"/home/viktoria/algoritms/spbu-fundamentals-of-algorithms")
 
-from practicum_4.dfs import GraphTraversal 
+from practicum_4.homework.dfs import GraphTraversal 
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
