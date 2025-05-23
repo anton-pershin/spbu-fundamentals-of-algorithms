@@ -10,24 +10,43 @@ from src.common import AnyNxGraph
 
 class MatrixChainMultiplication:
     def __init__(self) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        self.graph = None
+        self.res_root = ""
 
     def run(
         self,
         matrices: list[dict[str, Union[str, tuple[int, int]]]]
     ) -> tuple[AnyNxGraph, Any]:
+        self.graph = nx.Graph()
+        for i in range(len(matrices) - 1):
+            max_line = 0
+            max_matrix = ""
+            new_node = ""
+            new_m = 0
+            new_n = 0
+            l_node = ""
+            r_node = ""
+            for el in range(len(matrices) - 1):
+                if matrices[el]["shape"][1] > max_line:
+                    max_line = matrices[el]["shape"][1]
+                    max_matrix = matrices[el]["matrix_name"]
+                    new_node = matrices[el]["matrix_name"] + matrices[el + 1]["matrix_name"]
+                    new_m = matrices[el]["shape"][0]
+                    new_n = matrices[el + 1]["shape"][1]
+                    l_node = matrices[el]["matrix_name"]
+                    r_node = matrices[el + 1]["matrix_name"]
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+            for el in range(len(matrices) - 1):
+                if matrices[el]["matrix_name"] == l_node:
+                    matrices.insert(el + 1, {"matrix_name": new_node, "shape": (new_m, new_n)})
+            self.res_root = matrices[0]["matrix_name"]
+            matrices = [el for el in matrices if (el["shape"][1] != max_line and el["shape"][0] != max_line)]
 
-        pass
+            self.graph.add_edge(new_node, l_node)
+            self.graph.add_edge(new_node, r_node)
 
+        res = (self.graph, self.res_root)
+        return res
 
 if __name__ == "__main__":
 
