@@ -1,9 +1,15 @@
+import sys
 from pathlib import Path
+
+project_root = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(project_root))
+
 from typing import Any
 from abc import ABC, abstractmethod
 
 import numpy as np
 import networkx as nx
+import heapq
 
 from practicum_4.dfs import GraphTraversal 
 from src.plotting.graphs import plot_graph
@@ -25,17 +31,40 @@ class DijkstraAlgorithm(GraphTraversal):
         pass
 
     def run(self, node: Any) -> None:
+        distances: dict[Any, float] = {}
+        # расстояние, вершина, путь от старта
+        priority_queue: list[tuple[float, Any, list[Any]]] = []
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        distances[node] = 0.0
+        initial_path = [node]
+        # сохраняем стартовый путь
+        self.previsit(node, path=initial_path)
+        heapq.heappush(priority_queue, (0.0, node, initial_path))
 
-        pass
+        while priority_queue:
+            current_dist, current_node, path_to_node = heapq.heappop(priority_queue)
 
+            # если нашли лучший путь - пропускаем
+            if current_dist > distances.get(current_node, float('inf')):
+                continue
+
+            # Проход по соседям
+            for neighbor in self.G.neighbors(current_node):
+                # получаем вес ребра
+                weight = self.G[current_node][neighbor].get("weight", 1.0)
+                new_dist = current_dist + weight
+
+                if new_dist < distances.get(neighbor, float('inf')):
+                    distances[neighbor] = new_dist
+                    new_path = path_to_node + [neighbor]
+                    # сохраняем новый путь
+                    self.previsit(neighbor, path=new_path)
+                    # добавляем в очередь
+                    heapq.heappush(priority_queue, (new_dist, neighbor, new_path))
 
 if __name__ == "__main__":
     G = nx.read_edgelist(
-        Path("practicum_4") / "simple_weighted_graph_9_nodes.edgelist",
+        project_root / "practicum_4" / "simple_weighted_graph_9_nodes.edgelist",
         create_using=nx.Graph
     )
     plot_graph(G)
