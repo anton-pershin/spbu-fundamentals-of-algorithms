@@ -1,9 +1,11 @@
+from collections import deque
 from pathlib import Path
 from typing import Any
 from abc import ABC, abstractmethod
 
 import numpy as np
 import networkx as nx
+import heapq
 
 from practicum_4.dfs import GraphTraversal 
 from src.plotting.graphs import plot_graph
@@ -13,6 +15,7 @@ from src.common import AnyNxGraph
 class DijkstraAlgorithm(GraphTraversal):
     def __init__(self, G: AnyNxGraph) -> None:
         self.shortest_paths: dict[Any, list[Any]] = {}
+        self.distances: dict[Any, float] = {}
         super().__init__(G)
 
     def previsit(self, node: Any, **params) -> None:
@@ -25,12 +28,34 @@ class DijkstraAlgorithm(GraphTraversal):
         pass
 
     def run(self, node: Any) -> None:
+        self.shortest_paths = {node: [node]}
+        self.distances[node] = 0
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        visited = set()
+        priority_queue = [(0, node, [node])]
 
-        pass
+        while len(priority_queue) > 0:
+            cur_node_dist, cur_node, shortest_path = heapq.heappop(priority_queue)
+
+            self.previsit(cur_node, path=shortest_path)
+            visited.add(cur_node)
+
+            for neighbor in self.G.neighbors(cur_node):
+                if neighbor not in visited:
+                    edge_to_neighbor = self.G[cur_node][neighbor]
+                    neighbor_distance = cur_node_dist + edge_to_neighbor.get("weight", 1)
+
+                    self.distances[neighbor] = neighbor_distance
+                    self.shortest_paths[neighbor] = self.shortest_paths[cur_node] + [neighbor]
+                    heapq.heappush(priority_queue, (neighbor_distance, neighbor, shortest_path + [neighbor]))
+
+            self.postvisit(cur_node, path=shortest_path)
+
+
+
+
+
+
 
 
 if __name__ == "__main__":
