@@ -2,8 +2,11 @@ from pathlib import Path
 from typing import Any
 from abc import ABC, abstractmethod
 
+import heapq
 import numpy as np
 import networkx as nx
+import sys
+sys.path.append(r"/Users/alexanderkuka/documents/python/pershin/spbu-fundamentals-of-algorithms")
 
 from practicum_4.dfs import GraphTraversal 
 from src.plotting.graphs import plot_graph
@@ -16,29 +19,49 @@ class DijkstraAlgorithm(GraphTraversal):
         super().__init__(G)
 
     def previsit(self, node: Any, **params) -> None:
-        """List of params:
-        * path: list[Any] (path from the initial node to the given node)
-        """
         self.shortest_paths[node] = params["path"]
 
     def postvisit(self, node: Any, **params) -> None:
         pass
 
-    def run(self, node: Any) -> None:
+    def run(self, start_node: Any) -> None:
+        distances = {node: float('inf') for node in self.G.nodes()}
+        distances[start_node] = 0
+        self.shortest_paths = {start_node: [start_node]}
+        
+        heap = []
+        heapq.heappush(heap, (0, start_node, [start_node]))
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        while heap:
+            current_dist, current_node, current_path = heapq.heappop(heap)
+            
+            if current_dist > distances[current_node]:
+                continue
+
+            self.previsit(current_node, path = current_path)
+            self.visited.add(current_node)
+            # print("visited:  ", self.visited)
+
+            for neighbor in self.G.neighbors(current_node):
+                if neighbor in self.visited:
+                    continue
+                    
+                edge_weight = self.G[current_node][neighbor].get('weight')
+                new_dist = current_dist + edge_weight
+                
+                if new_dist < distances[neighbor]:
+                    distances[neighbor] = new_dist 
+                    new_path = current_path + [neighbor]
+                    heapq.heappush(heap, (new_dist, neighbor, new_path))
+                    print((new_dist, neighbor, new_path))
+            # print(distances)
+            # print(" ")
 
         pass
 
-
 if __name__ == "__main__":
-    G = nx.read_edgelist(
-        Path("practicum_4") / "simple_weighted_graph_9_nodes.edgelist",
-        create_using=nx.Graph
-    )
-    plot_graph(G)
+    G = nx.read_edgelist(r"pershin/spbu-fundamentals-of-algorithms/practicum_4/simple_weighted_graph_9_nodes.edgelist")
+    # plot_graph(G)
 
     sp = DijkstraAlgorithm(G)
     sp.run("0")
