@@ -1,6 +1,8 @@
 from pathlib import Path
+from queue import PriorityQueue
 from typing import Any
 from abc import ABC, abstractmethod
+import heapq  
 
 import numpy as np
 import networkx as nx
@@ -16,21 +18,30 @@ class DijkstraAlgorithm(GraphTraversal):
         super().__init__(G)
 
     def previsit(self, node: Any, **params) -> None:
-        """List of params:
-        * path: list[Any] (path from the initial node to the given node)
-        """
         self.shortest_paths[node] = params["path"]
 
     def postvisit(self, node: Any, **params) -> None:
         pass
 
-    def run(self, node: Any) -> None:
+    def run(self, node: Any) -> None:  
+        distances = {vertex: float('inf') for vertex in self.G.nodes}
+        distances[node] = 0
+        priority_queue = [(0, node, [node])]
+        processed = set()
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        while priority_queue:
+            dist_u, u, curr_path = heapq.heappop(priority_queue)
+            if u in processed:
+                continue
+            processed.add(u)
+            self.previsit(u, path=curr_path)
+            for v in self.G.neighbors(u):
+                attributes = self.G.get_edge_data(u, v)
+                w = attributes.get('weight', 1)
+                cand_dist = dist_u + w
+                if cand_dist < distances[v]:
+                    distances[v] = cand_dist
+                    heapq.heappush(priority_queue, (cand_dist, v, curr_path + [v]))
 
 
 if __name__ == "__main__":
@@ -49,4 +60,3 @@ if __name__ == "__main__":
         for i in range(len(sp.shortest_paths[test_node]) - 1)
     ]
     plot_graph(G, highlighted_edges=shortest_path_edges)
-
