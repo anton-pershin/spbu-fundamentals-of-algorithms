@@ -29,7 +29,7 @@ class DijkstraAlgorithm(GraphTraversal):
     def postvisit(self, node: Any, **params) -> None:
         pass
 
-def run(self, node: Any) -> None:
+    def run(self, node: Any) -> None:
         dist = {n: float('inf') for n in self.G.nodes}
         dist[node] = 0
         heap = [(0, node, [node])]
