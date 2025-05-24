@@ -2,6 +2,7 @@ from pathlib import Path
 from queue import PriorityQueue
 from typing import Any
 from abc import ABC, abstractmethod
+import heapq  
 
 import numpy as np
 import networkx as nx
@@ -22,25 +23,26 @@ class DijkstraAlgorithm(GraphTraversal):
     def postvisit(self, node: Any, **params) -> None:
         pass
 
-def run(self, node: Any) -> None:
-    distances = {vertex: float('inf') for vertex in self.G.nodes}
-    distances[node] = 0
-    priority_queue = [(0, node, [node])]
-    processed = set()
+    def run(self, node: Any) -> None:  
+        distances = {vertex: float('inf') for vertex in self.G.nodes}
+        distances[node] = 0
+        priority_queue = [(0, node, [node])]
+        processed = set()
 
-    while priority_queue:
-        dist_u, u, curr_path = heapq.heappop(priority_queue)
-        if u in processed:
-            continue
-        processed.add(u)
-        self.previsit(u, path=curr_path)
-        for v in self.G.neighbors(u):
-            attributes = self.G.get_edge_data(u, v)
-            w = attributes.get('weight', 1)
-            cand_dist = dist_u + w
-            if cand_dist < distances[v]:
-                distances[v] = cand_dist
-                heapq.heappush(priority_queue, (cand_dist, v, curr_path + [v]))
+        while priority_queue:
+            dist_u, u, curr_path = heapq.heappop(priority_queue)
+            if u in processed:
+                continue
+            processed.add(u)
+            self.previsit(u, path=curr_path)
+            for v in self.G.neighbors(u):
+                attributes = self.G.get_edge_data(u, v)
+                w = attributes.get('weight', 1)
+                cand_dist = dist_u + w
+                if cand_dist < distances[v]:
+                    distances[v] = cand_dist
+                    heapq.heappush(priority_queue, (cand_dist, v, curr_path + [v]))
+
 
 if __name__ == "__main__":
     G = nx.read_edgelist(
