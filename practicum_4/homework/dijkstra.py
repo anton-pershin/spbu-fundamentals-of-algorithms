@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import Any
 from abc import ABC, abstractmethod
+from queue import PriorityQueue
+
 
 import numpy as np
 import networkx as nx
@@ -25,12 +27,25 @@ class DijkstraAlgorithm(GraphTraversal):
         pass
 
     def run(self, node: Any) -> None:
+        distances = {n: float('inf') for n in G.nodes}
+        distances[node] = 0
+        queue = PriorityQueue()
+        queue.put((0, node))
+        paths = {node: [node]}  # путь до каждой вершины
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        while not queue.empty():
+            current_distance, current_node = queue.get()
 
-        pass
+            for n_neigh in G.neighbors(current_node):
+                weight = self.G.edges[current_node, n_neigh].get('weight', 1)
+                new_distance = current_distance + weight
+
+                if new_distance < distances[n_neigh]:
+                    distances[n_neigh] = new_distance
+                    queue.put((new_distance, n_neigh))
+                    paths[n_neigh] = paths[current_node] + [n_neigh]
+
+        self.shortest_paths = paths
 
 
 if __name__ == "__main__":

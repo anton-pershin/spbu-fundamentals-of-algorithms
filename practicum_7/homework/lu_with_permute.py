@@ -13,20 +13,43 @@ class LuSolverWithPermute(LinearSystemSolver):
         self.L, self.U, self.P = self._decompose(permute)
 
     def solve(self, b: NDArrayFloat) -> NDArrayFloat:
+        n = len(b)
+        b_permuted = np.dot(self.P, b)  # преобразуем правую часть LUx = P * b
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        y = np.zeros(n, dtype=self.dtype) # решаем Ly = Pb
+        for i in range(n):
+            summ = 0
+            for j in range(i):
+                summ += self.L[i][j] * y[j]
+            y[i] = b_permuted[i] - summ
 
-        pass
+        x = np.zeros(n, dtype=self.dtype) # находим Ux = y
+        for i in reversed(range(n)):
+            summ = 0
+            for j in range(i + 1, n):
+                summ += self.U[i][j] * x[j]
+            x[i] = (y[i] - summ) / self.U[i][i]
+
+        return x
 
     def _decompose(self, permute: bool) -> tuple[NDArrayFloat, NDArrayFloat, NDArrayFloat]:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        A = self.A.copy() # в стандартных обозначениях это U
+        n = len(A)
+        L = np.eye(n)
+        P = np.eye(n)
+        for k in range(n): # k-тый шаг метода Гаусса
+            if (permute):
+                pivot_index = np.argmax(np.abs(A[k:, k])) + k
+                if pivot_index != k: 
+                    A[[k, pivot_index], :] = A[[pivot_index, k], :] # переставляем строки в A
+                    P[[k, pivot_index], :] = P[[pivot_index, k], :] # переставляем строки в P
+                    L[[k, pivot_index], :k] = L[[pivot_index, k], :k] # переставляем строки L - только левую часть до текущего k
+            for i in range(k + 1, n):
+                m_ik = A[i][k] / A[k][k]
+                L[i][k] = m_ik                
+                for j in range(k, n):
+                    A[i][j] -= m_ik * A[k][j]
+        return L, A, P
 
 
 def get_A_b(a_11: float, b_1: float) -> tuple[NDArrayFloat, NDArrayFloat]:
@@ -41,7 +64,7 @@ if __name__ == "__main__":
     b_1 = -16 + 10 ** (-p)  # add/remove 10**(-p) to check instability
     A, b = get_A_b(a_11, b_1)
 
-    solver = LuSolver(A, np.float64, permute=True)
+    solver = LuSolverWithPermute(A, np.float64, permute=True)
     x = solver.solve(b)
     assert np.all(np.isclose(x, [1, -7, 4])), f"The anwser {x} is not accurate enough"
 
