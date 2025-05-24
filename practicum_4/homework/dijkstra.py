@@ -49,7 +49,7 @@ class DijkstraAlgorithm(GraphTraversal):
                     self.shortest_paths[neighbor] = self.shortest_paths[cur_node] + [neighbor]
                     heapq.heappush(priority_queue, (neighbor_distance, neighbor, shortest_path + [neighbor]))
 
-            self.postvisit(cur_node)
+            self.postvisit(cur_node, path=shortest_path)
 
 
 
