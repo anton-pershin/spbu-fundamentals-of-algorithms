@@ -37,7 +37,7 @@ class DijkstraAlgorithm(GraphTraversal):
         while len(priority_queue) > 0:
             cur_node_dist, cur_node, shortest_path = heapq.heappop(priority_queue)
 
-            self.previsit(cur_node)
+            self.previsit(cur_node, path=shortest_path)
             visited.add(cur_node)
 
             for neighbor in self.G.neighbors(cur_node):
