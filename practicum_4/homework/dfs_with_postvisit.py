@@ -1,54 +1,40 @@
 from pathlib import Path
-from collections import deque
 from typing import Any
-from abc import ABC, abstractmethod
-
 import networkx as nx
 
 from practicum_4.dfs import GraphTraversal
 from src.plotting.graphs import plot_graph
-from src.common import AnyNxGraph
 
 
 class DfsViaLifoQueueWithPostvisit(GraphTraversal):
-    def run(self, node: Any) -> None:
+    def run(self, start: Any) -> None:
+        stack = [(start, list(self.G.neighbors(start)), 0)]
+        self.previsit(start)
+        self.visited.add(start)
 
-        
-        stack = [node]
-        v = []
-
-        
-        while len(stack) > 0:
-            node = stack.pop()
-
-
-            if node not in self.visited:
-                self.previsit(node)
-                self.visited.add(node)
-
-
-                for n_neigh in self.G.neighbors(node):
-                    if n_neigh not in self.visited:
-                        stack.append(n_neigh)
-
-
-            for n in self.visited:
-                if n not in v and all((n_neigh in self.visited for n_neigh in self.G.neighbors(n))):
-                    self.postvisit(n)
-                    v.append(n)
-
+        while stack:
+            node, neighs, idx = stack[-1]
+            if idx < len(neighs):
+                stack[-1] = (node, neighs, idx + 1)
+                nxt = neighs[idx]
+                if nxt not in self.visited:
+                    self.previsit(nxt)
+                    self.visited.add(nxt)
+                    stack.append((nxt, list(self.G.neighbors(nxt)), 0))
+            else:
+                self.postvisit(node)
+                stack.pop()
 
 
 class DfsViaLifoQueueWithPrinting(DfsViaLifoQueueWithPostvisit):
     def previsit(self, node: Any, **params) -> None:
-        print(f"Previsit node {node}")
+        print(f"Previait node {node}")
 
     def postvisit(self, node: Any, **params) -> None:
         print(f"Postvisit node {node}")
 
 
 if __name__ == "__main__":
-    # Load and plot the graph
     G = nx.read_edgelist(
         Path("practicum_4") / "simple_graph_10_nodes.edgelist",
         create_using=nx.Graph
@@ -56,5 +42,4 @@ if __name__ == "__main__":
     plot_graph(G)
 
     dfs = DfsViaLifoQueueWithPrinting(G)
-    dfs.run(node="0")
-
+    dfs.run(start="0")
