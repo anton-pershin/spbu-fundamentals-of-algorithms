@@ -35,11 +35,13 @@ class MatrixChainMultiplication:
                     new_n = matrices[el + 1]["shape"][1]
                     l_node = matrices[el]["matrix_name"]
                     r_node = matrices[el + 1]["matrix_name"]
-
+            i = 0
             for el in range(len(matrices) - 1):
                 if matrices[el]["matrix_name"] == l_node:
                     matrices.insert(el + 1, {"matrix_name": new_node, "shape": (new_m, new_n)})
-            self.res_root = matrices[0]["matrix_name"]
+                    i = el + 1
+
+            self.res_root = matrices[i]["matrix_name"]
             matrices = [el for el in matrices if (el["shape"][1] != max_line and el["shape"][0] != max_line)]
 
             self.graph.add_edge(new_node, l_node)
@@ -73,4 +75,5 @@ if __name__ == "__main__":
     matmul_tree, root = mcm.run(test_matrices)
 
     plot_graph(matmul_tree)
+    print(root)
 
