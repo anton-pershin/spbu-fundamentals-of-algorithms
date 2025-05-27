@@ -78,7 +78,7 @@ class LossyCompression:
         for k in range(self.len):
             self.intervals.append(self.intervals[-1] + self.interval_len)
             self.centers.append((self.intervals[-2] + self.intervals[-1]) / 2)
-        self.code = np.digitize(self.alp, bins=self.intervals) - 1
+        self.code = np.digitize(time_series, bins=self.intervals) - 1
         code = '_'.join(map(str, self.code))
         return code
 
@@ -117,7 +117,3 @@ if __name__ == "__main__":
 
     decoded_data = huffman.decode(encoded_data)
     print("Decoded data:", decoded_data)
-
-
-
-
