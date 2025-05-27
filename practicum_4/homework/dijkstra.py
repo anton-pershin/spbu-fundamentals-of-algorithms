@@ -62,15 +62,16 @@ class DijkstraAlgorithm(GraphTraversal):
             dfs(end, [end])
             return paths
         
-        all_paths = dict()
         n = len(self.G)
         start_node = node
         start_node = str(start_node)
         distances, predcessors = dijkstra_all_paths(self.G, start_node)
         all_paths_from_node = [get_all_paths(predcessors, start_node, str(end_node)) for end_node in range(n)]
-        # all_paths[start_node] = all_paths_from_node
+        for i in range(len(all_paths_from_node)):
+            self.shortest_paths[i] = all_paths_from_node[i][0]
         
-        self.shortest_paths = all_paths_from_node
+
+        
         
         
 
@@ -84,11 +85,10 @@ if __name__ == "__main__":
 
     sp = DijkstraAlgorithm(G)
     sp.run("0")
-
-    # start_node = '0'
     test_node = 5
-    # print(sp.shortest_paths['0'][5][0])
-    shortest_path_edges = [(sp.shortest_paths[test_node][0][i], sp.shortest_paths[test_node][0][i+1]) for i in range(len( sp.shortest_paths[test_node][0])-1)]
-    # print(shortest_path_edges)
+    print(sp.shortest_paths)
+
+    shortest_path_edges = [(sp.shortest_paths[test_node][i], sp.shortest_paths[test_node][i+1]) 
+                           for i in range(len( sp.shortest_paths[test_node])-1)]
     plot_graph(G, highlighted_edges=shortest_path_edges)
 
