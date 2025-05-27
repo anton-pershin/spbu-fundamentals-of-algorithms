@@ -19,21 +19,22 @@ from src.common import AnyNxGraph
 
 class DfsViaLifoQueueWithPostvisit(GraphTraversal):
     def run(self, node: Any) -> None:
-        stack = deque([node])
+        stack = deque([(node, False)])
         visited = set()
-        route = []
 
         while len(stack) > 0:
-            current_node = stack.pop()
+            current_node, processed = stack.pop()
+            if processed:
+                self.postvisit(current_node)
+                continue
+                
             if current_node not in visited:
                 visited.add(current_node)
                 self.previsit(current_node)
-                for neighbor in self.G.neighbors(current_node):
+                stack.append((current_node, True))
+                for neighbor in list(self.G.neighbors(current_node))[::-1]:
                     if neighbor not in visited:
-                        stack.append(neighbor)
-                self.postvisit(current_node)
-                route.append(current_node)
-        print("-" * 20, "\n", "Complete route taken: ", " -> ".join(route))
+                        stack.append((neighbor, False))
 
 
 class DfsViaLifoQueueWithPrinting(DfsViaLifoQueueWithPostvisit):
