@@ -16,6 +16,7 @@ class DfsViaLifoQueueWithPostvisit(GraphTraversal):
         stack = deque()
         stack.append((node, False)) 
         visited = set()
+        postvisited = set()
         while stack:
             current, previsited = stack[-1]
             if not previsited:
@@ -26,7 +27,9 @@ class DfsViaLifoQueueWithPostvisit(GraphTraversal):
                     if neighbor not in visited:
                         stack.append((neighbor, False))
             else:
-                self.postvisit(current)
+                if current not in postvisited:  # Check if node has already been postvisited
+                    self.postvisit(current)
+                    postvisited.add(current)  # Mark node as postvisited
                 stack.pop()
 
 
