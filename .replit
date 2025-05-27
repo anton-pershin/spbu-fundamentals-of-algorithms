@@ -17,4 +17,4 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python3 practicum_7/homework/lu_with_permute.py"
+args = "python3 practicum_4/homework/dfs_with_postvisit.py"

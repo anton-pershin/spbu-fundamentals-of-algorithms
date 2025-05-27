@@ -35,6 +35,7 @@ class DfsViaLifoQueueWithPostvisit(GraphTraversal):
                 for neighbor in list(self.G.neighbors(current_node))[::-1]:
                     if neighbor not in visited:
                         stack.append((neighbor, False))
+# commit is likely to mark only this line as modified, but it's because I messed up a bit with branches. the run() method is fixed and should now work as expected. full fix can be reviewed at pull request num 44, commit num fb53f2866ce8a921bffe827af4d8bca7b72ae6ab                   
 
 
 class DfsViaLifoQueueWithPrinting(DfsViaLifoQueueWithPostvisit):
