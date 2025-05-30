@@ -30,12 +30,12 @@ class LuSolver(LinearSystemSolver):
         pass
 
     def _decompose(self) -> tuple[NDArrayFloat, NDArrayFloat]:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        n = self.A.shape[0]
+        U = self.A.copy()
+        L  = np.eye(n, dtype=self.dtype)
+        for k in range(n - 1):
+            L[k+1:, k] = U[k+1:, k] / U[k,k]
+            U[k+1:, k:] -= np.outer(L[k+1:, k], U[k, k:])
 
 
 def get_A_b(a_11: float, b_1: float) -> tuple[NDArrayFloat, NDArrayFloat]:
