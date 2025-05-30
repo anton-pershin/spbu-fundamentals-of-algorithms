@@ -25,12 +25,47 @@ class DijkstraAlgorithm(GraphTraversal):
         pass
 
     def run(self, node: Any) -> None:
+        new_G = nx.Graph()
+        new_G.add_node(node)
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        self.visited.add(node)
+        paths = {v: 100 for v in G.nodes()}
+        f_paths = {v: 100 for v in G.nodes()}
+        i = 100
+        for neighbor in self.G.neighbors(node):
+            paths[neighbor] = G[node][neighbor]['weight']
+            f_paths[neighbor] = G[node][neighbor]['weight']
 
-        pass
+        while len(self.visited) != len(G.nodes()):
+            min_len = 100
+            for neighbor, length in paths.items():
+                if length < min_len:
+                    min_len = length
+                    next_v = neighbor
+            if next_v in self.G.neighbors(node):
+                new_G.add_edge(node, next_v, weight=G[node][next_v]['weight'])
+            self.visited.add(next_v)
+            #paths[next_v] = i
+            for neighbor_of_n in self.G.neighbors(next_v):
+                if neighbor_of_n not in self.visited:
+                    if f_paths[next_v] + G[next_v][neighbor_of_n]['weight'] < f_paths[neighbor_of_n]:
+                        f_paths[neighbor_of_n] = f_paths[next_v] + G[next_v][neighbor_of_n]['weight']
+                        if new_G.has_node(neighbor_of_n):
+                            new_G.remove_node(neighbor_of_n)
+                        new_G.add_edge(next_v, neighbor_of_n, weight=G[next_v][neighbor_of_n]['weight'])
+
+                    if G[next_v][neighbor_of_n]['weight'] < paths[neighbor_of_n]:
+                        paths[neighbor_of_n] = G[next_v][neighbor_of_n]['weight']
+                else:
+                    paths[neighbor_of_n] = i
+    # в f_paths хранятся минимальные расстояния от node до вершин графа
+    # new_G - итоговый граф
+
+
+
+
+
+
 
 
 if __name__ == "__main__":
