@@ -19,7 +19,7 @@ class MatrixChainMultiplication:
     ) -> tuple[AnyNxGraph, Any]:
         self.graph = nx.Graph()
         for i in range(len(matrices) - 1):
-            max_line = 0
+            min_line = 10**100
             max_matrix = ""
             new_node = ""
             new_m = 0
@@ -27,22 +27,23 @@ class MatrixChainMultiplication:
             l_node = ""
             r_node = ""
             for el in range(len(matrices) - 1):
-                if matrices[el]["shape"][1] > max_line:
-                    max_line = matrices[el]["shape"][1]
+                if matrices[el]["shape"][1] < min_line:
+                    min_line = matrices[el]["shape"][1]
                     max_matrix = matrices[el]["matrix_name"]
                     new_node = matrices[el]["matrix_name"] + matrices[el + 1]["matrix_name"]
                     new_m = matrices[el]["shape"][0]
                     new_n = matrices[el + 1]["shape"][1]
                     l_node = matrices[el]["matrix_name"]
                     r_node = matrices[el + 1]["matrix_name"]
-            i = 0
+            j = 0
             for el in range(len(matrices) - 1):
                 if matrices[el]["matrix_name"] == l_node:
                     matrices.insert(el + 1, {"matrix_name": new_node, "shape": (new_m, new_n)})
-                    i = el + 1
+                    j = el + 1
 
-            self.res_root = matrices[i]["matrix_name"]
-            matrices = [el for el in matrices if (el["shape"][1] != max_line and el["shape"][0] != max_line)]
+            self.res_root = matrices[j]["matrix_name"]
+            matrices = [el for el in matrices if not((el["shape"][0] == new_m and el["shape"][1] == min_line) or
+                                                  (el["shape"][0] == min_line and el["shape"][1] == new_n))]
 
             self.graph.add_edge(new_node, l_node)
             self.graph.add_edge(new_node, r_node)
