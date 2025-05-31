@@ -11,13 +11,33 @@ from src.common import AnyNxGraph
 
 
 class DfsViaLifoQueueWithPostvisit(GraphTraversal):
+    # Скорее всего, проще сделать инициализацию через функцию init
+    def __init__(self, graph: AnyNxGraph):
+        super().__init__()
+        self.graph = graph
+        
     def run(self, node: Any) -> None:
+        # Инициализация стека с начальным узлом
+        stack = deque([node])
+        # Множество для отслеживания посещенных узлов
+        visited = set()
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        while stack:
+            # Извлечь узел из стека
+            current_node = stack.pop()
+            if current_node not in visited:
+                # Отметить узел как посещённый
+                visited.add(current_node)
+                # Вызвать previsit перед обработкой
+                self.previsit(current_node)
 
-        pass
+                # Добавить непосещённых соседей в стек
+                for neighbor in self.graph.neighbors(current_node):
+                    if neighbor not in visited:
+                        stack.append(neighbor)
+                
+                # После обхода соседей вызвать postvisit
+                self.postvisit(current_node)
 
 
 class DfsViaLifoQueueWithPrinting(DfsViaLifoQueueWithPostvisit):
