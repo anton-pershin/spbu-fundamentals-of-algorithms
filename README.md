@@ -52,5 +52,12 @@ TODO
 Изучение `python`, `numpy` и  `matplotlib`, необходимых для дальнейшей работы. Предполагается, что студент имеет базовые знания python.
 
 **План**
-1. Выполнить `intro_to_numpy_and_matplotlib.ipynb`
+1. Выполнить `practicum_1/intro_to_numpy_and_matplotlib.ipynb`
+
+## Практика 2
+
+Начало работы с графами и графовыми алгоритмами с помощью `networkx`.
+
+**План:**
+1. Выполнить `practicum_2/intro_to_networkx.ipynb`
 
