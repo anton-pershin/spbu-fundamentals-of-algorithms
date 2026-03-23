@@ -9,4 +9,5 @@ import networkx as nx
 ProblemCase = namedtuple("ProblemCase", "input, output")
 NDArrayInt = NDArray[np.int_]
 NDArrayFloat = NDArray[np.float64]
+
 AnyNxGraph = Union[nx.Graph, nx.DiGraph]

@@ -10,12 +10,19 @@ from src.common import NDArrayFloat
 
 
 def build_degree_histogram(G) -> tuple[NDArrayFloat, NDArrayFloat]:
+<<<<<<< HEAD
     degrees = [bnode_degree for _, bnode_degree in G.degree()]
     hist, bin_edges =np.histogram(degrees, bins=20)
     mids = 0.5*(bin_edges[1:] + bin_edges[:-1])
     return hist, mids
 
     pass
+=======
+    degrees = [node_degree for _, node_degree in G.degree()] 
+    hist, bin_edges = np.histogram(degrees, bins=20)
+    mids = 0.5 * (bin_edges[1:] + bin_edges[:-1])
+    return hist, mids
+>>>>>>> origin/main
 
 
 if __name__ == "__main__":
