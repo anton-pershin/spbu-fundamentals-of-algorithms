@@ -41,19 +41,19 @@ def betweenness_centrality(G: AnyNxGraph) -> dict[Any, float]:
             all_paths = list(nx.all_shortest_paths(G, s, t))
         except nx.NetworkXNoPath:
             continue
-    total_paths = len(all_paths)
+        total_paths = len(all_paths)
     
-    for v in G.nodes():
-        if v==s or v==t:
-            continue
+        for v in G.nodes():
+            if v==s or v==t:
+                continue
     
-        paths_through_v = 0
-        for path in all_paths:
-            if v in path[1:-1]:
-                paths_through_v += 1
+            paths_through_v = 0
+            for path in all_paths:
+                if v in path[1:-1]:
+                    paths_through_v += 1
                 
-        if total_paths > 0:
-            result[v] += paths_through_v/total_paths
+            if total_paths > 0:
+                result[v] += paths_through_v/total_paths
     
     
     
