@@ -21,7 +21,7 @@ def closeness_centrality(G: AnyNxGraph) -> dict[Any, float]:
         dist = sum(path.values())
 
         if dist > 0:
-            res[v] = (1 / n) * (1 / dist)
+            res[v] = (n - 1) * (1 / dist)
         else:
             res[v] = 0
 
@@ -32,6 +32,7 @@ def betweenness_centrality(G: AnyNxGraph) -> dict[Any, float]:
     res = {}
     for v in G:
         res[v] = 0.0
+    num = len(G)
     
     for s in G:
         for t in G:
@@ -41,10 +42,10 @@ def betweenness_centrality(G: AnyNxGraph) -> dict[Any, float]:
                 for path in all_paths:
                     for v in path[1: -1]:
                         res[v] += 1 / n
-    if not G.is_directed():            
-        for x in res:
-            res[x] /= 2
 
+    norm = (num - 1) * (num - 2)
+    for x in res:
+        res[x] /= norm
     return res
 
 
@@ -66,8 +67,9 @@ def eigenvector_centrality(G: AnyNxGraph) -> dict[Any, float]:
                 s = sum(c[u] for u in G.neighbors(v))
 
             c1[v] = (1 / l) * s
+        norm = sum(x**2 for x in c1.values())**0.5
         for v in c1:
-            c1[v] = float(c1[v])
+            c1[v] = c1[v] / norm
         c = c1
     return c
 
