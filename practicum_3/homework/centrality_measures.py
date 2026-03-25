@@ -9,7 +9,7 @@ from src.common import AnyNxGraph
 
 
 class CentralityMeasure(Protocol):
-    def call(self, G: AnyNxGraph) -> dict[Any, float]:
+    def __call__(self, G: AnyNxGraph) -> dict[Any, float]:
         ...
 
 
@@ -26,6 +26,7 @@ def closeness_centrality(G: AnyNxGraph) -> dict[Any, float]:
             res[v] = 0
 
     return res
+
 
 def betweenness_centrality(G: AnyNxGraph) -> dict[Any, float]: 
     res = {}
@@ -45,6 +46,7 @@ def betweenness_centrality(G: AnyNxGraph) -> dict[Any, float]:
             res[x] /= 2
 
     return res
+
 
 def eigenvector_centrality(G: AnyNxGraph) -> dict[Any, float]: 
     c = {}
@@ -69,7 +71,7 @@ def eigenvector_centrality(G: AnyNxGraph) -> dict[Any, float]:
         c = c1
     return c
 
-        
+
 def plot_centrality_measure(G: AnyNxGraph, measure: CentralityMeasure) -> None:
     values = measure(G)
     if values is not None:
