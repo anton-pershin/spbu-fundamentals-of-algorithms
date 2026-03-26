@@ -26,25 +26,31 @@ def closeness_centrality(G: AnyNxGraph) -> dict[Any, float]:
 
     return data
 
-
-
-
 def betweenness_centrality(G: AnyNxGraph) -> dict[Any, float]: 
+    n = G.number_of_nodes()
+    data = {}
+    for node in G:
+        betweenness = 0
+        for source, target in combinations(G.nodes(), 2):
+            if node == source or node == target or target == source:
+                continue
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
+            paths = list(nx.all_shortest_paths(G, source = source, target = target))
+            total = len(paths)
+            if total == 0:
+                continue
 
-    pass
+            trough_node = sum([1 for path in paths if node in path and path.index(node) not in (0, len(path) - 1)])
+            betweenness += trough_node / total
+
+        betweenness_norm = ((n-1)*(n-2))/2
+        data[node] = betweenness / betweenness_norm
+    
+    return data
 
 
 def eigenvector_centrality(G: AnyNxGraph) -> dict[Any, float]: 
-
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
-
-    pass
+    ...
 
 
 def plot_centrality_measure(G: AnyNxGraph, measure: CentralityMeasure) -> None:
