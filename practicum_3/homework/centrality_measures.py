@@ -17,9 +17,12 @@ def closeness_centrality(G: AnyNxGraph) -> dict[Any, float]:
     res = {}
     n = len(G)
     for v in G:
-        path = nx.shortest_path_length(G, v)
-        dist = sum(path.values())
+        if G.is_directed():
+            path = nx.shortest_path_length(G, target=v)
+        else:
+            path = nx.shortest_path_length(G, v)
 
+        dist = sum(path.values())
         if dist > 0:
             res[v] = (n - 1) * (1 / dist)
         else:
