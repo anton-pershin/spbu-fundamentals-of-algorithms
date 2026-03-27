@@ -15,30 +15,53 @@ class CentralityMeasure(Protocol):
 
 def closeness_centrality(G: AnyNxGraph) -> dict[Any, float]:
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
+    centrality = {}
+    n = len(G)
 
-    pass
+    for v in G.nodes:
+        lengths = nx.single_source_shortest_path_length(G, v)
+        total_dist = sum(lengths.values())
 
+        if total_dist > 0 and n > 1:
+            centrality[v] = (n - 1) / total_dist
+        else:
+            centrality[v] = 0.0
+
+    return centrality
 
 def betweenness_centrality(G: AnyNxGraph) -> dict[Any, float]: 
+    centrality = dict.fromkeys(G.nodes, 0.0)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
+    nodes = list(G.nodes)
 
-    pass
+    for s, t in combinations(nodes, 2):
+        paths = list(nx.all_shortest_paths(G, s, t))
+        num_paths = len(paths)
+
+        for path in paths:
+            for v in path[1:-1]: 
+                centrality[v] += 1 / num_paths
+
+    n = len(G)
+    if n > 2:
+        scale = 1 / ((n - 1) * (n - 2) / 2)
+        for v in centrality:
+            centrality[v] *= scale
+
+    return centrality
 
 
 def eigenvector_centrality(G: AnyNxGraph) -> dict[Any, float]: 
+    A = nx.to_numpy_array(G)
+    
+    eigenvalues, eigenvectors = np.linalg.eig(A)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
+    max_index = np.argmax(eigenvalues.real)
+    vec = eigenvectors[:, max_index].real
+    vec = np.abs(vec)
+    vec = vec / np.linalg.norm(vec)
 
-    pass
-
+    return {node: float(vec[i]) for i, node in enumerate(G.nodes)}
 
 def plot_centrality_measure(G: AnyNxGraph, measure: CentralityMeasure) -> None:
     values = measure(G)
@@ -54,4 +77,11 @@ if __name__ == "__main__":
     plot_centrality_measure(G, closeness_centrality)
     plot_centrality_measure(G, betweenness_centrality)
     plot_centrality_measure(G, eigenvector_centrality)
+
+    print(nx.closeness_centrality(G))
+    print(closeness_centrality(G))
+
+
+
+
 
