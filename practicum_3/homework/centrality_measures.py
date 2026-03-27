@@ -44,11 +44,6 @@ def betweenness_centrality(G: AnyNxGraph) -> dict[Any, float]:
                 d_vt = len_from_t[v]
                 if d_sv + d_vt == d_st:
                     centrs[v] += 1.0/num
-    n = len(G)
-    scale = 1 / ((n-1) *  (n - 2) / 2 )
-    for v in centrs:
-        centrs[v] /= 2
-        centrs[v] *= scale
     return centrs
 
 
