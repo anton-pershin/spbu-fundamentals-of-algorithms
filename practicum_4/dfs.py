@@ -53,38 +53,18 @@ class DfsViaLifoQueue(GraphTraversal):
 
 class DfsViaRecursionWithPrinting(DfsViaRecursion):
     def previsit(self, node: Any, **params) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        print(f"Previsit node {node}")
 
     def postvisit(self, node: Any, **params) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        print(f"Postvisit node {node}")
 
 
-class DfsViaLifoQueueWithPrinting(DfsViaRecursion):
+class DfsViaLifoQueueWithPrinting(DfsViaLifoQueue):
     def previsit(self, node: Any, **params) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        print(f"Previsit node {node}")
 
     def postvisit(self, node: Any, **params) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        print(f"Postvisit node {node}")
 
 
 class TopologicalSorting(DfsViaRecursion):
