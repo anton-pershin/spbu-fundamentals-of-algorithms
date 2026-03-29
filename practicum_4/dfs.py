@@ -33,22 +33,34 @@ class GraphTraversal(ABC):
 
 class DfsViaRecursion(GraphTraversal):
     def run(self, node: Any) -> None:
+        if node not in self.visited:
+            self.previsit(node)
+            self.visited.add(node)
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
-
+            neighbors = self.G.neighbors(node)
+            for neighbor in neighbors:
+                if neighbor not in self.visited:
+                    self.run(neighbor)
+        self.postvisit(node)
 
 class DfsViaLifoQueue(GraphTraversal):
     def run(self, node: Any) -> None:
+        self.previsit(node)
+        stack = deque([node])
+        self.visited.add(node)
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        while stack:
+            neighbor = stack[-1]
+            flag = 1
+            for i in self.G.neighbors(neighbor):
+                if i not in self.visited:
+                    self.visited.add(i)
+                    stack.append(i)
+                    self.previsit(i)
+                    flag = 0
+                    break
+            if flag:
+                self.postvisit(stack.pop())
 
 
 class DfsViaRecursionWithPrinting(DfsViaRecursion):
