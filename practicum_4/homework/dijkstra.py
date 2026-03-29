@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Any
 from abc import ABC, abstractmethod
+import heapq
 
 import numpy as np
 import networkx as nx
@@ -25,13 +26,30 @@ class DijkstraAlgorithm(GraphTraversal):
         pass
 
     def run(self, node: Any) -> None:
+        result = {node: float('inf') for node in self.G.nodes()}
+        paths = {node: [] for node in self.G.nodes()}
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        queue = []
+        heapq.heappush(queue, (0, [0, node, ['0']]))
+        counter = 0
+        
+        while queue:
+            counter += 1
+            dist, data = heapq.heappop(queue)
+            node, path = data[1], data[2]
+            self.visited.add(node)
 
-        pass
+            if dist < result[node]:
+                result[node] = dist
+                paths[node] = path
 
+            for neighbor in self.G.neighbors(node):
+                counter += 1
+
+                if neighbor not in self.visited:
+                    heapq.heappush(queue, (dist + self.G[node][neighbor]['weight'], [counter, neighbor, path + [neighbor]]))
+
+        self.shortest_paths = paths
 
 if __name__ == "__main__":
     G = nx.read_edgelist(
@@ -41,12 +59,14 @@ if __name__ == "__main__":
     plot_graph(G)
 
     sp = DijkstraAlgorithm(G)
-    sp.run("0")
 
+    sp.run("0")
     test_node = "5"
     shortest_path_edges = [
         (sp.shortest_paths[test_node][i], sp.shortest_paths[test_node][i + 1])
         for i in range(len(sp.shortest_paths[test_node]) - 1)
     ]
     plot_graph(G, highlighted_edges=shortest_path_edges)
+
+
 
