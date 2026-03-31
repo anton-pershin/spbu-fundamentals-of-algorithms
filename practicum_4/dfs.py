@@ -33,12 +33,17 @@ class GraphTraversal(ABC):
 
 class DfsViaRecursion(GraphTraversal):
     def run(self, node: Any) -> None:
+        visited = set()
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        def dfs(v):
+            visited.add(v)
+            self.previsit(v)
+            for adj in self.G.neighbors(v):
+                if adj not in visited:
+                    dfs(adj)
+            self.postvisit(v)
+        
+        dfs(node)
 
 
 class DfsViaLifoQueue(GraphTraversal):
