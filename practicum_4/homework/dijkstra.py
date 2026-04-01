@@ -84,7 +84,6 @@ if __name__ == "__main__":
     sp.run("0")
 
     test_node = "5"
-    print(sp.shortest_paths[test_node])
     shortest_path_edges = [
         (sp.shortest_paths[test_node][i], sp.shortest_paths[test_node][i + 1])
         for i in range(len(sp.shortest_paths[test_node]) - 1)
