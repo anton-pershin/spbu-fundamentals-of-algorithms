@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 import networkx as nx
+import heapq as hq
 
 from practicum_4.dfs import GraphTraversal 
 from src.plotting.graphs import plot_graph
@@ -25,12 +26,33 @@ class DijkstraAlgorithm(GraphTraversal):
         pass
 
     def run(self, node: Any) -> None:
+        dist = {v: float('inf') for v in self.G}
+        dist[node] = 0
+        processed = set()
+        heap = [(0, node, [node])]
+        
+        while heap:
+            curr_dist, u, path = hq.heappop(heap)
+            
+            if u in processed:
+                continue
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+            self.previsit(u, path=path)
+            
+            processed.add(u)
+            
+            for v in self.G.neighbors(u):
+                w = self.G[u][v].get('weight')
+                new_dist = curr_dist + w
+                
+                if new_dist < dist[v]:
+                    dist[v] = new_dist
+                    new_path = path + [v]
+                    hq.heappush(heap, (new_dist, v, new_path))
+            
+            self.postvisit(u, path=path)
 
-        pass
+
 
 
 if __name__ == "__main__":
