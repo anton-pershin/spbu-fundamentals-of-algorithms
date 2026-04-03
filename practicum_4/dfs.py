@@ -33,59 +33,33 @@ class GraphTraversal(ABC):
 
 class DfsViaRecursion(GraphTraversal):
     def run(self, node: Any) -> None:
+        self.visited.add(node)
+        self.previsit(node)
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
-
+        for neighbor in G.neighbors(node):
+            if neighbor not in self.visited:
+                self.run(neighbor)
+        self.postvisit(node)
 
 class DfsViaLifoQueue(GraphTraversal):
     def run(self, node: Any) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
+        q = deque([node])
         pass
-
 
 class DfsViaRecursionWithPrinting(DfsViaRecursion):
     def previsit(self, node: Any, **params) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        print(f"Previsit node {node}")
 
     def postvisit(self, node: Any, **params) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        print(f"Postvisit node {node}")
 
 
-class DfsViaLifoQueueWithPrinting(DfsViaRecursion):
+class DfsViaLifoQueueWithPrinting(DfsViaLifoQueue):
     def previsit(self, node: Any, **params) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        print(f"Previsit node {node}")
 
     def postvisit(self, node: Any, **params) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
-
+        print(f"Postvisit node {node}")
 
 class TopologicalSorting(DfsViaRecursion):
     ##########################
