@@ -13,7 +13,6 @@ class GraphTraversal(ABC):
     def __init__(self, G: AnyNxGraph) -> None:
         self.G: nx.Graph = G
         self.visited: set[Any] = set()
-        self.reset()
         
     def reset(self):
         self.visited.clear()
