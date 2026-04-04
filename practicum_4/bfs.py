@@ -12,12 +12,21 @@ from src.common import AnyNxGraph
 
 class BfsViaFifoQueue(GraphTraversal):
     def run(self, node: Any) -> None:
+        queue = deque()
+        self.visited(node)
+        queue.append(node)
+        
+        while len(queue) > 0:
+            node = queue.popleft()
+            self.previsit(node)
+            
+            for neigh in G.neighbors(node):
+                if neigh not in self.visited:
+                    self.visited.add(neigh)
+                    queue.append(neigh)
+            
+            self.postvisit(node)
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
 
 
 class BfsViaLifoQueueWithPrinting(BfsViaFifoQueue):
