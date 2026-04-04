@@ -14,30 +14,57 @@ class CentralityMeasure(Protocol):
 
 
 def closeness_centrality(G: AnyNxGraph) -> dict[Any, float]:
+    centrs = {}
+    n = len(G)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
+    for v in G.nodes():  
+        length = nx.single_source_shortest_path_length(G,v)
+        dist = sum(length.values())
 
-    pass
-
+        if dist == 0:
+            centrs[v] = 0.0
+        else: 
+            centrs[v] = 1 / dist 
+    
+    return centrs
 
 def betweenness_centrality(G: AnyNxGraph) -> dict[Any, float]: 
+    centrs = {v: 0.0 for v in G.nodes()}
+    nodes= list(G.nodes())
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
-
-    pass
+    for s,t in combinations(nodes, 2):
+        len_from_s = nx.single_source_shortest_path_length(G,s)
+        len_from_t = nx.single_source_shortest_path_length(G,t)
+        d_st = len_from_s[t]
+        paths = list(nx.all_shortest_paths(G,s,t))
+        num = len(paths)
+        for v in nodes:
+            if s != v and t != v :
+                d_sv = len_from_s[v]
+                d_vt = len_from_t[v]
+                if d_sv + d_vt == d_st:
+                    centrs[v] += 1.0/num
+    return centrs
 
 
 def eigenvector_centrality(G: AnyNxGraph) -> dict[Any, float]: 
-
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
-
-    pass
+    nodes = list(G.nodes())
+    n = len(nodes)
+    A = nx.adjacency_matrix(G, nodelist=nodes).toarray()
+    c = np.ones(n)
+    for x in range(1000):
+        c_new = np.zeros(n)
+        for i in range(n):
+            total = 0
+            for j in range(n):
+                total += A[i][j] * c[j]
+            c_new[i]= total
+        norm = np.linalg.norm(c_new)
+        if norm != 0:
+            c_new = c_new / norm
+        c = c_new
+    res = {nodes[i] : float(c[i]) for i in range(n)}
+    return res
 
 
 def plot_centrality_measure(G: AnyNxGraph, measure: CentralityMeasure) -> None:
