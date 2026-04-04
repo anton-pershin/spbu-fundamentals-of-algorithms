@@ -64,7 +64,7 @@ class DfsViaLifoQueue(GraphTraversal):
 
 class DfsViaRecursionWithPrinting(DfsViaRecursion):
 
-
+    pass
 
     def previsit(self, node: Any, **params) -> None:
         print(f"Previsit node {node}")
@@ -90,6 +90,7 @@ class DfsViaLifoQueueWithPrinting(DfsViaRecursion):
                     break
             if flag:
                 self.postvisit(stack.pop())
+
     def previsit(self, node: Any, **params) -> None:
         print(f"Previsit node {node}")
 
