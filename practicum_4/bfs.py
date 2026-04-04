@@ -9,15 +9,22 @@ from practicum_4.dfs import GraphTraversal
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
-
 class BfsViaFifoQueue(GraphTraversal):
     def run(self, node: Any) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        queue = deque()
+        self.visited.add(node)
+        queue.append(node)
+        
+        while len(queue) > 0:
+            current = queue.popleft()
+            self.previsit(current)
+            
+            for neigh in self.G.neighbors(current):
+                if neigh not in self.visited:
+                    self.visited.add(neigh)
+                    queue.append(neigh)
+            
+            self.postvisit(current)
 
 
 class BfsViaLifoQueueWithPrinting(BfsViaFifoQueue):
@@ -29,18 +36,16 @@ class BfsViaLifoQueueWithPrinting(BfsViaFifoQueue):
 
 
 if __name__ == "__main__":
-    # Load and plot the graph
     G = nx.read_edgelist(
         Path("practicum_4") / "simple_graph_10_nodes.edgelist",
         create_using=nx.Graph
     )
 
-    # Iterative BFS. Makes use of FIFO data structure
+
     print("Iterative BFS")
     print("-" * 32)
-    dfs = BfsViaLifoQueueWithPrinting(G)
-    dfs.run(node="0")
+    bfs = BfsViaLifoQueueWithPrinting(G)
+    bfs.run(node="0")
     print()
 
     plot_graph(G)
-
