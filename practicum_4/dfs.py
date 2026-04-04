@@ -40,6 +40,7 @@ class DfsViaRecursion(GraphTraversal):
                 self.run(neighbor)
         self.postvisit(node)
 
+
 class DfsViaLifoQueue(GraphTraversal):
     def run(self, node: Any) -> None:
         stack = deque([node])
@@ -71,6 +72,7 @@ class DfsViaRecursionWithPrinting(DfsViaRecursion):
 
     def postvisit(self, node: Any, **params) -> None:
         print(f"Postvisit node {node}")
+
 
 
 class DfsViaLifoQueueWithPrinting(DfsViaRecursion):
