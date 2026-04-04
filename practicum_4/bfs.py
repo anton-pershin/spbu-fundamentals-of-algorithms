@@ -2,25 +2,35 @@ from pathlib import Path
 from collections import deque
 from typing import Any
 from abc import ABC, abstractmethod
+from collections import deque
 
 import networkx as nx
 
-from practicum_4.dfs import GraphTraversal 
+from practicum_4.dfs import GraphTraversal, DfsViaRecursion
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
 
 class BfsViaFifoQueue(GraphTraversal):
     def run(self, node: Any) -> None:
+        queue = deque()
+        queue.append(node)
+        self.visited = set()
+        self.visited.add(node)
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        while queue:
+            neighbors = self.G.neighbors(queue[0])
+            for neighbor in neighbors:
+                if neighbor not in self.visited:
+                    self.previsit(neighbor)
+                    self.visited.add(neighbor)
+                    queue.append(neighbor)
 
-        pass
+            self.postvisit(queue.popleft())
 
 
-class BfsViaLifoQueueWithPrinting(BfsViaFifoQueue):
+
+class BfsViaLifoQueueWithPrinting(DfsViaRecursion):
     def previsit(self, node: Any, **params) -> None:
         print(f"Previsit node {node}")
 
