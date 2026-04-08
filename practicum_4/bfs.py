@@ -26,7 +26,6 @@ class BfsViaFifoQueue(GraphTraversal):
             
             self.postvisit(current)
 
-
 class BfsViaLifoQueueWithPrinting(BfsViaFifoQueue):
     def previsit(self, node: Any, **params) -> None:
         print(f"Previsit node {node}")
