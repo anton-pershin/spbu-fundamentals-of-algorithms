@@ -10,70 +10,60 @@ from src.common import AnyNxGraph
 
 class DisjointSets:
     def __init__(self) -> None:
-        self.parents.dict[Any, Any] = {}
-        self.ranks: dict[Any,Any] = {}
-        
-        pass
+        self.parents: dict[Any, Any] = {}
+        self.ranks: dict[Any, Any] = {}
 
     def make_set(self, v: Any) -> None:
-        """
-        Creates a set of a single element
-        """
         self.parents[v] = v
         self.ranks[v] = 0
-        pass
 
-    def find(self, v: Any) -> set[Any]:
-        """
-        Finds the set containing v without using recursion
-        """
+    def find(self, v: Any) -> Any:
         if v not in self.parents:
             raise ValueError("error")
 
-        while self.panrents[v]!= v:
-            v = self.parents[v]
-
-        return v
+        # path compression
+        root = v
+        while self.parents[root] != root:
+            root = self.parents[root]
+        
+        while v != root:
+            next_v = self.parents[v]
+            self.parents[v] = root
+            v = next_v
+        
+        return root
 
     def union(self, u: Any, v: Any) -> None:
-        """
-        Unites the sets containing u and v using union by rank,
-        i.e. we hang the smaller tree under the larger one
-        """
-
         root_u = self.find(u)
         root_v = self.find(v)
 
         if root_v != root_u:
-            u_rank = self.ranks[root_u]
-            v_rank = self.ranks[root_v]
-
-            if u_rank > v_rank:
-                self.parents[v_root] = i_root
-            elif u_rank < v_rank:
-                self.parents[u_root] = v_root
+            if self.ranks[root_u] > self.ranks[root_v]:
+                self.parents[root_v] = root_u
+            elif self.ranks[root_u] < self.ranks[root_v]:
+                self.parents[root_u] = root_v
             else:
-                self.parents[u_root] = v_root
-                self.ranks[v_root] +=1
+                self.parents[root_u] = root_v
+                self.ranks[root_v] += 1
 
 
 class KruskalAlgorithm:
     def __init__(self, G: AnyNxGraph) -> None:
         self.G: AnyNxGraph = G
         self.disjoint_sets: DisjointSets = DisjointSets()
-        self.edges = sorted(G.eges(data = true), key=lambda x: x[2]["weight"])
-        self.mst_eges: set[tuple[Any,Any]] = set()
-
+        self.edges = sorted(G.edges(data=True), key=lambda x: x[2]["weight"])
+        self.mst_edges: set[tuple[Any, Any]] = set()
 
     def run(self) -> set[tuple[Any, Any]]:
-        for v in self.G:
+        for v in self.G.nodes():
             self.disjoint_sets.make_set(v)
 
-        for edge in self.eges:
-            u,v weight == edge 
+        for u, v, data in self.edges:
             if self.disjoint_sets.find(u) != self.disjoint_sets.find(v):
                 self.disjoint_sets.union(u, v)
-                self.mst_eges.set(u, v)
+                self.mst_edges.add((u, v))
+        
+        return self.mst_edges
 
 
 if __name__ == "__main__":
@@ -87,4 +77,3 @@ if __name__ == "__main__":
     kruskal.run()
 
     plot_graph(G, highlighted_edges=list(kruskal.mst_edges))
-
