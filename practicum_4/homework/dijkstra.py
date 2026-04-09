@@ -49,8 +49,6 @@ class DijkstraAlgorithm(GraphTraversal):
                     dist[v] = new_dist
                     new_path = path + [v]
                     hq.heappush(heap, (new_dist, v, new_path))
-            
-            self.postvisit(u, path=path)
 
 
 
