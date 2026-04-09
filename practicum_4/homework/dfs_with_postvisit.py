@@ -1,6 +1,5 @@
 from pathlib import Path
 from collections import deque
-from platform import node
 from typing import Any
 from abc import ABC, abstractmethod
 
@@ -50,4 +49,5 @@ if __name__ == "__main__":
 
     dfs = DfsViaLifoQueueWithPrinting(G)
     dfs.run(node="0")
+    plot_graph(G)
 
