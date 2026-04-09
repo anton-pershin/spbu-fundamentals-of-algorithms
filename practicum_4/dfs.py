@@ -3,7 +3,7 @@ from collections import deque
 from typing import Any
 from abc import ABC, abstractmethod
 
-import networkx as nx
+import networkx as nx # type: ignore
 
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
