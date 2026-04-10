@@ -11,6 +11,7 @@ from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
 
+
 class DijkstraAlgorithm(GraphTraversal):
     def __init__(self, G: AnyNxGraph) -> None:
         self.shortest_paths: dict[Any, list[Any]] = {}

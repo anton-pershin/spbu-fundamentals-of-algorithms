@@ -10,6 +10,7 @@ from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
 
+
 class DfsViaLifoQueueWithPostvisit(GraphTraversal):
     def run(self, node: Any) -> None:
         visited = {}
