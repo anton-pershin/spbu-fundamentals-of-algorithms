@@ -13,7 +13,6 @@ class GraphTraversal(ABC):
     def __init__(self, G: AnyNxGraph) -> None:
         self.G: nx.Graph = G
         self.visited: set[Any] = set()
-        self.reset()
         
     def reset(self):
         self.visited.clear()
@@ -33,12 +32,14 @@ class GraphTraversal(ABC):
 
 class DfsViaRecursion(GraphTraversal):
     def run(self, node: Any) -> None:
+        self.visited.add(node)
+        self.previsit(node)
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        for neigh in G.neighbors(node):
+            if neigh not in self.visited:
+                self.run(neigh)
 
-        pass
+        self.postvisit(node)
 
 
 class DfsViaLifoQueue(GraphTraversal):
@@ -53,38 +54,18 @@ class DfsViaLifoQueue(GraphTraversal):
 
 class DfsViaRecursionWithPrinting(DfsViaRecursion):
     def previsit(self, node: Any, **params) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        print(f"Previsit node {node}")
 
     def postvisit(self, node: Any, **params) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        print(f"Postvisit node {node}")
 
 
-class DfsViaLifoQueueWithPrinting(DfsViaRecursion):
+class DfsViaLifoQueueWithPrinting(DfsViaLifoQueue):
     def previsit(self, node: Any, **params) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        print(f"Previsit node {node}")
 
     def postvisit(self, node: Any, **params) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        print(f"Postvisit node {node}")
 
 
 class TopologicalSorting(DfsViaRecursion):
