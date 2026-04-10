@@ -13,6 +13,7 @@ class GraphTraversal(ABC):
     def __init__(self, G: AnyNxGraph) -> None:
         self.G: nx.Graph = G
         self.visited: set[Any] = set()
+        self.reset()
         
     def reset(self):
         self.visited.clear()
@@ -41,6 +42,8 @@ class DfsViaRecursion(GraphTraversal):
 
         self.postvisit(node)
 
+        pass
+
 
 class DfsViaLifoQueue(GraphTraversal):
     def run(self, node: Any) -> None:
@@ -60,7 +63,7 @@ class DfsViaRecursionWithPrinting(DfsViaRecursion):
         print(f"Postvisit node {node}")
 
 
-class DfsViaLifoQueueWithPrinting(DfsViaLifoQueue):
+class DfsViaLifoQueueWithPrinting(DfsViaRecursion):
     def previsit(self, node: Any, **params) -> None:
         print(f"Previsit node {node}")
 
