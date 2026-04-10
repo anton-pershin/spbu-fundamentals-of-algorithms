@@ -33,66 +33,66 @@ class GraphTraversal(ABC):
 
 class DfsViaRecursion(GraphTraversal):
     def run(self, node: Any) -> None:
+        if node in self.visited:
+            return
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        self.visited.add(node)
+        self.previsit(node)
 
-        pass
+        for neighbor in self.G.neighbors(node):
+            if neighbor not in self.visited:
+                self.run(neighbor)
+
+        self.postvisit(node)
 
 
 class DfsViaLifoQueue(GraphTraversal):
     def run(self, node: Any) -> None:
+        stack = [node]
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        while stack:
+            current_node = stack.pop()
 
-        pass
+            if current_node in self.visited:
+                continue
 
+            self.visited.add(current_node)
+            self.previsit(current_node)
+
+            for neighbor in reversed(list(self.G.neighbors(current_node))):
+                if neighbor not in self.visited:
+                    stack.append(neighbor)
+
+            self.postvisit(current_node)
 
 class DfsViaRecursionWithPrinting(DfsViaRecursion):
     def previsit(self, node: Any, **params) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        print(f"Previsit node {node}")
 
     def postvisit(self, node: Any, **params) -> None:
+        print(f"Postvisit node {node}")
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
-
-
-class DfsViaLifoQueueWithPrinting(DfsViaRecursion):
+class DfsViaLifoQueueWithPrinting(DfsViaLifoQueue):
     def previsit(self, node: Any, **params) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        print(f"Previsit node {node}")
 
     def postvisit(self, node: Any, **params) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
-
+        print(f"Postvisit node {node}")
 
 class TopologicalSorting(DfsViaRecursion):
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
+    def __init__(self, G: AnyNxGraph) -> None:
+        super().__init__(G)
+        self.sorted_nodes = []
 
-    pass
+    def postvisit(self, node: Any, **params) -> None:
+        self.sorted_nodes.append(node)
+
+    def sort(self, node: Any) -> list[Any]:
+        self.reset()
+        self.sorted_nodes.clear()
+        self.run(node)
+        return list(reversed(self.sorted_nodes))
+
 
 
 if __name__ == "__main__":

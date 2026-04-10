@@ -4,8 +4,9 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 import networkx as nx
+import heapq
 
-from practicum_4.dfs import GraphTraversal 
+from practicum_4.dfs import GraphTraversal
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
@@ -25,12 +26,35 @@ class DijkstraAlgorithm(GraphTraversal):
         pass
 
     def run(self, node: Any) -> None:
+        distances = {n: float('infinity') for n in self.G.nodes()}
+        distances[node] = 0
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        priority_queue = [(0, node)]
+        previous = {n: None for n in self.G.nodes()}
 
-        pass
+        while priority_queue:
+            current_distance, current_node = heapq.heappop(priority_queue)
+
+            if current_distance > distances[current_node]:
+                continue
+
+            for neighbor, edge_data in self.G[current_node].items():
+                weight = edge_data.get('weight', 1)
+                distance = current_distance + weight
+                if distance < distances[neighbor]:
+                    distances[neighbor] = distance
+                    previous[neighbor] = current_node
+                    heapq.heappush(priority_queue, (distance, neighbor))
+
+        for target_node in self.G.nodes():
+            path = []
+            current = target_node
+
+            while current is not None:
+                path.append(current)
+                current = previous[current]
+            path.reverse()
+            self.previsit(target_node, path=path)
 
 
 if __name__ == "__main__":
@@ -49,4 +73,3 @@ if __name__ == "__main__":
         for i in range(len(sp.shortest_paths[test_node]) - 1)
     ]
     plot_graph(G, highlighted_edges=shortest_path_edges)
-
