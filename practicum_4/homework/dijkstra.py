@@ -1,7 +1,3 @@
-from pathlib import Path
-from typing import Any
-from abc import ABC, abstractmethod
-
 import numpy as np
 import networkx as nx
 
@@ -26,12 +22,34 @@ class DijkstraAlgorithm(GraphTraversal):
 
     def run(self, node: Any) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+       
+        import heapq
 
         pass
+        dist = {v: float("inf") for v in self.G.nodes}
+        dist[node] = 0
 
+        pq = [(0, node, [node])]
+
+        visited = set()
+
+        while pq:
+            current_dist, current_node, path = heapq.heappop(pq)
+
+            if current_node in visited:
+                continue
+
+            visited.add(current_node)
+
+            self.previsit(current_node, path=path)
+
+            for neighbor in self.G.neighbors(current_node):
+                weight = self.G[current_node][neighbor].get("weight", 1)
+                new_dist = current_dist + weight
+
+                if new_dist < dist[neighbor]:
+                    dist[neighbor] = new_dist
+                    heapq.heappush(pq, (new_dist, neighbor, path + [neighbor]))
 
 if __name__ == "__main__":
     G = nx.read_edgelist(
@@ -49,4 +67,3 @@ if __name__ == "__main__":
         for i in range(len(sp.shortest_paths[test_node]) - 1)
     ]
     plot_graph(G, highlighted_edges=shortest_path_edges)
-
