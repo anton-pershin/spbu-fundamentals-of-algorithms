@@ -1,9 +1,7 @@
-from pathlib import Path
-from typing import Any
-from abc import ABC, abstractmethod
-
 import numpy as np
 import networkx as nx
+from pathlib import Path
+import heapq
 
 from practicum_4.dfs import GraphTraversal 
 from src.plotting.graphs import plot_graph
@@ -25,12 +23,44 @@ class DijkstraAlgorithm(GraphTraversal):
         pass
 
     def run(self, node: Any) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        distances = {node: float('inf') for node in self.G.nodes()}
+        distances[node] = 0
+        
+        pq = [(0, node)]
+        
+        predecessors = {node: None for node in self.G.nodes()}
+        
+        while pq:
+            current_dist, u = heapq.heappop(pq)
+            
+            if current_dist > distances[u]:
+                continue
+            
+            path = self._reconstruct_path(predecessors, u)
+            
+            self.previsit(u, path=path)
+            self.visited.add(u)
+            
+            for v in self.G.neighbors(u):
+                weight = self.G[u][v].get('weight', 1.0)
+                dist = current_dist + weight
+                
+                if dist < distances[v]:
+                    distances[v] = dist
+                    predecessors[v] = u
+                    heapq.heappush(pq, (dist, v))
+            
+            self.postvisit(u)
+    
+    def _reconstruct_path(self, predecessors: dict, node: Any) -> list[Any]:
+        """Восстанавливает путь от начальной вершины до заданной."""
+        path = []
+        current = node
+        while current is not None:
+            path.append(current)
+            current = predecessors[current]
+        path.reverse()
+        return path
 
 
 if __name__ == "__main__":
@@ -49,4 +79,3 @@ if __name__ == "__main__":
         for i in range(len(sp.shortest_paths[test_node]) - 1)
     ]
     plot_graph(G, highlighted_edges=shortest_path_edges)
-
