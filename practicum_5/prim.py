@@ -13,19 +13,14 @@ from src.common import AnyNxGraph
 class PrimAlgorithm:
     def __init__(self, G: AnyNxGraph) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.G = G
+        self.mst_set = set()
+        self.rest_set = set(G.nodes())
+        self.mst_edges = set()
 
     def run(self, node: Any) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        
 
 
 if __name__ == "__main__":

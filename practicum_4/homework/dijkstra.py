@@ -9,6 +9,8 @@ from practicum_4.dfs import GraphTraversal
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
+import heapq
+
 
 class DijkstraAlgorithm(GraphTraversal):
     def __init__(self, G: AnyNxGraph) -> None:
@@ -26,11 +28,24 @@ class DijkstraAlgorithm(GraphTraversal):
 
     def run(self, node: Any) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        pq = [(0.0, node, [node])]
+        shortest_dist = {node: 0.0}
 
-        pass
+        while pq:
+            dist, current, path = heapq.heappop(pq)
+
+            if dist > shortest_dist.get(current, float('inf')):
+                continue
+
+            self.previsit(current, path=path)
+
+            for neighbor in self.G.neighbors(current):
+                weight = float(self.G[current][neighbor].get('weight', 1.0))
+                new_dist = dist + weight
+
+                if new_dist < shortest_dist.get(neighbor, float('inf')):
+                    shortest_dist[neighbor] = new_dist
+                    heapq.heappush(pq, (new_dist, neighbor, path + [neighbor]))
 
 
 if __name__ == "__main__":
