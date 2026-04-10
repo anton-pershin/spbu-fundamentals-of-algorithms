@@ -25,12 +25,41 @@ class DijkstraAlgorithm(GraphTraversal):
         pass
 
     def run(self, node: Any) -> None:
+        graph = self.G
+        INF = float("inf")
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        distances = {v: INF for v in graph.nodes}
+        predecessors = {v: None for v in graph.nodes}
+        distances[node] = 0
 
-        pass
+        priority_queue = [(0, node)]
+
+        while priority_queue:
+            current_dist, current_node = heapq.heappop(priority_queue)
+
+            if current_dist > distances[current_node]:
+                continue
+
+            for neighbor, edge_data in graph[current_node].items():
+                weight = edge_data["weight"]
+                new_dist = current_dist + weight
+
+                if new_dist < distances[neighbor]:
+                    distances[neighbor] = new_dist
+                    predecessors[neighbor] = current_node
+                    heapq.heappush(priority_queue, (new_dist, neighbor))
+
+        self.shortest_paths = {}
+        for target in graph.nodes:
+            path = []
+            cur = target
+            while cur is not None:
+                path.append(cur)
+                cur = predecessors[cur]
+            path.reverse()
+
+            self.shortest_paths[target] = path
+            self.previsit(target, path=path)
 
 
 if __name__ == "__main__":
