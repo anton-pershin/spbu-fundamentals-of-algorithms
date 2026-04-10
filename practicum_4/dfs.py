@@ -13,11 +13,7 @@ class GraphTraversal(ABC):
     def __init__(self, G: AnyNxGraph) -> None:
         self.G: nx.Graph = G
         self.visited: set[Any] = set()
-<<<<<<< HEAD
 
-=======
->>>>>>> 78ce0ae1e574e141ce29f986bb053a47bb76137a
-        
     def reset(self):
         self.visited.clear()
 
@@ -37,16 +33,6 @@ class GraphTraversal(ABC):
 class DfsViaRecursion(GraphTraversal):
     def run(self, node: Any) -> None:
         self.visited.add(node)
-<<<<<<< HEAD
-        self.previsit()
-        
-        for neigh in G.neighbors(node):
-            if neigh not in self.visited:
-                self.run(neigh)
-        
-        self.postvisit(node)
-        
-=======
         self.previsit(node)
 
         for neigh in G.neighbors(node):
@@ -54,29 +40,31 @@ class DfsViaRecursion(GraphTraversal):
                 self.run(neigh)
 
         self.postvisit(node)
->>>>>>> 78ce0ae1e574e141ce29f986bb053a47bb76137a
 
 
 class DfsViaLifoQueue(GraphTraversal):
     def run(self, node: Any) -> None:
-        stack = deque()
-        stack.append(node)
-        while satck:
-            current = stack.pop()
-            if current in self.visited:
-                continue
-                
-            self.visited.add(current)
-            self.previsit(current)
-            
-            for neight in G.neighbors(node):
-                if neight not in self.visited:
-                    ...
-                    
-    ###################
-    #########ДЗ########
-    ###################
-        
+        def run(self, node: Any) -> None:
+            stack = [(node, False)]
+
+            while stack:
+                current_node, is_postvisit = stack.pop()
+
+                if is_postvisit:
+                    self.postvisit(current_node)
+                    continue
+
+                if current_node in self.visited:
+                    continue
+
+                self.visited.add(current_node)
+                self.previsit(current_node)
+                stack.append((current_node, True))
+
+                neighbors_list = list(self.G.neighbors(current_node))
+                for neighbor in reversed(neighbors_list):
+                    if neighbor not in self.visited:
+                        stack.append((neighbor, False))
 
 
 class DfsViaRecursionWithPrinting(DfsViaRecursion):
@@ -96,11 +84,21 @@ class DfsViaLifoQueueWithPrinting(DfsViaLifoQueue):
 
 
 class TopologicalSorting(DfsViaRecursion):
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
+    def __init__(self, G: AnyNxGraph):
+        super().__init__(G)
+        self.order = []
 
-    pass
+    def sort(self, node: Any) -> list:
+        self.reset()
+        self.order = []
+        self.run(node)
+        return self.order
+
+    def postvisit(self, node: Any, **params) -> None:
+        self.order.insert(0, node)
+
+        def previsit(self, node: Any, **params) -> None:
+            pass
 
 
 if __name__ == "__main__":
@@ -137,4 +135,3 @@ if __name__ == "__main__":
     sorted_nodes = ts.sort(node="0")
     print(sorted_nodes)
     plot_graph(G)
-
