@@ -55,3 +55,5 @@ if __name__ == "__main__":
     
     dfs = DfsViaLifoQueueWithPrinting(G)
     dfs.run(node="0")
+
+    dfs.run(node="0")

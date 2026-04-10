@@ -54,7 +54,6 @@ class DijkstraAlgorithm(GraphTraversal):
                     dist[neighbor] = new_dist
                     heapq.heappush(pq, (new_dist, neighbor, path + [neighbor]))
 
-
 if __name__ == "__main__":
     G = nx.read_edgelist(
         Path("practicum_4") / "simple_weighted_graph_9_nodes.edgelist",
