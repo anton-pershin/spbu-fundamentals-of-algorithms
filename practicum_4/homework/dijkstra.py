@@ -25,12 +25,37 @@ class DijkstraAlgorithm(GraphTraversal):
         pass
 
     def run(self, node: Any) -> None:
+        dist = {node: float("inf") for node in G.nodes()}
+        dist[node] = 0
+        priority_queue = [(0, node)]
+        paths = {node: [node]}
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        while priority_queue:
+            min_id = 0
+            for i in range(len(priority_queue)):
+                if priority_queue[i][0] < priority_queue[min_id][0]:
+                    min_id = i
 
-        pass
+            cdist, cur = priority_queue.pop(min_id)
+
+            if cur in self.visited:
+                continue
+
+            self.visited.add(cur)
+            self.previsit(cur, path=paths[cur])
+
+            for neighbour in G.neighbors(cur):
+                if neighbour not in self.visited:
+                    w = G[cur][neighbour].get("weight", 1)
+                    up = cdist + w
+
+                    if up < dist[neighbour]:
+                        dist[neighbour] = up
+                        paths[neighbour] = paths[cur] + [neighbour]
+                        priority_queue.append((up, neighbour))
+
+            self.postvisit(cur)
+
 
 
 if __name__ == "__main__":
