@@ -35,6 +35,7 @@ class DfsViaLifoQueueWithPostvisit(GraphTraversal):
             for neighbor in reversed(list(self.G.neighbors(current))):
                 if neighbor not in visited:
                     stack.append((neighbor, False))
+                    
 
 
 class DfsViaLifoQueueWithPrinting(DfsViaLifoQueueWithPostvisit):
