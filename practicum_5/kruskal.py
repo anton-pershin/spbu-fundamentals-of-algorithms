@@ -72,7 +72,7 @@ class KruskalAlgorithm:
 
 if __name__ == "__main__":
     G = nx.read_edgelist(
-        Path("practicum_4") / "simple_weighted_graph_9_nodes.edgelist",
+        Path("..") / "practicum_4" / "simple_weighted_graph_9_nodes.edgelist",
         create_using=nx.Graph
     )
     plot_graph(G)
