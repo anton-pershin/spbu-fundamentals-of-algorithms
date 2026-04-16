@@ -12,22 +12,28 @@ from src.common import AnyNxGraph
 
 class PrimAlgorithm:
     def __init__(self, G: AnyNxGraph) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.G : AnyNxGraph = G
+        self.mst_edges = set()
+        self.visited = set()
 
     def run(self, node: Any) -> None:
+        heap = [(0,node,None)]
+        while heap:
+            weight,curNode, parent = heapq.heappop(heap)
+    
+            if curNode in self.visited:
+                continue
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+            self.visited.add(curNode)
 
-        pass
+            if parent is not None:
+                self.mst_edges.add((curNode,parent))
 
+            for adj in self.G[curNode]:
+                if adj not in self.visited:
+                    heapq.heappush(heap,(self.G[curNode][adj]["weight"],adj,curNode))
 
+                
 if __name__ == "__main__":
     G = nx.read_edgelist(
         Path("practicum_4") / "simple_weighted_graph_9_nodes.edgelist",
