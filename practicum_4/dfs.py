@@ -35,7 +35,7 @@ class DfsViaRecursion(GraphTraversal):
         self.visited.add(node)
         self.previsit(node)
 
-        for neigh in G.neighbors(node):
+        for neigh in selfG.neighbors(node):
             if neigh not in self.visited:
                 self.run(neigh)
 
