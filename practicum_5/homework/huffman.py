@@ -80,6 +80,7 @@ class HuffmanCoding:
         for number in sequence:
             encoded += alphabet[number]
 
+        print(alphabet)
         return encoded
 
 
@@ -101,58 +102,58 @@ class HuffmanCoding:
 
 class LossyCompression:
     def __init__(self) -> None:
+        self.coder = HuffmanCoding()
+    
+    # This part of the code is a bit clumsy, I'm sorry :c
+    def compress(self, time_series: NDArrayFloat) -> str:        
+        minim = np.min(time_series)
+        maxim = np.max(time_series)
+        # I didn't know what K must be exactly and got a bit afraid to ask
+        # So i supposed it is a quantity of unique numbers in the time series
+        # It may be changed as you like
+        capacity = len(set(time_series))
+        
+        diff = (maxim - minim) / capacity
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        intervals = list()
+        down = minim
+        while down < maxim:
+            intervals.append((down, down + diff))
+            down += diff
+        # In case of too small or imprecise diff
+        if 0 < maxim - intervals[-1][1] < diff:
+            intervals[-1] = (intervals[-1][0], maxim)
 
-        pass
+        approx = [float((up + down)/2) for down, up in intervals]
+        
+        sequence = list()
+        for number in time_series:
+            for i in range(len(intervals)):
+                down = intervals[i][0]
+                up = intervals[i][1]
+                if down <= number <= up:
+                    sequence.append(approx[i])
+                    break
 
-    def compress(self, time_series: NDArrayFloat) -> str:
+        encoded = self.coder.encode(sequence)
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        return encoded
 
     def decompress(self, bits: str) -> NDArrayFloat:
+        decoded = self.coder.decode(bits)
+        npArray = np.array(decoded, dtype=np.float64)
+        return npArray
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
-
-# Personal test
 if __name__ == "__main__":
-    l1 = [1, 2, 3, 3, 4, 2, 5]
-    l2 = [6, 6, 7, 9, 0, 8]
-    
-    coder1 = HuffmanCoding()
-    coder2 = HuffmanCoding()
-    
-    coded1 = coder1.encode(l1)
-    coded2 = coder2.encode(l2)
-    
-    decoded1 = coder1.decode(coded1)
-    decoded2 = coder2.decode(coded2)
-    
-    print(coded1, decoded1)
-    print(coded2, decoded2)
+    ts = np.loadtxt("ts_homework_practicum_5.txt")
 
-    coder1.decode(coded2)
+    compressor = LossyCompression()
+    bits = compressor.compress(ts)
+    decompressed_ts = compressor.decompress(bits)
 
-#if __name__ == "__main__":
-#    ts = np.loadtxt("ts_homework_practicum_5.txt")
-#
-#    compressor = LossyCompression()
-#    bits = compressor.compress(ts)
-#    decompressed_ts = compressor.decompress(bits)
-#
-#    compression_ratio = (len(ts) * 32 * 8) / len(bits) 
-#    print(f"Compression ratio: {compression_ratio:.2f}")
-#
-#    compression_loss = np.sqrt(np.mean((ts - decompressed_ts)**2))
-#    print(f"Compression loss (RMSE): {compression_loss}")
+    compression_ratio = (len(ts) * 32 * 8) / len(bits) 
+    print(f"Compression ratio: {compression_ratio:.2f}")
+
+    compression_loss = np.sqrt(np.mean((ts - decompressed_ts)**2))
+    print(f"Compression loss (RMSE): {compression_loss}")
 
