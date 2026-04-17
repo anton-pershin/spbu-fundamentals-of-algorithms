@@ -109,9 +109,9 @@ class LossyCompression:
         minim = np.min(time_series)
         maxim = np.max(time_series)
         # I didn't know what K must be exactly and got a bit afraid to ask
-        # So i supposed it is a quantity of unique numbers in the time series
+        # So i made it classic: 256
         # It may be changed as you like
-        capacity = len(set(time_series))
+        capacity = 256
         
         diff = (maxim - minim) / capacity
 
