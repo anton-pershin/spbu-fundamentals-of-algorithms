@@ -104,7 +104,7 @@ class LossyCompression:
         self.delta = delta
 
     def compress(self, time_series: NDArrayFloat) -> str:
-        data_range = ts.max() - ts.min()
+        data_range = time_series.max() - time_series.min()
         optimal_delta = data_range / (2**self.bits_per_sample - 1)
         self.delta = optimal_delta
     
