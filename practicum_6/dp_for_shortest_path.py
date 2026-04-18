@@ -4,6 +4,7 @@ from typing import Any
 import networkx as nx
 import numpy as np
 
+from practicum_4.dfs import TopologicalSorting
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
@@ -14,19 +15,31 @@ class DpAlgorithmForShortestPath:
     """ 
     def __init__(self, G: nx.DiGraph) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.G: nx.DiGraph = G
+        self.topo_sorting: TopologicalSorting = TopologicalSorting(G)
+        self.dist: dict[Any, int] = {}
+        self.shortest_paths: dict[Any, set[tuple[Any, Any]]] = {}
+        
 
     def run(self, node: Any) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        sorted_nodes = self.topo_sorting.run(node)
+        self.dist
+        self.shortest_paths[node] = set()
 
-        pass
+        for cur_node in sorted_nodes[1:]:
+            self.dist[cur_node] = float('inf')
+            self.shortest_paths[cur_node] = set()
+
+            for neigh in self.G.predecessors(cur_node):
+                edge_weight = self.G[neigh][cur_node]['weight']
+                new_dist = self.dist[neigh] + edge_weight
+
+                if new_dist < self.dist[cur_node]:
+                    self.dist[cur_node] = new_dist
+                    self.shortest_paths[cur_node] = {(neigh, cur_node)}
+                elif new_dist == self.dist[cur_node]:
+                    self.shortest_paths[cur_node].add((neigh, cur_node))
 
 
 class DpAlgorithmForShortestReliablePath:
