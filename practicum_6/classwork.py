@@ -42,3 +42,43 @@ sorted(b, key = itemgetter("x"))
 def custom_itemgetter(elem):
     return elem["x"]
 sorted(b, key = custom_itemgetter)
+
+def custom_itemgetter(key:str):
+    def _itemgetter(elem):
+        return elem[key]
+    return _itemgetter
+custom_itemgetter("x")
+sorted(b, key=custom_itemgetter("x"))
+
+a
+map(square, a)
+for elem in map(square, a):
+    print(elem)
+
+from functools import reduce
+from operator import add
+def custom_add(x, y):
+    return x + y
+reduce(add, map(square, a), 0)
+
+c = [[1,2,3], [4,5,6], [7,8,9]]
+reduce(add, c, [])
+
+d = [-3, -4, 5, 1, 2]
+def positive(x):
+    return x > 0
+filter(positive, d)
+for element in filter(positive, d):
+    print(element)
+
+def foo(x: int, flag: bool) -> int:
+    if flag: 
+        return x
+    else: 
+        return -x
+from functools import partial
+foo_with_flag_true = partial(foo, flag=True)
+foo_with_flag_false = partial(foo, flag=False)
+foo_with_flag_true(10)
+foo_with_flag_false(10)
+foo_with_flag_true([1, 2])
