@@ -12,21 +12,33 @@ from src.common import AnyNxGraph
 
 class PrimAlgorithm:
     def __init__(self, G: AnyNxGraph) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.G = G
+        self.nodes = set()
+        self.mst_edges = set()
 
     def run(self, node: Any) -> None:
+        self.nodes.add(node)
+        data = []
+        counter = 0
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        for edge in self.G.edges(node, data=True):
+            if (edge[0] not in self.nodes) or (edge[1] not in self.nodes):
+                counter += 1
+                heapq.heappush(data, (edge[2]['weight'], (counter, edge[0], edge[1])))
+                
+        while len(self.nodes) != len(self.G):
+            length, (k, first_node, second_node) = heapq.heappop(data)
 
-        pass
+            if (first_node not in self.nodes) or (second_node not in self.nodes):
+                self.mst_edges.add((first_node, second_node))
 
+            current_node = first_node if first_node not in self.nodes else second_node
+            self.nodes.add(current_node)
+
+            for edge in self.G.edges(current_node, data=True):
+                if ((edge[0] not in self.nodes) or (edge[1] not in self.nodes)):
+                    counter += 1
+                    heapq.heappush(data, (edge[2]['weight'], (counter, edge[0], edge[1])))
 
 if __name__ == "__main__":
     G = nx.read_edgelist(
@@ -36,7 +48,7 @@ if __name__ == "__main__":
     plot_graph(G)
 
     prim = PrimAlgorithm(G)
-    mst_edges = prim.run(node="0")
+    prim.run(node="0")
 
     plot_graph(G, highlighted_edges=list(prim.mst_edges))
 
