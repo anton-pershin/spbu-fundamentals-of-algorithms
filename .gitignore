@@ -1,3 +1,5 @@
 
 .venv/
+.vscode/
+__pycache__/
 practicum_1/img/

@@ -12,21 +12,15 @@ source .venv/bin/activate
 deactivate
 
 
-#  VSCode (ipynb)
+# ~/.bashrc
 #
-#   - Дебаг (launch.json)
-#   - Кнопки запуска (tasks.json)
-#
-#  "Debug Console" в VSCode!
-#
-#   Когда ставишь breakpoint и останавливаешься,
-#   можно выполнять Python-команды прямо в
-#   контексте текущего состояния программы.
-
-# PYTHONPATH
-#
-# case ":$PYTHONPATH:" in
-#     *":$PROJ:"*) ;;
-#     *) export PYTHONPATH=\
-#         "$PROJ${PYTHONPATH:+:$PYTHONPATH}" ;;
-# esac
+# cd() {
+#     builtin cd "$@"
+#     if [ -f .venv/bin/activate ]; then
+#         source .venv/bin/activate
+#         export PYTHONPATH="$PWD"
+#     elif [ -n "$VIRTUAL_ENV" ]; then
+#         deactivate
+#         export PYTHONPATH=""
+#     fi
+# }
