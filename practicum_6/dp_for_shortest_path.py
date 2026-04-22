@@ -1,9 +1,11 @@
 from pathlib import Path
 from typing import Any
+from operator import itemgetter
 
 import networkx as nx
 import numpy as np
 
+from practicum_4.dfs_solved import TopologicalSorting
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
@@ -13,22 +15,27 @@ class DpAlgorithmForShortestPath:
     Shortest path algorithm for directed acyclic graphs.
     """ 
     def __init__(self, G: nx.DiGraph) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.G : nx.DiGraph = G
+        self.topo_sorting: TopologicalSorting = TopologicalSorting(G)
+        self.dist: dict[Any,int] = {}
+        self.shortest_paths : dict[Any,set[tuple[Any,Any]]] = {}
 
     def run(self, node: Any) -> None:
+        sorted_nodes = self.topo_sorting.sort(node)
+        self.dist[node] = 0
+        self.shortest_paths[node] = set()
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        for cur_node in sorted_nodes[1:]:
 
-        pass
+            predecessors = list(G.predecessors(cur_node))
+            paths = [self.dist[n_neigh] + self.G.edges[n_neigh,cur_node]["weight"] for n_neigh in predecessors]
 
+            n_neigh, min_path = min(zip(predecessors, paths), key=itemgetter(0))
+            
+            self.dist[cur_node] = min_path
+            self.shortest_paths[cur_node] = self.shortest_paths[n_neigh] | {(n_neigh,cur_node)}
 
+#TODO
 class DpAlgorithmForShortestReliablePath:
     """
     Shortest path algorithm for directed acyclic graphs with additional
