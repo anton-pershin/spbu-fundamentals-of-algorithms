@@ -34,7 +34,7 @@ class DpAlgorithmForShortestReliablePath:
     Shortest path algorithm for directed acyclic graphs with additional
     constraint: the path cannot contain more than k edges
     """ 
-    def __init__(self, G: nx.DiGraph) -> None:
+    def __init__(self, G: nx.DiGraph, k: int) -> None:
 
         ##########################
         ### PUT YOUR CODE HERE ###
