@@ -10,25 +10,17 @@ from src.common import AnyNxGraph
 class Matrix():
     def __init__(
             self,
-            prod: str,
-            shape: tuple[int, int],
-            complexity: int,
-            tree: list[tuple[str, str]]
+            shape: tuple[int, int] = (0, 0),
+            complexity: int = 0,
+            tree: list[tuple[str, str]] = []
     ) -> None:
-        self.prod = prod
         self.shape = shape
         self.complexity = complexity
         self.tree = tree 
 
-    def __eq__(self, other) -> bool:
-        if type(other) == str:
-            return self.name == other
-        return False
-
     def __repr__(self) -> str:
         text = (
-            f"\nProduction: {self.prod}\n"
-            f"Shape: {self.shape}\n"
+            f"\nShape: {self.shape}\n"
             f"Complexity: {self.complexity}\n"
             f"Tree: {self.tree}"
         )
@@ -36,21 +28,54 @@ class Matrix():
 
 class MatrixChainMultiplication:
     def __init__(self) -> None:
-        self.matrices: list[dict[str, str | tuple[int, int] | int]] = []
-        self.bestTree: list[tuple[str, str]] = []
+        self.matrices: dict[str, Matrix] = {}
 
-    def preprocess(self, matrices):
+    def preprocess(self, matrices) -> str:
+        prod = str()
         for old in matrices:
-            new = Matrix(old["matrix_name"], old["shape"], 0, [])
-            self.matrices.append(new)
+            prod += old["matrix_name"]
+            new = Matrix(old["shape"], 0, [])
+            self.matrices[old["matrix_name"]] = new
+        return prod
+
+    def findChain(self, prod: str, tree: list[tuple[str, str]]) -> list[tuple[str, str]]:
+        best = Matrix()
+        for gap in range(1, len(prod)):
+            leftProd = prod[:gap]
+            rightProd = prod[gap:]
+
+            if leftProd not in self.matrices:
+                self.findChain(leftProd, [])
+            if rightProd not in self.matrices:
+                self.findChain(rightProd, [])
+
+            # To this point, left and right will be in self.matrices
+            left = self.matrices[leftProd]
+            right = self.matrices[rightProd]
+
+            shape = (left.shape[0], right.shape[1])
+            complexity = left.complexity + right.complexity + \
+                    shape[0] * shape[1] * left.shape[1]
+            tree = [(prod, leftProd)] + [(prod, rightProd)] + left.tree + right.tree
+
+            cur = Matrix(shape, complexity, tree)
+            
+            if best.complexity == 0 or cur.complexity < best.complexity:
+                best = cur
+        self.matrices[prod] = best
 
     def run(
         self,
         matrices: list[dict[str, Union[str, tuple[int, int]]]]
     ) -> tuple[AnyNxGraph, Any]:
-        self.preprocess(matrices)
-        print(self.matrices)
-
+        prod = self.preprocess(matrices)
+        self.findChain(prod, [])
+        
+        matmul_tree = nx.DiGraph()
+        matmul_tree.add_edges_from(self.matrices[prod].tree)
+        root = matmul_tree.nodes[prod]
+        return matmul_tree, root
+        
 
 if __name__ == "__main__":
 
@@ -75,7 +100,7 @@ if __name__ == "__main__":
 
     mcm = MatrixChainMultiplication()
     mcm.run(test_matrices)
-    #matmul_tree, root = mcm.run(test_matrices)
+    matmul_tree, root = mcm.run(test_matrices)
 
-    #plot_graph(matmul_tree)
+    plot_graph(matmul_tree)
 
