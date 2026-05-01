@@ -58,7 +58,6 @@ class HuffmanCoding:
 
         return result
 
-
 class LossyCompression:
     def __init__(self, delta = 0.01, bits_per_sample = 8) -> None:
         self.huffman = HuffmanCoding()
