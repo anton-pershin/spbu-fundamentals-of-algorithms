@@ -18,6 +18,7 @@ class MatrixChainMultiplication:
     def get_tree(self, i, j, names):
         if i == j:
             return names[i] 
+        
         k = self.path[i][j]
         left = self.get_tree(i, k, names)
         right = self.get_tree(k + 1, j, names)
@@ -35,6 +36,7 @@ class MatrixChainMultiplication:
             MatrixChainMultiplication.make_tree(right, G)
             G.add_edge(t, left)
             G.add_edge(t, right)
+            
         return G
 
     def run(
@@ -63,10 +65,7 @@ class MatrixChainMultiplication:
         self.tree = self.make_tree(root_tuple)
 
         mapping = {i:f"пустая вершина{j}" for j, i in enumerate(self.tree) if isinstance(i, tuple)}
-
         self.tree = nx.relabel_nodes(self.tree, mapping)
-
-
 
         return self.tree, root_tuple
         
