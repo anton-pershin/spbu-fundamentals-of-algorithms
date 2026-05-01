@@ -1,10 +1,11 @@
+from operator import itemgetter
 from pathlib import Path
 from typing import Any
 
 import networkx as nx
 import numpy as np
 
-from practicum_4.dfs import TopologicalSorting
+from practicum_4.dfs_solved import TopologicalSorting
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
@@ -23,23 +24,16 @@ class DpAlgorithmForShortestPath:
 
     def run(self, node: Any) -> None:
 
-        sorted_nodes = self.topo_sorting.run(node)
-        self.dist
+        sorted_nodes = self.topo_sorting.sort(node)
+        self.dist[node] = 0
         self.shortest_paths[node] = set()
 
         for cur_node in sorted_nodes[1:]:
-            self.dist[cur_node] = float('inf')
-            self.shortest_paths[cur_node] = set()
-
-            for neigh in self.G.predecessors(cur_node):
-                edge_weight = self.G[neigh][cur_node]['weight']
-                new_dist = self.dist[neigh] + edge_weight
-
-                if new_dist < self.dist[cur_node]:
-                    self.dist[cur_node] = new_dist
-                    self.shortest_paths[cur_node] = {(neigh, cur_node)}
-                elif new_dist == self.dist[cur_node]:
-                    self.shortest_paths[cur_node].add((neigh, cur_node))
+            predecessors = list(self.G.predecessors(cur_node))
+            paths = [self.dist[n_neigh] + self.G.edges[n_neigh, cur_node]["weight"] for n_neigh in predecessors]
+            n_neigh, min_path = min(zip(predecessors, paths), key = itemgetter(1)) 
+            self.dist[cur_node] = min_path
+            self.shortest_paths[cur_node] = self.shortest_paths[n_neigh] | {(n_neigh, cur_node)}
 
 
 class DpAlgorithmForShortestReliablePath:

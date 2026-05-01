@@ -10,23 +10,83 @@ from src.common import AnyNxGraph
 
 class MatrixChainMultiplication:
     def __init__(self) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        self._graph: AnyNxGraph | None = None
+        self._root: Any | None = None
 
     def run(
         self,
         matrices: list[dict[str, Union[str, tuple[int, int]]]]
     ) -> tuple[AnyNxGraph, Any]:
+        if not matrices:
+            raise ValueError("matrix list must not be empty")
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        matrix_names = []
+        shapes = []
+        for matrix in matrices:
+            name = matrix.get("matrix_name")
+            shape = matrix.get("shape")
+            if not isinstance(name, str):
+                raise TypeError("matrices must have name")
+            if (
+                not isinstance(shape, tuple)
+                or len(shape) != 2
+                or not all(isinstance(v, int) for v in shape)
+            ):
+                raise TypeError("matrices must have shape")
+            matrix_names.append(name)
+            shapes.append(shape)
 
-        pass
+        n = len(shapes)
+        dims = [shapes[0][0]] + [shape[1] for shape in shapes]
+
+        for i in range(1, n):
+            if shapes[i - 1][1] != shapes[i][0]:
+                raise ValueError(
+                    f"matrices shapes are incompatible:  "
+                    f"{shapes[i - 1]} and {shapes[i]}"
+                )
+
+        cost = [[0] * n for _ in range(n)]
+        split = [[None] * n for _ in range(n)]
+
+        for length in range(2, n + 1):
+            for i in range(0, n - length + 1):
+                j = i + length - 1
+                best_cost = float("inf")
+                best_k = None
+                for k in range(i, j):
+                    current_cost = (
+                        cost[i][k]
+                        + cost[k + 1][j]
+                        + dims[i] * dims[k + 1] * dims[j + 1]
+                    )
+                    if current_cost < best_cost:
+                        best_cost = current_cost
+                        best_k = k
+                cost[i][j] = best_cost
+                split[i][j] = best_k
+
+        graph = nx.Graph()
+
+        def build_tree(i: int, j: int) -> Any:
+            if i == j:
+                node_id = matrix_names[i]
+                graph.add_node(node_id)
+                return node_id
+            k = split[i][j]
+            left = build_tree(i, k)
+            right = build_tree(k + 1, j)
+            node_id = (i, j)
+            graph.add_node(node_id)
+            graph.add_edge(node_id, left)
+            graph.add_edge(node_id, right)
+            return node_id
+
+        root = build_tree(0, n - 1)
+        self._graph = graph
+        self._root = root
+
+        return graph, root
 
 
 if __name__ == "__main__":
@@ -54,4 +114,3 @@ if __name__ == "__main__":
     matmul_tree, root = mcm.run(test_matrices)
 
     plot_graph(matmul_tree)
-
