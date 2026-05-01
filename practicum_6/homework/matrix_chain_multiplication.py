@@ -30,13 +30,14 @@ class MatrixChainMultiplication:
             G = nx.Graph()
 
         G.add_node(t)
+        
         if isinstance(t, tuple):
             left, right = t
             MatrixChainMultiplication.make_tree(left, G)
             MatrixChainMultiplication.make_tree(right, G)
             G.add_edge(t, left)
             G.add_edge(t, right)
-            
+
         return G
 
     def run(
@@ -46,7 +47,7 @@ class MatrixChainMultiplication:
 
         shapes = [i["shape"][0] for i in matrices] + [matrices[-1]["shape"][1]]
         self.m = [[0] * len(matrices) for _ in range(len(matrices))]
-        self.path = [[0] * len(matrices) for _ in range(len(matrices))]
+        self.path = [[0] * len(matrices) for _ in range(len(matrices))] 
 
         for size in range(2, len(matrices) + 1):
             for left in range(0, len(matrices) - size + 1):
