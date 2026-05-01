@@ -13,20 +13,12 @@ class FloydWarshallAlgorithm:
     This algorithm finds the shortest paths for all the node pairs
     """ 
     def __init__(self, G: nx.DiGraph) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.G: nx.DiGraph = G
+        self.dist: dict[(Any, Any), int] = {}
+        self.shortest_paths: dict[(Any, Any), set[tuple[Any, Any]]] = {}
 
     def run(self, node: Any) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        
 
 
 if __name__ == "__main__":
