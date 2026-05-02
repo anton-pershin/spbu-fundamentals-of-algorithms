@@ -70,7 +70,7 @@ if __name__ == "__main__":
     bits = compressor.compress(ts)
     decompressed_ts = compressor.decompress(bits)
 
-    compression_ratio = (len(ts) * 32 * 8) / len(bits) 
+    compression_ratio = (len(ts) * 32) / len(bits) 
     print(f"Compression ratio: {compression_ratio:.2f}")
 
     compression_loss = np.sqrt(np.mean((ts - decompressed_ts)**2))
