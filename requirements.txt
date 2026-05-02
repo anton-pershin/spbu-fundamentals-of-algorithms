@@ -2,3 +2,4 @@ numpy>=2.0.0
 matplotlib>=3.9.0
 plotly>=6.0.0
 networkx>=3.4.0
+scipy
