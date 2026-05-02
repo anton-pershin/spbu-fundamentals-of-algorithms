@@ -10,23 +10,59 @@ from src.common import AnyNxGraph
 
 class MatrixChainMultiplication:
     def __init__(self) -> None:
+        self.graph = nx.Graph()
+        self.node_counter = 0
+        self.split = []
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+    def buildTree(self,i : int, j : int, ids : list[str]):
+        if i == j:
+            self.graph.add_node(ids[i])
+            return ids[i]
+        
+        k = self.split[i,j]
 
-        pass
+        l = self.buildTree(i,k,ids)
+        r = self.buildTree(k+1,j,ids)
+
+        node = f"mul_{self.node_counter}"
+        self.node_counter += 1
+        self.graph.add_edge(node,l)
+        self.graph.add_edge(node,r)
+        
+        return node
 
     def run(
         self,
         matrices: list[dict[str, Union[str, tuple[int, int]]]]
     ) -> tuple[AnyNxGraph, Any]:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        ids = [m["matrix_name"] for m in matrices]
+        shapes = [m["shape"] for m in matrices]
+        
+        p = [shapes[0][0]]
+        for r,c in shapes:
+            p.append(c)
 
-        pass
+        n = len(matrices)
+        cost = np.full((n,n), 10**18, dtype=np.int64)
+        np.fill_diagonal(cost,0)
+
+        self.split = np.full((n,n),-1,dtype=np.int64)
+
+        for l in range(2,n+1):
+            for i in range(0,n - l + 1):
+                j = i + l - 1
+
+                for k in range(i,j):
+                    curCost = (cost[i,k] + cost[k+1,j] + p[i] * p[k+1] * p[j+1])
+
+                    if (curCost < cost[i,j]):
+                        cost[i,j] = curCost
+                        self.split[i,j] = k
+
+        root = self.buildTree(0,n-1,ids)
+
+        return self.graph, root
 
 
 if __name__ == "__main__":
@@ -54,4 +90,5 @@ if __name__ == "__main__":
     matmul_tree, root = mcm.run(test_matrices)
 
     plot_graph(matmul_tree)
+
 
