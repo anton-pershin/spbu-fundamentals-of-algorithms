@@ -20,8 +20,8 @@
 - $x(u, v)$ - бинарная переменная, указывающая, включено ли ребро $u \rightarrow v$ в путь
 
 Тогда линейная программа для поиска кратчайшего пути имеет вид:
-$$ \begin{align}
-\text{argmax}_{x(u,v) \in \{0, 1\}} \quad &\sum_{(u,v) \in E} w(u, v) x(u, v) \\
+\begin{align}
+\text{argmin}_{x(u,v) \in \{0, 1\}} \quad &\sum_{(u,v) \in E} w(u, v) x(u, v) \\
 \text{s.t.} \quad &f(s) = -1 \\
 &f(t) = 1 \\
 &f(v) = 0 \quad \forall v \in V \backslash \{s, t\}
