@@ -1,10 +1,13 @@
 from pathlib import Path
 from typing import Any
+from operator import itemgetter
 
 import networkx as nx
 import numpy as np
 
+
 from src.plotting.graphs import plot_graph
+from practicum_4.dfs_solved import TopologicalSorting
 from src.common import AnyNxGraph
 
 
@@ -14,19 +17,23 @@ class DpAlgorithmForShortestPath:
     """ 
     def __init__(self, G: nx.DiGraph) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.G: nx.DiGraph = G
+        self.topo_sorting: TopologicalSorting = TopologicalSorting(G)
+        self.dist: dict[Any, int] = {}
+        self.shortest_paths: dict[Any, set[tuple[Any, Any]]] = {}
 
     def run(self, node: Any) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        sorted_nodes = self.topo_sorting.sort(node)
+        self.dist[node] = 0
+        self.shortest_paths[node] = set()
 
-        pass
+        for cur_node in sorted_nodes[1:]:
+            predecessors = list(self.G.predecessors(cur_node))
+            paths = [self.dist[n_neigh] + self.G.edges[n_neigh, cur_node]["weight"] for n_neigh in predecessors]
+            n_neigh, min_path = min(zip(predecessors, paths), key=itemgetter(1))
+            self.dist[cur_node] = min_path
+            self.shortest_paths[cur_node] = self.shortest_paths[n_neigh] | {(n_neigh, cur_node)}
 
 
 class DpAlgorithmForShortestReliablePath:
@@ -35,20 +42,12 @@ class DpAlgorithmForShortestReliablePath:
     constraint: the path cannot contain more than k edges
     """ 
     def __init__(self, G: nx.DiGraph, k: int) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.G: nx.DiGraph = G
+        self.dist: dict[(Any, Any), int] = {}
+        self.shortest_paths: dict[(Any, Any), set[tuple[Any, Any]]] = {}
 
     def run(self, node: Any) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        
 
 
 if __name__ == "__main__":
