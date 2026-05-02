@@ -1,8 +1,11 @@
 from pathlib import Path
 from typing import Any
+from operator import itemgetter
 
 import networkx as nx
 import numpy as np
+
+
 
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
@@ -13,20 +16,29 @@ class DpAlgorithmForShortestPath:
     Shortest path algorithm for directed acyclic graphs.
     """ 
     def __init__(self, G: nx.DiGraph) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.G: nx.DiGraph = G
+        self.topo_sorting = To
 
     def run(self, node: Any) -> None:
+        sorted_nodes = self.topo_sorting.sort(node)
+        self.dist[node]= 0
+        self.shortest_paths[node] = set()
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        for cur in sorted_nodes[1:]:
+            predecessors_node = None
+            min_path_w = np.inf
+            for v in G.predecessors(cur_node):
+                path_w =  self.dist[v] +self.G.edges[v,cur_node]["w"]
+                if path_w < min_path_w:
+                    min_path_w= path_w
+                    predecessors_node= v
+            self.dist[cur_node] = min_path_w
+            self.shortest_paths
 
-        pass
+
+
+                
+
 
 
 class DpAlgorithmForShortestReliablePath:
@@ -36,11 +48,8 @@ class DpAlgorithmForShortestReliablePath:
     """ 
     def __init__(self, G: nx.DiGraph, k: int) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        ...
 
-        pass
 
     def run(self, node: Any) -> None:
 
