@@ -3,7 +3,7 @@ from collections import deque
 from typing import Any
 from abc import ABC, abstractmethod
 
-import networkx as nx
+import networkx as nx # type: ignore
 
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
@@ -38,18 +38,29 @@ class DfsViaRecursion(GraphTraversal):
         for neigh in G.neighbors(node):
             if neigh not in self.visited:
                 self.run(neigh)
-
         self.postvisit(node)
 
 
 class DfsViaLifoQueue(GraphTraversal):
     def run(self, node: Any) -> None:
+        self.visited = set()
+        queue = deque([(node, False)])
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        while queue:
+            vertex, processed = queue.pop()
+            
+            if processed:
+                self.postvisit(vertex)
+                continue
 
-        pass
+            if vertex not in self.visited:
+                self.visited.add(vertex)
+                self.previsit(vertex)
+                queue.append((vertex, True))
+                for v in reversed(list(self.G.neighbors(vertex))):
+                    if v not in self.visited:
+                        queue.append((v, False))
+                
 
 
 class DfsViaRecursionWithPrinting(DfsViaRecursion):
