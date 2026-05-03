@@ -25,12 +25,35 @@ class DijkstraAlgorithm(GraphTraversal):
         pass
 
     def run(self, node: Any) -> None:
+        dist = {n: float('inf') for n in self.G.nodes()}
+        dist[node] = 0
+        path = {n: None for n in self.G.nodes()}
+        priority_queue = [(0, node)]
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        while priority_queue:
+            distance, name = heapq.heappop(priority_queue)
+            if distance > dist[name]:
+                continue
 
-        pass
+            for neighbor in self.G.neighbors(name):
+                weight = self.G[name][neighbor].get('weight', 1)
+                new_d = distance + weight
+
+                if new_d < dist[neighbor]:
+                    dist[neighbor] = new_d
+                    path[neighbor] = name
+                    heapq.heappush(priority_queue, (new_d, neighbor))
+        
+        for n in self.G.nodes():
+            if dist[n] == float('inf'):
+                continue
+            final_path = []
+            current = n
+            while current is not None:
+                final_path.append(current)
+                current = path[current]
+            final_path.reverse()
+            self.previsit(n, path=final_path)
 
 
 if __name__ == "__main__":
