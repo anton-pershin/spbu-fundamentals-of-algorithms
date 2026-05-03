@@ -46,4 +46,3 @@ if __name__ == "__main__":
     ax.legend(fontsize=12)
     fig.tight_layout()
     plt.show()
-
