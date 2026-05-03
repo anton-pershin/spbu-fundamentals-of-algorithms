@@ -44,12 +44,24 @@ class DfsViaRecursion(GraphTraversal):
 
 class DfsViaLifoQueue(GraphTraversal):
     def run(self, node: Any) -> None:
+        self.visited = set()
+        queue = deque([(node, False)])
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        while queue:
+            vertex, processed = queue.pop()
+            
+            if processed:
+                self.postvisit(vertex)
+                continue
 
-        pass
+            if vertex not in self.visited:
+                self.visited.add(vertex)
+                self.previsit(vertex)
+                queue.append((vertex, True))
+                for v in reversed(list(self.G.neighbors(vertex))):
+                    if v not in self.visited:
+                        queue.append((v, False))
+                
 
 
 class DfsViaRecursionWithPrinting(DfsViaRecursion):
