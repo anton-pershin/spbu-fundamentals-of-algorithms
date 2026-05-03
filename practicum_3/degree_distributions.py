@@ -10,12 +10,11 @@ from src.common import NDArrayFloat
 
 
 def build_degree_histogram(G) -> tuple[NDArrayFloat, NDArrayFloat]:
-    degrees = [node_degree for _, node_degree in G.degree()] 
-    hist, bin_edges = np.histogram(degrees, bins=20)
-    mids = 0.5 * (bin_edges[1:] + bin_edges[:-1])
+    degrees = [node_degree for _, node_degree in G.degree()]
+    hist, bin_edges =np.histogram(degrees, bins=20)
+    mids = 0,5*(bin_edges[1:] + bin_edges[:-1])
     return hist, mids
-
-
+    
 if __name__ == "__main__":
     # USairport500.txt stores a network of the most active US airports.
     # This is a typical example of a scale-free network as some airports
