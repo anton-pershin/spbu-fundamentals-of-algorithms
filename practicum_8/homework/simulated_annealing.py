@@ -25,17 +25,24 @@ def set_colors(G: nx.Graph, colors: NDArrayInt) -> None:
 def tweaks(bestColors: NDArrayInt, n_max_colors: int) -> NDArrayInt:
     newColors = bestColors
     vertex = np.random.randint(0, len(newColors))
-    newColors[vertex] = np.random.randint(0, n_max_colors)
+    neighColors = list()
+    for neighbor in G.neighbors(vertex):
+        neighColors.append(G.nodes[neighbor]["color"])
+    colors = [color for color in range(n_max_colors) if color not in neighColors]
+    if colors:
+        newColors[vertex] = np.random.choice(colors)
+    else:
+        newColors[vertex] = np.random.randint(0, n_max_colors)
     return newColors
 
 def toChange(temp: int, diff: int) -> bool:
-    prob = math.exp(diff / temp) * 100
+    prob = math.exp((-diff) / temp) * 100
     if 0 <= np.random.randint(0, 100) <= prob:
         return True
     return False
 
-def decreaseTemperature(temp):
-    temp -= 1
+def decreaseTemperature(start_temp, iteration, buff): 
+    temp = start_temp / ((1 + iteration) * buff)
     return temp
 
 def solve_via_simulated_annealing(
@@ -45,19 +52,26 @@ def solve_via_simulated_annealing(
     bestColors = initial_colors
     bestConflicts = number_of_conflicts(G, initial_colors) 
 
-    temp = n_iters
+    start_temp = 100 
+    temp = start_temp
     for iteration in range(n_iters):
+        buff = 1
+
         newColors = tweaks(bestColors, n_max_colors)
         newConflicts = number_of_conflicts(G, newColors)
+        diff = abs(newConflicts - bestConflicts)
+        
         if newConflicts <= bestConflicts:
             bestColors = newColors
             bestConflicts = newConflicts
+            buff = 1.25
+
         else:
-            if toChange(temp, bestConflicts - newConflicts) == True:
+            if toChange(temp, diff) == True:
                 bestColors = newColors
                 bestConflicts = newConflicts
         loss_history[iteration] = bestConflicts
-        temp = decreaseTemperature(temp)
+        temp = decreaseTemperature(start_temp, iteration, buff)
 
     return loss_history
 
@@ -75,5 +89,6 @@ if __name__ == "__main__":
     loss_history = solve_via_simulated_annealing(
         G, n_max_colors, initial_colors, n_max_iters
     )
+    print(np.min(loss_history))
     plot_loss_history(loss_history)
     print()
