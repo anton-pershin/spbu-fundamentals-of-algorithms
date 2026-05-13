@@ -23,14 +23,61 @@ def set_colors(G: nx.Graph, colors: NDArrayInt) -> None:
         G.nodes[n]["color"] = color
 
 
+def tweak(colors: NDArrayInt, n_max_colors: int) -> NDArrayInt:
+    new_color = colors.copy()
+    node = np.random.randint(0, len(new_color))
+
+    old = new_color[node]
+    new = np.random.randint(0, n_max_colors)
+    while new == old:
+        new = np.random.randint(0, n_max_colors)
+
+    new_color[node] = new
+    return new_color
+
+
+def cooling_schedule(initial_temp: float, i: int) -> float:
+    # return initial_temp / np.log(i + 2) # Логарифмическое
+    # return initial_temp / (1 + i)  # Коши
+    # return initial_temp * (1 - i / n_iters) # Линейное
+     return initial_temp * (0.98 ** i) # Экспоненциальное, 0.95-0.99
+
+
 def solve_via_simulated_annealing(
     G: nx.Graph, n_max_colors: int, initial_colors: NDArrayInt, n_iters: int
 ) -> NDArrayInt:
     loss_history = np.zeros((n_iters,), dtype=np.int_)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    cur_color = initial_colors.copy() # current color
+    cur_cf = number_of_conflicts(G, cur_color) # current number of conflicts
+
+    res = cur_color.copy() # best color variant - result
+    min_cf = cur_cf # min number of conflicts
+
+    initial_temp = 100.0 # start temperature
+
+    for i in range(n_iters):
+        loss_history[i] = cur_cf
+
+        if cur_cf == 0:
+            loss_history[i:] = 0
+            break
+
+        temp = cooling_schedule(initial_temp, i) # temperature
+        new_color = tweak(cur_color, n_max_colors)
+        new_cf = number_of_conflicts(G, new_color) # new number of conflicts
+
+        d = new_cf - cur_cf # difference
+
+        if d <= 0 or np.random.random() < np.exp(-d / temp):
+            cur_color = new_color
+            cur_cf = new_cf
+
+            if cur_cf < min_cf:
+                min_cf = cur_cf
+                res = cur_color.copy()
+
+    set_colors(G, res)
 
     return loss_history
 
