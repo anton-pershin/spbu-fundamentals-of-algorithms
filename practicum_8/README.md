@@ -10,10 +10,12 @@ Hill climbing предполагает наличие процедуры `tweak(
 Например, если $\boldsymbol{x}^{(0)} \in \mathbb{R}^K$, то `tweak()` может изменить значение одной из компонент вектора.
 Далее из $N$ локально измененных копий и $\boldsymbol{x}^{(0)}$ выбирается наилучшее, после чего процедура повторяется.
 
-\begin{align}
+$$
+\begin{aligned}
 \boldsymbol{x}_1, ..., \boldsymbol{x}_N &= \text{tweak}(\boldsymbol{x}^{(k)}), \\
 \boldsymbol{x}^{(k+1)} &= \text{argmax}_{\boldsymbol{x} \in \{\boldsymbol{x}_1, ..., \boldsymbol{x}_N, \boldsymbol{x}^{(k)}\}} f(\boldsymbol{x}).
-\end{align}
+\end{aligned}
+$$
 
 ![hill climbing 1](images/hill_climbing_1.svg)
 
