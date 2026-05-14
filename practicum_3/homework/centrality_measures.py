@@ -11,54 +11,80 @@ from src.common import AnyNxGraph
 class CentralityMeasure(Protocol):
     def __call__(self, G: AnyNxGraph) -> dict[Any, float]:
         ...
-        
+
+
 def closeness_centrality(G: AnyNxGraph) -> dict[Any, float]:
-    centrality = {}
-    n = G.number_of_nodes()
-    for node in G.nodes():
-        distances = nx.single_source_shortest_path_length(G, node)
+    nodes = list(G.nodes())
+    n = len(nodes)
+    res = {}
 
-        total_distance = sum(distances.values())
-
-        if total_distance > 0:
-            centrality[node] = (n - 1) / total_distance
+    for u in nodes:
+        lengths = nx.single_source_shortest_path_length(G, u)
+        sum_dist = sum(lengths.values())
+        
+        if sum_dist > 0:
+            reachable_nodes = len(lengths) - 1
+            if reachable_nodes > 0:
+                norm = reachable_nodes / (n - 1)
+                res[u] = (reachable_nodes / sum_dist) * norm
+            else:
+                res[u] = 0.0
         else:
-            centrality[node] = 0.0
+            res[u] = 0.0
+            
+    return res
 
-    return centrality
 
-def betweenness_centrality(G: AnyNxGraph) -> dict[Any, float]:
-    dict_res = {i: 0.0 for i in G.nodes()}
+def betweenness_centrality(G: AnyNxGraph) -> dict[Any, float]: 
+    nodes = list(G.nodes())
+    n = len(nodes)
+    between = {node: 0.0 for node in nodes}
+    
+    for s, t in combinations(nodes, 2):
+        try:
+            all_paths = list(nx.all_shortest_paths(G, source=s, target=t))
+            sigma_st = len(all_paths)
+            
+            for v in nodes:
+                if v != s and v != t:
+                    sigma_v = 0
+                    for path in all_paths:
+                        if v in path:
+                            sigma_v += 1
+                    
+                    between[v] += sigma_v / sigma_st
+        except nx.NetworkXNoPath:
+            pass
 
-    for i,j in combinations(G.nodes(), 2):
-        paths = list(nx.all_shortest_paths(G, i, j))
-        path_len = len(paths)
-        if path_len > 0:
-            for path in paths:
-                for node in path:
-                    dict_res[node] += path_len
-    return dict_res
+    if n > 2:
+        coeff = 2.0 / ((n - 1) * (n - 2))
+        for node in between:
+            between[node] *= coeff
+            
+    return between
 
-def eigenvector_centrality(G: AnyNxGraph) -> dict[Any, float]:
-    ln = len(G)
 
-    if ln < 0:
-        return {}
-
-    vec_one = np.ones(ln) / np.linalg.norm(np.ones(ln))
-
-    matrix_adjency = nx.adjacency_matrix(G).toarray()
-
-    for i in range(101):
-        vec_one_copy = vec_one.copy()
-        vec_one = matrix_adjency @ vec_one
-        vec_one = vec_one / np.linalg.norm(vec_one)
-        if np.linalg.norm(vec_one) == 0:
-            return {x: 0.0 for x in G.nodes()}
-        if (np.linalg.norm(vec_one_copy) - np.linalg.norm(vec_one)) < 1e-6:
-            return {x: vec_one[j] for j, x in enumerate(G.nodes())}
-    raise Exception
-
+def eigenvector_centrality(G: AnyNxGraph) -> dict[Any, float]: 
+    nodes = list(G.nodes())
+    n = len(nodes)
+    
+    adj = nx.to_numpy_array(G, nodelist=nodes)
+    
+    x = np.ones(n)
+    
+    for _ in range(100):
+        prev_x = x.copy()
+        
+        x = adj @ x
+        
+        norm = np.linalg.norm(x)
+        if norm > 0:
+            x = x / norm
+        
+        if np.allclose(x, prev_x, atol=1e-6):
+            break
+            
+    return {nodes[i]: float(x[i]) for i in range(n)}
 
 
 def plot_centrality_measure(G: AnyNxGraph, measure: CentralityMeasure) -> None:
@@ -71,7 +97,7 @@ def plot_centrality_measure(G: AnyNxGraph, measure: CentralityMeasure) -> None:
 
 if __name__ == "__main__":
     G = nx.karate_club_graph()
-
+    
     plot_centrality_measure(G, closeness_centrality)
     plot_centrality_measure(G, betweenness_centrality)
     plot_centrality_measure(G, eigenvector_centrality)
