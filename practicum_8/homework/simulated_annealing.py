@@ -110,3 +110,4 @@ if __name__ == "__main__":
     )
     plot_loss_history(loss_history)
     print()
+   
