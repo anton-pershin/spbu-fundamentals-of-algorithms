@@ -23,14 +23,65 @@ def set_colors(G: nx.Graph, colors: NDArrayInt) -> None:
         G.nodes[n]["color"] = color
 
 
+def tweak(colors: NDArrayInt, n_max_colors: int) -> NDArrayInt:
+    new_colors = colors.copy() 
+    
+    node_to_change = np.random.randint(0, len(new_colors))
+    new_color = np.random.randint(0, n_max_colors) 
+    
+    new_colors[node_to_change] = new_color  
+    
+    return new_colors 
+
+
 def solve_via_simulated_annealing(
     G: nx.Graph, n_max_colors: int, initial_colors: NDArrayInt, n_iters: int
 ) -> NDArrayInt:
     loss_history = np.zeros((n_iters,), dtype=np.int_)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    current_colors = initial_colors.copy() 
+    current_loss = number_of_conflicts(G, current_colors) 
+    
+    best_colors = current_colors.copy() 
+    best_loss = current_loss 
+    
+    loss_history[0] = current_loss 
+    
+    temperature = 10.0 
+    cooling_rate = 0.995
+    
+    for i in range(1, n_iters):
+        if current_loss == 0:
+            loss_history[i:] = best_loss 
+            break
+        
+        new_colors = tweak(current_colors, n_max_colors) 
+        new_loss = number_of_conflicts(G, new_colors)
+        
+        delta = new_loss - current_loss 
+        
+        if delta <= 0: 
+            current_colors = new_colors 
+            current_loss = new_loss
+        else:
+            probability = np.exp(-delta / temperature)
+            random_number = np.random.rand()
+            
+            if random_number < probability: 
+                current_colors = new_colors 
+                current_loss = new_loss 
+                
+        if current_loss < best_loss: 
+            best_loss = current_loss
+            best_colors = current_colors.copy()
+            
+        loss_history[i] = current_loss
+        temperature = temperature * cooling_rate
+        
+        if temperature < 0.001:  
+            temperature = 0.001
+            
+    set_colors(G, best_colors)
 
     return loss_history
 
