@@ -5,7 +5,9 @@ import networkx as nx
 from src.plotting.graphs import plot_graph
 from src.plotting.misc import plot_loss_history
 
+
 NDArrayInt = NDArray[np.int_]
+
 
 def number_of_conflicts(G: nx.Graph, colors: NDArrayInt) -> int:
     set_colors(G, colors)
@@ -15,9 +17,11 @@ def number_of_conflicts(G: nx.Graph, colors: NDArrayInt) -> int:
             n += 1
     return n
 
+
 def set_colors(G: nx.Graph, colors: NDArrayInt) -> None:
     for n, color in zip(G.nodes, colors):
         G.nodes[n]["color"] = color
+
 
 def solve_via_simulated_annealing(
     G: nx.Graph, n_max_colors: int, initial_colors: NDArrayInt, n_iters: int
