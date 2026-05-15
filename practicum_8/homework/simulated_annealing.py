@@ -28,9 +28,31 @@ def solve_via_simulated_annealing(
 ) -> NDArrayInt:
     loss_history = np.zeros((n_iters,), dtype=np.int_)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    curr_colors = initial_colors.copy();
+    curr_loss = number_of_conflicts(G, curr_colors)
+    best_loss = curr_loss
+
+    T = 1.0
+    cooling_rate = 0.995
+
+    for i in range(n_iters):
+
+        new_colors = curr_colors.copy()
+        vertex = np.random.randint(0, len(G.nodes))
+        new_color = np.random.randint(0, n_max_colors)
+        new_colors[vertex] = new_color
+
+        new_loss = number_of_conflicts(G, new_colors)
+        delta = new_loss - curr_loss
+
+        if delta < 0 or np.random.random() < np.exp(-delta / T):
+            curr_colors = new_colors
+            curr_loss = new_loss
+            if curr_loss < best_loss:
+                best_loss = curr_loss
+
+        loss_history[i] = best_loss
+        T *= cooling_rate
 
     return loss_history
 
