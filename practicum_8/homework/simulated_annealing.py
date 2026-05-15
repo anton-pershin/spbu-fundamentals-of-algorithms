@@ -22,15 +22,43 @@ def set_colors(G: nx.Graph, colors: NDArrayInt) -> None:
     for n, color in zip(G.nodes, colors):
         G.nodes[n]["color"] = color
 
+def tweak(colors: NDArrayInt, n_max_colors: int) -> NDArrayInt:
+    new_colors = colors.copy()
+    n_nodes = len(new_colors)
+    while all([new_colors[i] == colors[i] for i in range(n_nodes)]):
+        random_i = np.random.randint(0, n_nodes)
+        random_color = np.random.randint(0, n_max_colors)
+        new_colors[random_i] = random_color
+    return new_colors
+
 
 def solve_via_simulated_annealing(
     G: nx.Graph, n_max_colors: int, initial_colors: NDArrayInt, n_iters: int
 ) -> NDArrayInt:
+    global_colors = initial_colors.copy()
     loss_history = np.zeros((n_iters,), dtype=np.int_)
+    global_loss = number_of_conflicts(G, initial_colors)
+    T = 1
+    alpha = 0.997
+    
+    for i in range(n_iters):
+        local_colors = tweak(global_colors, n_max_colors)
+        local_loss = number_of_conflicts(G, local_colors)
+        
+        if local_loss < global_loss:
+            global_loss = local_loss
+            global_colors = local_colors
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+        else:
+            propability = np.exp(-(local_loss - global_loss)/T)
+            if np.random.rand() < propability:
+                global_loss = local_loss
+                global_colors = local_colors
+
+        T *= alpha
+        loss_history[i] = global_loss
+        
+
 
     return loss_history
 
