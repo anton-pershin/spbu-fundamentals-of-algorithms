@@ -38,23 +38,28 @@ def solve_via_simulated_annealing(
 
     temp_start = 1.00
     temp_step = 0.99
-    curr_initial_colors = initial_colors.copy()
-    number_of_conflict = number_of_conflicts(G, curr_initial_colors)
-    loss_history[0] = number_of_conflict
 
-    for i in range(1, n_max_iters):
+    curr_initial_colors = initial_colors.copy()
+    curr_loss = number_of_conflicts(G, curr_initial_colors)
+    loss_history[0] = curr_loss
+
+    for i in range(1, n_iters):
         copy_initial_colors = curr_initial_colors.copy()
         curr_initial_colors = tweak(curr_initial_colors, n_max_colors)
-        cur_loss = number_of_conflicts(G, curr_initial_colors)
+        cur_loss_maybe = number_of_conflicts(G, curr_initial_colors)
 
-        delta_loss = cur_loss - loss_history[i - 1]
-        if delta_loss > 0:
+        delta_loss = cur_loss_maybe - curr_loss
+
+        if delta_loss < 0:
+            curr_initial_colors = copy_initial_colors
+            curr_loss = cur_loss_maybe
+        else:
             if np.exp(-delta_loss/temp_start) <= np.random.rand():
                 curr_initial_colors = copy_initial_colors
                 curr_loss = loss_history[i - 1]
 
         temp_start *= temp_step
-        loss_history[i] = cur_loss
+        loss_history[i] = curr_loss
     return loss_history
 
 
