@@ -23,14 +23,72 @@ def set_colors(G: nx.Graph, colors: NDArrayInt) -> None:
         G.nodes[n]["color"] = color
 
 
+def tweak(colors: NDArrayInt, n_max_colors: int):
+    new_colors = colors.copy()
+    vertex = np.random.randint(0, len(new_colors))
+    old_color = new_colors[vertex]
+    new_colors[vertex] = np.random.randint(0, n_max_colors)
+    while new_colors[vertex] == old_color:
+        new_colors[vertex] = np.random.randint(0, n_max_colors)
+    return new_colors, vertex, old_color, new_colors[vertex]
+
+
+def temperature_schedule(initial_temperature: float, cooling_rate: float, max_steps: int):
+    current_temperature = initial_temperature
+    for _ in range(max_steps):
+        if current_temperature < 0.0001:
+            break
+        yield current_temperature
+        current_temperature *= cooling_rate
+
+
 def solve_via_simulated_annealing(
     G: nx.Graph, n_max_colors: int, initial_colors: NDArrayInt, n_iters: int
 ) -> NDArrayInt:
     loss_history = np.zeros((n_iters,), dtype=np.int_)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    current_colors = initial_colors.copy()
+    current_conflicts = number_of_conflicts(G, current_colors)
+    best_conflicts = current_conflicts
+    loss_history[0] = current_conflicts
+
+    initial_temperature = 10.0
+    cooling_rate = 0.98
+    best_colors = current_colors.copy()
+
+    temperature_generator = temperature_schedule(
+        initial_temperature=initial_temperature, 
+        cooling_rate=cooling_rate, 
+        max_steps=n_iters - 1
+    )
+    for iteration_index, current_temperature in enumerate(temperature_generator, start=1):
+        new_colors, vertex_index, old_color, new_color = tweak(current_colors, n_max_colors)
+
+        conflicts_delta = 0
+        for neighbor in G.neighbors(vertex_index):
+            neighbor_color = current_colors[neighbor]
+            if neighbor_color == old_color:
+                conflicts_delta -= 1
+            elif neighbor_color == new_color:
+                conflicts_delta += 1
+        
+        new_conflicts = current_conflicts + conflicts_delta
+
+        should_accept = (conflicts_delta < 0) or (np.random.random() < np.exp(-conflicts_delta / current_temperature))
+
+        if should_accept:
+            current_colors[vertex_index] = new_color
+            current_conflicts = new_conflicts
+        
+        if current_conflicts < best_conflicts:
+            best_colors = current_colors.copy()
+            best_conflicts = current_conflicts
+        
+        loss_history[iteration_index] = best_conflicts
+
+        if best_conflicts == 0:
+            loss_history[iteration_index:] = 0
+            break
 
     return loss_history
 
