@@ -8,7 +8,6 @@ from src.plotting.misc import plot_loss_history
 
 NDArrayInt = NDArray[np.int_]
 
-
 def number_of_conflicts(G: nx.Graph, colors: NDArrayInt) -> int:
     set_colors(G, colors)
     n = 0
@@ -40,6 +39,7 @@ def solve_via_simulated_annealing(
     global_loss = number_of_conflicts(G, initial_colors)
     T = 1
     alpha = 0.997
+    
     
     for i in range(n_iters):
         local_colors = tweak(global_colors, n_max_colors)
