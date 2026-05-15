@@ -22,15 +22,34 @@ def set_colors(G: nx.Graph, colors: NDArrayInt) -> None:
     for n, color in zip(G.nodes, colors):
         G.nodes[n]["color"] = color
 
+def tweak(colors: NDArrayInt, n_max_colors: int) -> NDArrayInt:
+    new_colors = colors.copy()
+    n_nodes = len(new_colors)
+    random_i = np.random.randint(0, n_nodes)
+    random_color = np.random.randint(0, n_max_colors)
+    new_colors[random_i] = random_color
+    return new_colors
+
 
 def solve_via_simulated_annealing(
     G: nx.Graph, n_max_colors: int, initial_colors: NDArrayInt, n_iters: int
 ) -> NDArrayInt:
     loss_history = np.zeros((n_iters,), dtype=np.int_)
+    T = 1
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    colors = initial_colors
+    loss = number_of_conflicts(G, colors)
+    for i in range(n_iters):
+        new_colors = tweak(colors, n_max_colors)
+        new_loss = number_of_conflicts(G, new_colors)
+        delta_loss = new_loss - loss
+        if delta_loss < 0 or np.random.random() < np.exp(- delta_loss/T):
+            colors = new_colors
+            loss_history[i] = new_loss
+            loss = new_loss
+        else:
+            loss_history[i] = loss
+        T *= 0.99
 
     return loss_history
 
