@@ -13,16 +13,19 @@ class GraphColoringSolver(Protocol):
         G: nx.Graph, n_max_colors: int, initial_colors: NDArrayInt, n_iters: int
     ) -> NDArrayInt:
         pass
-
+    
+def set_colors(G: nx.Graph, colors: NDArrayInt) -> None:
+    for n, color in zip(G.nodes, colors):
+        G.nodes[n]["color"] = color
 
 def number_of_conflicts(G: nx.Graph, colors: NDArrayInt) -> int:
+    set_colors(G, colors)
+    conflicts = 0
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-
-    pass
-
+    for u, v in G.edges:
+        if G.nodes[u]["color"] == G.nodes[v]["color"]:
+            conflicts += 1
+    return conflicts       
 
 def tweak(colors: NDArrayInt, n_max_colors: int) -> NDArrayInt:
 
@@ -46,23 +49,17 @@ def solve_via_hill_climbing(
     G: nx.Graph, n_max_colors: int, initial_colors: NDArrayInt, n_iters: int
 ) -> NDArrayInt:
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-
-    pass
-
+    
 
 def solve_via_random_search(
     G: nx.Graph, n_max_colors: int, initial_colors: NDArrayInt, n_iters: int
 ) -> NDArrayInt:
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    loss_history = np.zeros((n_iters,), dtype=np.int_)
 
-    pass
-
+    
+    
+    return loss_history
 
 def solve_with_restarts(
     solver: GraphColoringSolver,
@@ -73,11 +70,7 @@ def solve_with_restarts(
     n_restarts: int,
 ) -> NDArrayInt:
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-
-    pass
+    
 
 
 if __name__ == "__main__":
