@@ -26,14 +26,55 @@ def set_colors(G: nx.Graph, colors: NDArrayInt) -> None:
 def solve_via_simulated_annealing(
     G: nx.Graph, n_max_colors: int, initial_colors: NDArrayInt, n_iters: int
 ) -> NDArrayInt:
+
     loss_history = np.zeros((n_iters,), dtype=np.int_)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    current_colors = initial_colors.copy()
+
+    current_loss = number_of_conflicts(G, current_colors)
+
+    best_colors = current_colors.copy()
+    best_loss = current_loss
+
+    T = 1
+
+    alpha = 0.95
+
+    for i in range(n_iters):
+
+        loss_history[i] = current_loss
+
+        if current_loss == 0:
+            break
+
+        new_colors = current_colors.copy()
+        vertex= np.random.randint(0, len(G.nodes))
+        new_color = np.random.randint(0, n_max_colors)
+        new_colors[vertex] = new_color
+
+        new_loss = number_of_conflicts(G, new_colors)
+        delta = new_loss - current_loss
+
+        if delta <= 0:
+            current_colors = new_colors
+            current_loss = new_loss
+
+        else:
+            if np.random.rand() < np.exp(-delta / T):
+                current_colors = new_colors
+                current_loss = new_loss
+
+        if current_loss < best_loss:
+            best_loss = current_loss
+            best_colors = current_colors.copy()
+
+        
+        T *= alpha
+
+    set_colors(G, best_colors)
+    print("Best conflicts:", best_loss)
 
     return loss_history
-
 
 if __name__ == "__main__":
     seed = 42
@@ -49,4 +90,3 @@ if __name__ == "__main__":
         G, n_max_colors, initial_colors, n_max_iters
     )
     plot_loss_history(loss_history)
-    print()
