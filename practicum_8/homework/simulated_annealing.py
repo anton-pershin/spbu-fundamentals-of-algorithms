@@ -5,15 +5,8 @@ import networkx as nx
 from src.plotting.graphs import plot_graph
 from src.plotting.misc import plot_loss_history
 
-<<<<<<< HEAD
 NDArrayInt = NDArray[np.int_]
 
-=======
-
-NDArrayInt = NDArray[np.int_]
-
-
->>>>>>> upstream/main
 def number_of_conflicts(G: nx.Graph, colors: NDArrayInt) -> int:
     set_colors(G, colors)
     n = 0
@@ -22,24 +15,15 @@ def number_of_conflicts(G: nx.Graph, colors: NDArrayInt) -> int:
             n += 1
     return n
 
-<<<<<<< HEAD
-=======
-
->>>>>>> upstream/main
 def set_colors(G: nx.Graph, colors: NDArrayInt) -> None:
     for n, color in zip(G.nodes, colors):
         G.nodes[n]["color"] = color
 
-<<<<<<< HEAD
-=======
-
->>>>>>> upstream/main
 def solve_via_simulated_annealing(
     G: nx.Graph, n_max_colors: int, initial_colors: NDArrayInt, n_iters: int
 ) -> NDArrayInt:
     loss_history = np.zeros((n_iters,), dtype=np.int_)
 
-<<<<<<< HEAD
     current_colors = initial_colors.copy()
     
     current_loss = number_of_conflicts(G, current_colors)
@@ -111,15 +95,6 @@ def solve_via_simulated_annealing(
 
     return loss_history
 
-=======
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-
-    return loss_history
-
-
->>>>>>> upstream/main
 if __name__ == "__main__":
     seed = 42
     np.random.seed(seed)
