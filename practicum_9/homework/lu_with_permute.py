@@ -27,24 +27,14 @@ class LuSolverWithPermute(LinearSystemSolver):
         U = self.A.copy()
         P = np.identity(n, dtype = self.dtype)
         
-        
-
         for k in range(n - 1):
             if permute == True:
                 best = k + np.argmax(np.abs(U[k:, k]))
             
                 if best != k:
-                    tempL = L[best, :k].copy()
-                    tempU = U[best].copy()
-                    tempP = P[best].copy()
-                    
-                    L[best, :k] = L[k, :k]
-                    U[best] = U[k]
-                    P[best] = P[k]
-     
-                    L[k, :k] = tempL
-                    U[k] = tempU
-                    P[k] = tempP
+                    L[[k, best], :k] = L[[best, k], :k]
+                    U[[k, best]] = U[[best, k]]
+                    P[[k, best]] = P[[best, k]]
 
             if np.isclose(U[k, k], 0):
                 raise ValueError("Матрица имеет нулевой определитель!")
