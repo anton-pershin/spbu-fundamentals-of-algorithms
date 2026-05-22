@@ -23,19 +23,31 @@ class LuSolver(LinearSystemSolver):
 
     def solve(self, b: NDArrayFloat) -> NDArrayFloat:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        b = b.astype(self.dtype)
+        n = len(b)
+        y = np.zeros(n, dtype=self.dtype)
+        for i in range(n):
+            y[i] = b[i] - np.dot(self.L[i, :i], y[:i])
 
-        pass
+        x = np.zeros(n, dtype=self.dtype)
+        for i in range(n - 1, -1, -1):    
+            x[i] = (y[i] - np.dot(self.U[i, i + 1:], x[i + 1:])) / self.U[i, i]
+
+        return x
 
     def _decompose(self) -> tuple[NDArrayFloat, NDArrayFloat]:
+        n = self.A.shape[0]  
+        A = self.A.copy()
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        for k in range(n - 1):
+            for i in range(k + 1, n):
+                A[i, k] = A[i, k] / A[k, k]
+                A[i, k + 1:] = A[i, k + 1:] - A[i, k] * A[k, k + 1:]
+        
+        L = np.tril(A, -1) + np.eye(n, dtype=self.dtype)
+        U = np.triu(A)
 
-        pass
+        return L, U
 
 
 def get_A_b(a_11: float, b_1: float) -> tuple[NDArrayFloat, NDArrayFloat]:
@@ -45,7 +57,7 @@ def get_A_b(a_11: float, b_1: float) -> tuple[NDArrayFloat, NDArrayFloat]:
 
 
 if __name__ == "__main__":
-    p = 7  # modify from 7 to 16 to check instability
+    p = 9  # modify from 7 to 16 to check instability
     a_11 = 3 + 10 ** (-p)  # add/remove 10**(-p) to check instability
     b_1 = -16 + 10 ** (-p)  # add/remove 10**(-p) to check instability
     A, b = get_A_b(a_11, b_1)
