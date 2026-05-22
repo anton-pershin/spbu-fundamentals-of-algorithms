@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 
 import numpy as np
+
 from numpy.typing import DTypeLike
 
-from practicum_7.lu import LinearSystemSolver
+from practicum_9.lu import LinearSystemSolver
 from src.common import NDArrayFloat
 
 
@@ -12,21 +13,44 @@ class LuSolverWithPermute(LinearSystemSolver):
         super().__init__(A, dtype)
         self.L, self.U, self.P = self._decompose(permute)
 
-    def solve(self, b: NDArrayFloat) -> NDArrayFloat:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
-
     def _decompose(self, permute: bool) -> tuple[NDArrayFloat, NDArrayFloat, NDArrayFloat]:
+        n = self.A.shape[0]
+        U = self.A.astype(self.dtype).copy()
+        L = np.eye(n, dtype=self.dtype)
+        P = np.eye(n, dtype=self.dtype)
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        for i in range(n):
+            if permute:
+                # Выбор главного элемента: ищем индекс максимального в столбце
+                pivot = np.argmax(np.abs(U[i:, i])) + i
+                # Меняем строки в U, L (до i) и P
+                U[[i, pivot]] = U[[pivot, i]]
+                P[[i, pivot]] = P[[pivot, i]]
+                if i > 0:
+                    L[[i, pivot], :i] = L[[pivot, i], :i]
 
-        pass
+            for j in range(i + 1, n):
+                factor = U[j, i] / U[i, i]
+                L[j, i] = factor
+                U[j, i:] -= factor * U[i, i:]
+
+        return L, U, P
+
+    def solve(self, b: NDArrayFloat) -> NDArrayFloat:
+        # Умножаем b на матрицу перестановок P
+        b_permuted = self.P @ b
+
+        # 1. Ly = Pb (прямая подстановка)
+        y = np.zeros_like(b_permuted)
+        for i in range(len(b)):
+            y[i] = b_permuted[i] - self.L[i, :i] @ y[:i]
+
+        # 2. Ux = y (обратная подстановка)
+        x = np.zeros_like(y)
+        for i in range(len(y) - 1, -1, -1):
+            x[i] = (y[i] - self.U[i, i + 1:] @ x[i + 1:]) / self.U[i, i]
+
+        return x
 
 
 def get_A_b(a_11: float, b_1: float) -> tuple[NDArrayFloat, NDArrayFloat]:
@@ -41,7 +65,7 @@ if __name__ == "__main__":
     b_1 = -16 + 10 ** (-p)  # add/remove 10**(-p) to check instability
     A, b = get_A_b(a_11, b_1)
 
-    solver = LuSolver(A, np.float64, permute=True)
+    solver = LuSolverWithPermute(A, np.float64, permute=True)
     x = solver.solve(b)
     assert np.all(np.isclose(x, [1, -7, 4])), f"The anwser {x} is not accurate enough"
 
