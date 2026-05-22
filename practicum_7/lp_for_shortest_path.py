@@ -12,21 +12,13 @@ from src.common import AnyNxGraph, NDArrayInt, NDArrayFloat
 
 class ShortestPathLinearProgram:
     def __init__(self, G: AnyNxGraph) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.nodes: list[Any] = list(G.nodes)
+        self.adj_matrix: NDArrayInt | NDArrayFloat = nx.adjacency_matrix(G).todense()
 
     def solve(self, s_node: Any, t_node: Any) -> set[tuple[Any, Any]]:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
-
+        edge_mask = self.adj_matrix != 0
+        c = self.adj_matrix[edge_mask].reshape(-1)
+        res = linprog(c, A_ub=None, b_ub=None, A_eq=A_eq, b_eq=b_eq, bounds=(0, None))
 
 if __name__ == "__main__":
     G = nx.read_edgelist(Path("practicum_4") / "simple_weighted_graph_9_nodes.edgelist", create_using=nx.Graph)
@@ -38,3 +30,4 @@ if __name__ == "__main__":
     lp = ShortestPathLinearProgram(G)
     shortest_path_edges = lp.solve(s_node=s_node, t_node=t_node)
     plot_graph(G, highlighted_edges=shortest_path_edges)
+
