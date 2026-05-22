@@ -22,20 +22,32 @@ class LuSolver(LinearSystemSolver):
         self.L, self.U = self._decompose()
 
     def solve(self, b: NDArrayFloat) -> NDArrayFloat:
+        b_cast = b.astype(self.dtype)
+        n = self.L.shape[0]
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        y = np.zeros(n, dtype=self.dtype)
+        for i in range(n):
+            y[i] = b_cast[i] - np.dot(self.L[i,:i], y[:i])
 
-        pass
+        x = np.zeros(n, dtype=self.dtype)
+        for i in range(n-1,-1,-1):
+            x[i] = (y[i] - np.dot(self.U[i,i+1:], x[i + 1:])) /  self.U[i,i]
+        return x
 
     def _decompose(self) -> tuple[NDArrayFloat, NDArrayFloat]:
+        n = self.A.shape[0]
+        L = np.identity(n,dtype=self.dtype)
+        U = self.A.copy()
+        
+        for k in range(n-1):
+            if (U[k,k] == 0):
+                raise ValueError("Zero pivot element")
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+            L[k+1:,k] = U[k+1:,k]/U[k,k]
+            U[k+1:,k:] -= np.outer(L[k+1:,k], U[k,k:])
 
-        pass
+        return L,U
+            
 
 
 def get_A_b(a_11: float, b_1: float) -> tuple[NDArrayFloat, NDArrayFloat]:
