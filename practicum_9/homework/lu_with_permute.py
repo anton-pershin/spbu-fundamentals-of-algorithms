@@ -53,32 +53,6 @@ def get_A_b(a_11: float, b_1: float) -> tuple[NDArrayFloat, NDArrayFloat]:
     return A, b
 
 
-def test_with_matrix_market(filename):
-
-    A_sparse = mmread(filename)
-    A = A_sparse.toarray()
-
-    n = A.shape[0]
-
-    x_true = np.ones(n)
-
-    b = A @ x_true
-
-    solver = LuSolverWithPermute(A, np.float64, permute=True)
-    x_computed = solver.solve(b)
-
-    error = np.linalg.norm(x_computed - x_true) / np.linalg.norm(x_true)
-    print(f"Относительная ошибка: {error:.2e}")
-
-    residual = np.linalg.norm(A @ x_computed - b) / np.linalg.norm(b)
-    print(f"Относительная невязка: {residual:.2e}")
-
-    return error, residual
-
-
-error1, residual1 = test_with_matrix_market('mcca.mtx')
-error1, residual1 = test_with_matrix_market('mcfe.mtx')
-
 
 if __name__ == "__main__":
     p = 16  # modify from 7 to 16 to check instability
