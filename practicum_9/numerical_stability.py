@@ -37,6 +37,7 @@ class Evaluator(ABC):
 
 
 class Polynomial(Evaluator):
+
     def __init__(
         self,
         dtype: DTypeLike,
@@ -49,20 +50,21 @@ class Polynomial(Evaluator):
 
     def _eval_standard(self, x):
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        x = self.dtype(x)
+        res = self.dtype(0.0)
+        for i in range(len(self.coeffs)):
+            res += self.coeffs[i] * (x ** i)
 
-        pass
+        return res
 
     def _eval_optimal(self, x):
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        x = self.dtype(x)
+        res = self.coeffs[-1]
+        for i in range(len(self.coeffs) - 2, -1, -1):
+            res = res * x + self.coeffs[i]
 
-        pass
-
+        return res
 
 class SeriesSum(Evaluator):
     def __init__(
@@ -77,19 +79,21 @@ class SeriesSum(Evaluator):
 
     def _eval_standard(self):
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        res = self.dtype(0.0)
 
-        pass
+        for i in range(1, self.max_i + 1):
+            res += self.dtype(1.0) / self.dtype(i)
+
+        return res
 
     def _eval_optimal(self):
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        res = self.dtype(0.0)
 
-        pass
+        for i in range(self.max_i, 0, -1):
+            res += self.dtype(1.0) / self.dtype(i)
+
+        return res
 
 
 def _get_value(f, x=None):
@@ -154,4 +158,3 @@ if __name__ == "__main__":
         evaluator_params=dict(coeffs=original_coeffs),
         x=x
     )
-

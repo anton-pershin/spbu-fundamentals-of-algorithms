@@ -23,19 +23,46 @@ class LuSolver(LinearSystemSolver):
 
     def solve(self, b: NDArrayFloat) -> NDArrayFloat:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        b = b.astype(self.dtype)
+        n = len(b)
+        # Ly = b
+        y = np.zeros(n, dtype=self.dtype)
 
-        pass
+        for i in range(n):
+            s = self.dtype(0.0)
+            for j in range(i):
+                s += self.L[i, j] * y[j]
+
+            y[i] = b[i] - s
+
+        # Ux = y
+        x = np.zeros(n, dtype=self.dtype)
+
+        for i in range(n - 1, -1, -1):
+            s = self.dtype(0.0)
+            for j in range(i + 1, n):
+                s += self.U[i, j] * x[j]
+
+            x[i] = (y[i] - s) / self.U[i, i]
+
+        return x
 
     def _decompose(self) -> tuple[NDArrayFloat, NDArrayFloat]:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        n = self.A.shape[0]
 
-        pass
+        L = np.eye(n, dtype=self.dtype)
+        U = self.A.copy()
+
+        for k in range(n - 1):
+
+            for i in range(k + 1, n):
+                factor = U[i, k] / U[k, k]
+                L[i, k] = factor
+                for j in range(k, n):
+                    U[i, j] -= factor * U[k, j]
+
+        return L, U
 
 
 def get_A_b(a_11: float, b_1: float) -> tuple[NDArrayFloat, NDArrayFloat]:
@@ -54,4 +81,3 @@ if __name__ == "__main__":
     solver = LuSolver(A, np.float64)
     x = solver.solve(b)
     assert np.all(np.isclose(x, [1, -7, 4])), f"The anwser {x} is not accurate enough"
-
