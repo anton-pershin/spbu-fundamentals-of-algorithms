@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Literal, Sequence, Type, Any
 
 import numpy as np
+from fontTools.pens.reverseContourPen import reversedContour
 from numpy.typing import DTypeLike, ArrayLike
 
 
@@ -48,20 +49,24 @@ class Polynomial(Evaluator):
         super().__init__(dtype, evaluation_method)
 
     def _eval_standard(self, x):
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        coeffs = self.coeffs[-1::]
+        p_i = self.dtype(coeffs[0])
+        for i in range(len(coeffs) - 1):
+            p_i  = p_i * coeffs[i] + coeffs[i-1]
+        return p_i
 
     def _eval_optimal(self, x):
+        coeffs = reversed(self.coeffs)
+        p_i = self.dtype(coeffs[0])
+        s = self.dtype(0.0)
+        c = self.dtype(0.0)
+        for i in range(coeffs - 1):
+            p_i = p_i * coeffs[i] + coeffs[i - 1]
+            y = p_i - c
+            t = s + y
+            c =
+        return p_i
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
 
 
 class SeriesSum(Evaluator):
@@ -77,19 +82,22 @@ class SeriesSum(Evaluator):
 
     def _eval_standard(self):
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        res = self.dtype(0.0)
+        for i in range(1, self.max_i + 1):
+            res += self.dtype(1.0) / self.dtype(i)
+        return res
 
     def _eval_optimal(self):
+        s = self.dtype(0.0)
+        c = self.dtype(0.0)
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        for i in range(1, self.max_i + 1):
+            a_i = self.dtype(1.0) / self.dtype(i)
+            y = a_i - c
+            t = s + y
+            c = (t - s) - y
+            s = t
+        return s
 
 
 def _get_value(f, x=None):
