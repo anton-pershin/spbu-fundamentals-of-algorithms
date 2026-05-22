@@ -26,16 +26,13 @@ class LuSolverWithPermute(LinearSystemSolver):
         L = np.identity(n, dtype = self.dtype)
         U = self.A.copy()
         P = np.identity(n, dtype = self.dtype)
+        
+        
 
         for k in range(n - 1):
-            if np.isclose(U[k, k], 0) and permute == True:
-                best = k
-                maxVal = abs(U[k, k])
-                for i in range(k+1, n):
-                    if abs(U[i, k]) > maxVal:
-                        best = i
-                        maxVal = abs(U[i, k])
-
+            if permute == True:
+                best = k + np.argmax(np.abs(U[k:, k]))
+            
                 if best != k:
                     tempL = L[best, :k].copy()
                     tempU = U[best].copy()
@@ -50,7 +47,7 @@ class LuSolverWithPermute(LinearSystemSolver):
                     P[k] = tempP
 
             if np.isclose(U[k, k], 0):
-                raise ValueError("В матрице нулевой столбец!")
+                raise ValueError("Матрица имеет нулевой определитель!")
 
             L[k+1:, k] = U[k+1:, k] / U[k, k]
             U[k+1:, k:] -= np.outer(L[k+1:, k], U[k, k:])
@@ -66,7 +63,7 @@ def get_A_b(a_11: float, b_1: float) -> tuple[NDArrayFloat, NDArrayFloat]:
 
 
 if __name__ == "__main__":
-    p = 30 # modify from 7 to 16 to check instability
+    p = 16 # modify from 7 to 16 to check instability
     a_11 = 3 + 10 ** (-p)  # add/remove 10**(-p) to check instability
     b_1 = -16 + 10 ** (-p)  # add/remove 10**(-p) to check instability
     A, b = get_A_b(a_11, b_1)
