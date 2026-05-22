@@ -30,12 +30,18 @@ class LuSolver(LinearSystemSolver):
         pass
 
     def _decompose(self) -> tuple[NDArrayFloat, NDArrayFloat]:
+        n = self.A.shape[0]
+        U = self.A.copy()
+        L = np.eye(n, dtype=self.dtype)
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        for k in range(n - 1):
+            if U[k, k] == 0:
+                raise ValueError("Zero pivot element")
+            
+            L[k + 1:, k] = U[k + 1:, k] / U[k, k]
+            U[k + 1:, k:] -= np.outer(L[k + 1:, k], U[k, k:])
 
-        pass
+
 
 
 def get_A_b(a_11: float, b_1: float) -> tuple[NDArrayFloat, NDArrayFloat]:
