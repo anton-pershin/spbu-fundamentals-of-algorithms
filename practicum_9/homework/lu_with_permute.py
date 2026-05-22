@@ -30,7 +30,7 @@ class LuSolverWithPermute(LinearSystemSolver):
 
             for j in range(i + 1, n):
                 x[i] -= self.U[i, j] * x[j]
-
+                
             x[i] /= self.U[i, i]
 
         return x
@@ -56,6 +56,8 @@ class LuSolverWithPermute(LinearSystemSolver):
             #     L[i, k] = U[i, k] / U[k, k]
             #     for j in range(k, n):
             #         U[i, j] = U[i, j] - L[i, k] * U[k, j]
+            if np.abs(U[k, k]) < 1e-15:
+                raise ValueError("Zero pivot element")
             L[k+1:, k] = U[k+1:, k] / U[k, k]
             U[k+1:, k:] -= np.outer(L[k+1:, k], U[k, k:])
 
