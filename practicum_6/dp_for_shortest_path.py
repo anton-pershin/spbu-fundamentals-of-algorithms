@@ -13,20 +13,27 @@ class DpAlgorithmForShortestPath:
     Shortest path algorithm for directed acyclic graphs.
     """ 
     def __init__(self, G: nx.DiGraph) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.G: nx.DiGraph = G
+        self.topo_sorting = TopologicalSorting(G)
+        self.dist: dict[Any, int] = {}
+        self.shortest_paths: dict[Any, set[tuple[Any, Any]]] = {}
 
     def run(self, node: Any) -> None:
+        sorted_nodes = self.topo_sorting.sorted(node)
+        self.dist[node] = 0
+        self.shortest_paths[node] = set()
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        for cur_node in sorted_nodes[1:]:
+            predecessor_node = None
+            min_w = np.inf
+            for n_nei in self.G.predecessors(cur_node):
+                w = self.dist[n_nei] + self.G[n_nei, cur_node]["weight"]
+                if w < min_w:
+                    min_w = w
+                    predecessor_node = n_nei
+                
+            self.dist[cur_node] = min_w
+            self.shortest_paths[cur_node] = self.shortest_paths[predecessor_node] | {(predecessor_node, cur_node)}
 
 
 class DpAlgorithmForShortestReliablePath:

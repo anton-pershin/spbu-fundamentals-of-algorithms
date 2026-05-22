@@ -14,19 +14,19 @@ class FloydWarshallAlgorithm:
     """ 
     def __init__(self, G: nx.DiGraph) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        self.G: nx.DiGraph = G
+        self.dist: dict[(Any, Any), int] = {}
+        self.shortest_paths: dict[Any, set[tuple[Any, Any]]] = {}
 
-        pass
 
     def run(self, node: Any) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        for i in self.G:
+            for j in self.G:
+                for k in self.G:
+                    if dist[(i, j)] 
+                    dist[k] = min(dist[i, j] + dist[j, k], dist[k])
+        
 
 
 if __name__ == "__main__":
