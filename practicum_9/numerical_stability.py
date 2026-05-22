@@ -48,20 +48,18 @@ class Polynomial(Evaluator):
         super().__init__(dtype, evaluation_method)
 
     def _eval_standard(self, x):
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        res = self.dtype(0.0)
+        x = self.dtype(x)
+        for i in range(len(self.coeffs)):
+            res += self.coeffs[i] * np.power(x, i, dtype=self.dtype)
+        return res
 
     def _eval_optimal(self, x):
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        res = self.coeffs[-1]
+        x = self.dtype(x)
+        for i in range(len(self.coeffs) - 2, -1, -1):
+            res = self.coeffs[i] + x * res
+        return res
 
 
 class SeriesSum(Evaluator):
@@ -76,20 +74,22 @@ class SeriesSum(Evaluator):
         super().__init__(dtype, evaluation_method)
 
     def _eval_standard(self):
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        res = self.dtype(0.0)
+        for i in range(1, self.max_i + 1):
+            res += self.dtype(1.0) / self.dtype(i)
+        return res
 
     def _eval_optimal(self):
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        res = self.dtype(0.0)
+        c = 0
+        s = 0
+        for i in range(1, self.max_i + 1):
+            #res += self.dtype(1.0) / self.dtype(i)
+            y = self.dtype(1.0) / self.dtype(i) - c
+            t = res + y
+            c = (t - res) - y
+            res = t
+        return res
 
 
 def _get_value(f, x=None):
