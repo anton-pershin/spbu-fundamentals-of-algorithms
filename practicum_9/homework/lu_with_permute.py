@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 from numpy.typing import DTypeLike
 
-from practicum_7.lu import LinearSystemSolver
+from practicum_9.lu import LinearSystemSolver
 from src.common import NDArrayFloat
 
 
@@ -13,20 +13,45 @@ class LuSolverWithPermute(LinearSystemSolver):
         self.L, self.U, self.P = self._decompose(permute)
 
     def solve(self, b: NDArrayFloat) -> NDArrayFloat:
+        b_cast = b.astype(self.dtype)
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        b_permuted = self.P @ b_cast
 
-        pass
+        n = self.L.shape[0]
+
+        y = np.zeros(n, dtype=self.dtype)
+        for i in range(n):
+            y[i] = b_permuted[i] - np.dot(self.L[i,:i],y[:i])
+
+        x = np.zeros(n,dtype=self.dtype)
+        for i in range(n-1,-1,-1):
+            x[i] = (y[i] - np.dot(self.U[i,i+1:],x[i+1:])) / self.U[i,i]
+        return x
 
     def _decompose(self, permute: bool) -> tuple[NDArrayFloat, NDArrayFloat, NDArrayFloat]:
+        n = self.A.shape[0]
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        LU = self.A.copy()
 
-        pass
+        P = np.eye(n, dtype=self.dtype)
+
+        for k in range(n-1):
+            if permute:
+                pivotRow = k + np.argmax(np.abs(LU[k:,k]))
+                if pivotRow != k:
+                    LU[[k,pivotRow],:] = LU[[pivotRow,k],:]
+
+                    P[[k,pivotRow], :] = P[[pivotRow,k],:]
+            if LU[k,k] == 0:
+                raise ValueError("zero element")
+            LU[k+1:, k] /= LU[k,k]
+            LU[k+1:,k+1:] -= np.outer(LU[k+1:,k],LU[k,k+1:])
+        
+        L = np.tril(LU,k=-1) + np.eye(n,dtype=self.dtype)
+        
+        U = np.triu(LU)
+
+        return L,U,P
 
 
 def get_A_b(a_11: float, b_1: float) -> tuple[NDArrayFloat, NDArrayFloat]:
@@ -41,7 +66,7 @@ if __name__ == "__main__":
     b_1 = -16 + 10 ** (-p)  # add/remove 10**(-p) to check instability
     A, b = get_A_b(a_11, b_1)
 
-    solver = LuSolver(A, np.float64, permute=True)
+    solver = LuSolverWithPermute(A, np.float64, permute=True)
     x = solver.solve(b)
     assert np.all(np.isclose(x, [1, -7, 4])), f"The anwser {x} is not accurate enough"
 
