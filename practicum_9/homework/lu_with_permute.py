@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 from numpy.typing import DTypeLike
 
-from practicum_7.lu import LinearSystemSolver
+from practicum_9.lu import LinearSystemSolver
 from src.common import NDArrayFloat
 
 
@@ -14,19 +14,31 @@ class LuSolverWithPermute(LinearSystemSolver):
 
     def solve(self, b: NDArrayFloat) -> NDArrayFloat:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        y = np.linalg.solve(self.L, self.P @ b)
+        x = np.linalg.solve(self.U, y)
+        return x
 
     def _decompose(self, permute: bool) -> tuple[NDArrayFloat, NDArrayFloat, NDArrayFloat]:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        n = len(self.A)
+        U = self.A.copy().astype(float)
+        L = np.eye(n)
+        P = np.eye(n)
 
-        pass
+        for k in range(n - 1):
+            if permute:
+                max_idx = np.argmax(np.abs(U[k:, k])) + k
+                if max_idx != k:
+                    U[[k, max_idx]] = U[[max_idx, k]]
+                    L[[k, max_idx], :k] = L[[max_idx, k], :k]
+                    P[[k, max_idx]] = P[[max_idx, k]]
+
+            for i in range(k + 1, n):
+                factor = U[i, k] / U[k, k]
+                L[i,k] = factor
+                U[i, k:] -= factor * U[k, k:]
+
+        return L, U, P
 
 
 def get_A_b(a_11: float, b_1: float) -> tuple[NDArrayFloat, NDArrayFloat]:
@@ -41,7 +53,7 @@ if __name__ == "__main__":
     b_1 = -16 + 10 ** (-p)  # add/remove 10**(-p) to check instability
     A, b = get_A_b(a_11, b_1)
 
-    solver = LuSolver(A, np.float64, permute=True)
+    solver = LuSolverWithPermute(A, np.float64, permute=True)
     x = solver.solve(b)
     assert np.all(np.isclose(x, [1, -7, 4])), f"The anwser {x} is not accurate enough"
 
