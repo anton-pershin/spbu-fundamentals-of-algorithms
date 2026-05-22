@@ -12,20 +12,13 @@ from src.common import AnyNxGraph, NDArrayInt, NDArrayFloat
 
 class ShortestPathLinearProgram:
     def __init__(self, G: AnyNxGraph) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.nodes: list(Any) = list[G.nodes]
+        self.adj_matrix: NDArrayInt | NDArrayFloat = nx.adjacency_matrix(G).todense()
 
     def solve(self, s_node: Any, t_node: Any) -> set[tuple[Any, Any]]:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        edge_mask = self.adj_matrix != 0
+        c = self.adj_matrix[edge_mask]
+        A_eq = np.zeros(shape = (len(self.nodes) - 1, self.adj_matrix[edge_mask].shape[0]))
 
 
 if __name__ == "__main__":
