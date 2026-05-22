@@ -44,24 +44,22 @@ class Polynomial(Evaluator):
         **kwargs,
     ):
         assert "coeffs" in kwargs, "coeffs must be specified"
-        self.coeffs = np.array(kwargs["coeffs"], dtype=dtype)
+        self.coeffs = np.array(kwargs["coeffs"], dtype=dtype) #массив a_i
         super().__init__(dtype, evaluation_method)
 
     def _eval_standard(self, x):
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        res = self.dtype(0.0)
+        x = self.dtype(x)
+        for i in range(len(self.coeffs)):
+            res += self.coeffs[i] * np.power(x, i, dtype=self.dtype)
+        return res
 
     def _eval_optimal(self, x):
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        res = self.dtype(0.0)
+        x = self.dtype(x)
+        for coeff in np.flip(self.coeffs):
+            res = x * res + coeff
+        return res
 
 
 class SeriesSum(Evaluator):
@@ -76,20 +74,23 @@ class SeriesSum(Evaluator):
         super().__init__(dtype, evaluation_method)
 
     def _eval_standard(self):
+            res = self.dtype(0.0)
+            for i in range(1, self.max_i + 1):
+                res += self.dtype(1.0) / self.dtype(i)
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+            return res
 
     def _eval_optimal(self):
+            res = self.dtype(0.0)
+            c = self.dtype(0.0)
+            for i in range(1, self.max_i + 1):
+                a_i = self.dtype(1.0) / self.dtype(i)
+                y = a_i - c
+                t = res + y
+                c = (t - res) - y
+                res = t
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+            return res
 
 
 def _get_value(f, x=None):
