@@ -6,7 +6,7 @@ import numpy as np
 
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
-
+from operator import itemgetter
 
 class DpAlgorithmForShortestPath:
     """
@@ -14,20 +14,29 @@ class DpAlgorithmForShortestPath:
     """ 
     def __init__(self, G: nx.DiGraph) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        self.G: nx.DiGraph = G
+        self.topo_sorting: TopologicalSorting = TopologicalSorting(G)
+        self.dist: dict[Any, int] = {}
+        self.shortest_paths: dict[Any, set[tuple[Any, Any]]] = 0
 
-        pass
-
+        
     def run(self, node: Any) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        sorted_nodes = self.topo_sorting(node)
+        self.dist[node] = 0
+        self.shortest_paths[node] = set()
 
-        pass
+        for cur_node in sorted_nodes[1:]:
 
+            predecessors = self.G.predecessors(cur_node)
+            paths = [self.dist[n_neigh] + self.G.edges[n_neigh, cur_node]["weight"] for n_neigh in predecessors]
+            n_neigh, min_path = min(zip(predecessors, paths), key = itemgetter(0))
+            self.dist[cur_node] = min_path
+            self.shortest_paths[cur_node] = self.shortest_paths[n_neigh] | {(n_neigh, cur_node)} # | instead of .union(... , ...)
+            
+            
+            for predecessor in predecessors:
+                
 
 class DpAlgorithmForShortestReliablePath:
     """
@@ -36,20 +45,13 @@ class DpAlgorithmForShortestReliablePath:
     """ 
     def __init__(self, G: nx.DiGraph, k: int) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.G: nx.DiGraph = G
+        self.dist: dict[(Any, Any), set[tuple[Any, Any]]] = {}
+        self.shortest_paths: dict[(Any, Any), set[tuple[Any, Any]]] = {}
 
     def run(self, node: Any) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
-
+        
 
 if __name__ == "__main__":
     G = nx.read_edgelist(
