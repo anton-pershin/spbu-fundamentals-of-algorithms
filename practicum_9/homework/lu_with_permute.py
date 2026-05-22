@@ -41,8 +41,8 @@ class LuSolverWithPermute(LinearSystemSolver):
                 for k in range(i+1, n):
                     factor = A[k, i] / A[i, i]
                     L[k, i] = factor
-                    for j in range(i, n):
-                        A[k, j] -= factor * A[i, j]
+                    A[k, i:] -= factor * A[i, i:]
+
         else:
             for i in range(n-1):
                 if np.abs(A[i, i]) == 0:
@@ -50,12 +50,9 @@ class LuSolverWithPermute(LinearSystemSolver):
                 for k in range(i+1, n):
                     factor = A[k, i] / A[i, i]
                     L[k, i] = factor
-                    for j in range(i, n):
-                        A[k, j] -= factor * A[i, j]
+                    A[k, i:] -= factor * A[i, i:]
         
-        for i in range(n):
-            for j in range(i, n):
-                U[i, j] = A[i, j]
+        U = np.triu(A).astype(self.dtype)
         
         return L, U, P
 
