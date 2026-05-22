@@ -3,13 +3,22 @@ from numpy.typing import ArrayLike
 
 
 def cholesky(A: ArrayLike) -> ArrayLike:
+    n = A.shape[0]
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    L = np.zeros((n,n), dtype=float)
 
-    pass
-
+    for i in range(n):
+        for j in range(i+1):
+            if (i == j):
+                sumDiag = np.sum(L[i,:i]**2)
+                val = A[i,i] - sumDiag
+                if val <= 0:
+                    raise ValueError("Must Be positive-definite")
+                L[i,i] = np.sqrt(val)
+            else:
+                sumOffDiag = np.sum(L[i,:j] * L[j,:j])
+                L[i,j] = (A[i,j] - sumOffDiag) / L[j,j]
+    return L
 
 if __name__ == "__main__":
     L = np.array(
