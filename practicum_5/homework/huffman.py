@@ -11,56 +11,124 @@ from src.common import AnyNxGraph, NDArrayFloat
 
 
 class HuffmanCoding:
+
+    class Node:
+
+        def __init__(self, frequency, number = None, left = None, right = None):
+            self.frequency = frequency
+            self.number = number
+            self.left = left
+            self.right = right
+
+        def __lt__(self, other):
+            return self.frequency < other.frequency
+
     def __init__(self) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        self.codes = {}
+        self.decoding_codes = {}
+        self.tree_root = None
 
-        pass
+    def build_tree(self, number_list):
 
+        frequency = {}
+        for num in number_list:
+            frequency[num] = frequency.get(num, 0) + 1
+
+        heap = []
+        for n, f in frequency.items():
+            heap.append(self.Node(f, number = n))
+        heapq.heapify(heap)
+
+        while len(heap) > 1:
+            n1 = heapq.heappop(heap)
+            n2 = heapq.heappop(heap)
+            merge_2nodes = self.Node(n1.frequency + n2.frequency, left = n1, right = n2)
+            heapq.heappush(heap, merge_2nodes)
+        self.tree_root = heap[0]
+
+    def code_num(self, node, pathtoNode = ""):
+
+        if node is None:
+            return
+
+        if node.number is not None:
+            self.codes[node.number] = pathtoNode
+            self.decoding_codes[pathtoNode] = node.number
+            return
+
+        self.code_num(node.left, pathtoNode + "0")
+        self.code_num(node.right, pathtoNode + "1")
+            
     def encode(self, sequence: list[Any]) -> str:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.codes = {}
+        self.decoding_codes = {}
         
+        self.build_tree(sequence)
+        self.code_num(self.tree_root)
 
+        encoded_tree = ""
+        for num in sequence:
+            encoded_tree += self.codes[num]
+
+        return encoded_tree
+        
     def decode(self, encoded_sequence: str) -> list[Any]:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        decoded_tree = []
+        current_node = self.tree_root
 
-        pass
+        for bit  in encoded_sequence:
+            if bit == "0":
+                current_node = current_node.left
+            else:
+                current_node = current_node.right
 
+            if current_node.number is not None:
+                decoded_tree.append(current_node.number)
+                current_node = self.tree_root
+
+        return decoded_tree
 
 class LossyCompression:
+
     def __init__(self) -> None:
+        
+        self.compression_levels = 32
+        self.min_val = None
+        self.max_val = None
+        self.huffman = HuffmanCoding()
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+    def quantize(self, data):
 
-        pass
+        self.min_val = np.min(data)
+        self.max_val = np.max(data)
 
+        K = self.compression_levels
+        z = np.linspace(self.min_val, self.max_val, K + 1)
+        centers = (z[:-1] + z[1:]) / 2
+
+        interval = np.digitize(data, z) - 1
+        interval = np.clip(interval, 0, K - 1)
+
+        quantized = centers[interval]
+
+        return quantized
+        
     def compress(self, time_series: NDArrayFloat) -> str:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        time_series = np.asarray(time_series)
+        quantized = self.quantize(time_series)
+        bits = self.huffman.encode(quantized.tolist())
 
-        pass
+        return bits
 
     def decompress(self, bits: str) -> NDArrayFloat:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        decoded = self.huffman.decode(bits)
 
-        pass
+        return np.array(decoded)
 
 
 if __name__ == "__main__":

@@ -13,13 +13,27 @@ from src.common import AnyNxGraph
 class DfsViaLifoQueueWithPostvisit(GraphTraversal):
     def run(self, node: Any) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        visited = set()
+        visited.add(node)
+        
+        lifo_queue = deque()
+        lifo_queue.append((node, "previsit"))
 
-        pass
+        while lifo_queue:
+            current, state = lifo_queue.pop()
 
+            if state == "postvisit":
+                self.postvisit(current)
+                continue
 
+            self.previsit(current)
+            lifo_queue.append((current, "postvisit"))
+            
+            for child_node in self.G.neighbors(current):
+                if child_node not in visited:
+                    visited.add(child_node)
+                    lifo_queue.append((child_node, "previsit"))
+                
 class DfsViaLifoQueueWithPrinting(DfsViaLifoQueueWithPostvisit):
     def previsit(self, node: Any, **params) -> None:
         print(f"Previsit node {node}")
