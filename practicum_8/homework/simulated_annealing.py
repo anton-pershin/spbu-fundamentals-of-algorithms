@@ -22,16 +22,47 @@ def set_colors(G: nx.Graph, colors: NDArrayInt) -> None:
     for n, color in zip(G.nodes, colors):
         G.nodes[n]["color"] = color
 
+def tweak(colors: NDArrayInt, n_max_colors: int) -> NDArrayInt:
+    new_colors = colors.copy()
+    idx = np.random.randint(0, len(new_colors))
+    current_color = new_colors[idx]
+    
+    shift = np.random.randint(1, n_max_colors)
+    new_colors[idx] = (current_color + shift) % n_max_colors
+    return new_colors
 
 def solve_via_simulated_annealing(
     G: nx.Graph, n_max_colors: int, initial_colors: NDArrayInt, n_iters: int
 ) -> NDArrayInt:
     loss_history = np.zeros((n_iters,), dtype=np.int_)
+    temp_history = np.zeros((n_iters,), dtype=np.float64)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    current_colors = initial_colors.copy()
+    current_loss = number_of_conflicts(G, current_colors)
+    
+    temp_history[0] = 10
+    cooling = 0.95
 
+    for i in range(n_iters):
+        proposed_colors = tweak(current_colors, n_max_colors)
+        proposed_loss = sum(1 for u, v in G.edges() if proposed_colors[u] == proposed_colors[v])
+        
+        if i > 0:
+            temp_history[i] = temp_history[i-1] * cooling
+        
+        delta = proposed_loss - current_loss
+        if delta < 0 or np.random.random() < np.exp(-delta / max(temp_history[i], 1e-9)):
+            current_colors = proposed_colors
+            current_loss = number_of_conflicts(G, current_colors)
+        
+            
+        loss_history[i] = current_loss
+        
+
+        if current_loss == 0:
+            loss_history[i+1:] = 0
+            break
+            
     return loss_history
 
 
@@ -43,7 +74,7 @@ if __name__ == "__main__":
 
     n_max_iters = 500
     n_max_colors = 3
-    initial_colors = np.random.randint(low=0, high=n_max_colors - 1, size=len(G.nodes))
+    initial_colors = np.random.randint(low=0, high=n_max_colors, size=len(G.nodes))
 
     loss_history = solve_via_simulated_annealing(
         G, n_max_colors, initial_colors, n_max_iters
