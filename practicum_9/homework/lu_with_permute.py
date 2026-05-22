@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 from numpy.typing import DTypeLike
 
-from practicum_7.lu import LinearSystemSolver
+from practicum_9.lu import LinearSystemSolver
 from src.common import NDArrayFloat
 
 
@@ -13,20 +13,39 @@ class LuSolverWithPermute(LinearSystemSolver):
         self.L, self.U, self.P = self._decompose(permute)
 
     def solve(self, b: NDArrayFloat) -> NDArrayFloat:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        n = b.shape[0]
+        b_perm = self.P @ b
+        y = np.empty(n, dtype=self.dtype)
+        for i in range(n):
+            y[i] = b_perm[i] - np.dot(self.L[i, :i], y[:i])
+        x = np.empty(n, dtype=self.dtype)
+        for i in range(n - 1, -1, -1):
+            x[i] = (y[i] - np.dot(self.U[i, i + 1:], x[i + 1:])) / self.U[i, i]
+        return x
 
     def _decompose(self, permute: bool) -> tuple[NDArrayFloat, NDArrayFloat, NDArrayFloat]:
+        n = self.A.shape[0]
+        U = self.A.copy().astype(self.dtype)
+        L = np.eye(n, dtype=self.dtype)
+        P = np.eye(n, dtype=self.dtype)
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        for k in range(n - 1):
+            if permute:
+                max_idx = np.argmax(np.abs(U[k:, k])) + k
+                if max_idx != k:
+                    U[[k, max_idx]] = U[[max_idx, k]]
+                    P[[k, max_idx]] = P[[max_idx, k]]
+                    if k > 0:
+                        L[[k, max_idx], :k] = L[[max_idx, k], :k]
 
-        pass
+            if np.abs(U[k, k]) < np.finfo(self.dtype).eps * 10:
+                raise ValueError("Матрица вырождена или близка к вырожденной.")
+        
+            L[k+1:, k] = U[k + 1:, k] / U[k, k]
+            U[k+1:, k:] -= L[k+1:, k, None] * U[k, k:]
+
+        return L, U, P
+        
 
 
 def get_A_b(a_11: float, b_1: float) -> tuple[NDArrayFloat, NDArrayFloat]:
@@ -41,7 +60,7 @@ if __name__ == "__main__":
     b_1 = -16 + 10 ** (-p)  # add/remove 10**(-p) to check instability
     A, b = get_A_b(a_11, b_1)
 
-    solver = LuSolver(A, np.float64, permute=True)
+    solver = LuSolverWithPermute(A, np.float64, permute=True)
     x = solver.solve(b)
     assert np.all(np.isclose(x, [1, -7, 4])), f"The anwser {x} is not accurate enough"
 
