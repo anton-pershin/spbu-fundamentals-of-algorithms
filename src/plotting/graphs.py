@@ -56,7 +56,9 @@ def plot_graph(
     if node_weights is not None:
         sm = plt.cm.ScalarMappable(cmap=truncated_cmap, norm=norm)
         sm.set_array([])
-        plt.colorbar(sm)
+    
+        cbar = ax.figure.colorbar(sm, ax=ax)
+        cbar.set_label("Node weight")
 
     if name is not None:
         ax.set_title(name)
