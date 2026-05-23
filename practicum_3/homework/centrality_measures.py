@@ -15,29 +15,64 @@ class CentralityMeasure(Protocol):
 
 def closeness_centrality(G: AnyNxGraph) -> dict[Any, float]:
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
+    centrality = {}
 
-    pass
+    for node in G.nodes():
+        distances = nx.shortest_path_length(G, source=node)
+
+        total_distance = sum(dist for target, dist in distances.items()
+                                  if target != node)
+        
+        if total_distance > 0:
+            centrality[node] = 1 / total_distance
+        else:
+            centrality[node] = 0
+
+    return centrality
 
 
 def betweenness_centrality(G: AnyNxGraph) -> dict[Any, float]: 
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
-
-    pass
+    betweenness = {node: 0.0 for node in G.nodes()}
+    nodes = list(G.nodes())
+    
+    for s in nodes:
+        for t in nodes:
+            if s >= t:
+                continue
+                
+            try:
+                all_paths = list(nx.all_shortest_paths(G, source=s, target=t))
+                total_paths = len(all_paths)
+                
+                for path in all_paths:
+                    for v in path[1:-1]:
+                        betweenness[v] += 1 / total_paths
+            except nx.NetworkXNoPath:
+                continue
+    
+    n = len(nodes)
+    if n > 2:
+        for node in betweenness:
+            betweenness[node] = betweenness[node] / ((n-1)*(n-2))
+    
+    return betweenness
 
 
 def eigenvector_centrality(G: AnyNxGraph) -> dict[Any, float]: 
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
-
-    pass
+    A = nx.adjacency_matrix(G).astype(float)
+    
+    eigenvalues, eigenvectors = np.linalg.eig(A.toarray())
+    
+    max_index = np.argmax(eigenvalues)
+    eigenvector = np.abs(eigenvectors[:, max_index])
+    
+    eigenvector = eigenvector / np.max(eigenvector)
+    
+    centrality = {node: eigenvector[i] for i, node in enumerate(G.nodes())}
+    
+    return centrality
 
 
 def plot_centrality_measure(G: AnyNxGraph, measure: CentralityMeasure) -> None:
