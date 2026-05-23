@@ -28,10 +28,52 @@ def solve_via_simulated_annealing(
 ) -> NDArrayInt:
     loss_history = np.zeros((n_iters,), dtype=np.int_)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    current_colors = initial_colors.copy()
+    current_loss = number_of_conflicts(G, current_colors)
 
+    best_colors = current_colors.copy()
+    best_loss = current_loss
+
+    start_temperature = 10.0
+    end_temperature = 0.01
+
+    nodes_count = len(current_colors)
+
+    for i in range(n_iters):
+        temperature = start_temperature * (end_temperature / start_temperature) ** (i / n_iters)
+
+        new_colors = current_colors.copy()
+
+        random_node = np.random.randint(0, nodes_count)
+        old_color = new_colors[random_node]
+
+        new_color = np.random.randint(0, n_max_colors)
+        while new_color == old_color:
+            new_color = np.random.randint(0, n_max_colors)
+
+        new_colors[random_node] = new_color
+
+        new_loss = number_of_conflicts(G, new_colors)
+
+        delta = new_loss - current_loss
+
+        if delta <= 0:
+            current_colors = new_colors
+            current_loss = new_loss
+        else:
+            probability = np.exp(-delta / temperature)
+            if np.random.random() < probability:
+                current_colors = new_colors
+                current_loss = new_loss
+
+        if current_loss < best_loss:
+            best_colors = current_colors.copy()
+            best_loss = current_loss
+
+        loss_history[i] = best_loss
+
+    set_colors(G, best_colors)
+   
     return loss_history
 
 
