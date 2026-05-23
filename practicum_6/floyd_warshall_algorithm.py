@@ -14,19 +14,34 @@ class FloydWarshallAlgorithm:
     """ 
     def __init__(self, G: nx.DiGraph) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.G: nx.DiGraph = G
+        self.dist: dict[(Any, Any), int] = {}
+        self.shortest_paths: dict[(Any, Any), set[tuple[Any, Any]]] = {}
 
     def run(self, node: Any) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        for u in self.G.nodes():
+            for v in self.G.nodes():
+                if u == v:
+                    self.dist[(u, v)] = 0
+                    self.shortest_paths[(u, v)] = set()
+                elif self.G.has_edge(u, v):
+                    self.dist[(u, v)] = self.G.edges[u, v]['weight']
+                    self.shortest_paths[(u, v)] = set([(u, v)])
+                else:
+                    self.dist[(u, v)] = float('inf')
+                    self.shortest_paths[(u, v)] = set()
 
-        pass
+        for k in self.G.nodes():
+            for i in self.G.nodes():
+                for j in self.G.nodes():
+                    if self.dist[(i, k)] + self.dist[(k, j)] < self.dist[(i, j)]:
+                        self.dist[(i, j)] = self.dist[(i, k)] + self.dist[(k, j)]
+                        self.shortest_paths[(i, j)] = self.shortest_paths[(i, k)] | self.shortest_paths[(k, j)]
+                    elif self.dist[(i, k)] + self.dist[(k, j)] == self.dist[(i, j)]:
+                        self.shortest_paths[(i, j)].update(self.shortest_paths[(i, k)])
+                        self.shortest_paths[(i, j)].update(self.shortest_paths[(k, j)])
+
 
 
 if __name__ == "__main__":
