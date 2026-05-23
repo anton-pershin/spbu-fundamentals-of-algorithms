@@ -134,28 +134,16 @@ class LossyCompression:
         
         encoded_data = self.huffman.encode(quantized.tolist())
         
-        metadata = f"{self.data_min}|{self.data_max}|{self.num_levels}|"
-        
-        return metadata + encoded_data
+        return encoded_data
 
     def decompress(self, bits: str) -> NDArrayFloat:
-        if not bits or "|" not in bits:
+        if not bits:
+            return np.array([])
+
+        if self.data_min is None or self.data_max is None:
             return np.array([])
         
-        parts = bits.split("|", 3)
-        if len(parts) < 4:
-            return np.array([])
-        
-        self.data_min = float(parts[0])
-        self.data_max = float(parts[1])
-        self.num_levels = int(parts[2])
-        encoded_data = parts[3]
-        
-        self.interval_size = (self.data_max - self.data_min) / self.num_levels
-        if self.interval_size == 0:
-            self.interval_size = 1.0
-        
-        quantized_indices = self.huffman.decode(encoded_data)
+        quantized_indices = self.huffman.decode(bits)
         
         decompressed = self._dequantize(np.array(quantized_indices))
         
@@ -185,11 +173,19 @@ class LossyCompression:
 
 
 if __name__ == "__main__":
-    ts = np.loadtxt("ts_homework_practicum_5.txt") #
+    ts = np.loadtxt("ts_homework_practicum_5.txt")
 
     compressor = LossyCompression()
-    bits = compressor.compress(ts)
+    bits = compressor.compress(ts)                  
     decompressed_ts = compressor.decompress(bits)
+
+    # huffman = HuffmanCoding()
+    # encoded = huffman.encode("AAAAABBBCCDAA")
+    # print(f"Huffman codes: {huffman.codes}")
+    # decoded = huffman.decode(encoded)
+    # print(f"Decoded: {decoded}")
+    # G = huffman._build_huffman_tree({'A': 5, 'B': 3, 'C': 2, 'D': 1})
+    # huffman._generate_codes(huffman.tree, "")
 
     compression_ratio = (len(ts) * 32 * 8) / len(bits) 
     print(f"Compression ratio: {compression_ratio:.2f}")
@@ -197,3 +193,4 @@ if __name__ == "__main__":
     compression_loss = np.sqrt(np.mean((ts - decompressed_ts)**2))
     print(f"Compression loss (RMSE): {compression_loss}")
 
+    # print(compressor, bits, decompressed_ts)
