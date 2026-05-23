@@ -185,7 +185,7 @@ class LossyCompression:
 
 
 if __name__ == "__main__":
-    ts = np.loadtxt("ts_homework_practicum_5.txt")
+    ts = np.loadtxt("ts_homework_practicum_5.txt") #
 
     compressor = LossyCompression()
     bits = compressor.compress(ts)
