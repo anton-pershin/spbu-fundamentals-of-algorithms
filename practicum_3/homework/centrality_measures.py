@@ -14,30 +14,67 @@ class CentralityMeasure(Protocol):
 
 
 def closeness_centrality(G: AnyNxGraph) -> dict[Any, float]:
+    res = {}
+    n = len(G)
+    for v in G:
+        if G.is_directed():
+            path = nx.shortest_path_length(G, target=v)
+        else:
+            path = nx.shortest_path_length(G, v)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
+        dist = sum(path.values())
+        if dist > 0:
+            res[v] = (n - 1) * (1 / dist)
+        else:
+            res[v] = 0
 
-    pass
+    return res
 
 
 def betweenness_centrality(G: AnyNxGraph) -> dict[Any, float]: 
+    res = {}
+    for v in G:
+        res[v] = 0.0
+    num = len(G)
+    
+    for s in G:
+        for t in G:
+            if s != t:
+                all_paths = list(nx.all_shortest_paths(G, s, t))
+                n = len(all_paths)
+                for path in all_paths:
+                    for v in path[1: -1]:
+                        res[v] += 1 / n
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
-
-    pass
+    norm = (num - 1) * (num - 2)
+    for x in res:
+        res[x] /= norm
+    return res
 
 
 def eigenvector_centrality(G: AnyNxGraph) -> dict[Any, float]: 
+    c = {}
+    for v in G:
+        c[v] = 1.0
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
+    A = nx.to_numpy_array(G)
+    eigenvalues = np.linalg.eigvals(A)
+    l = max(abs(eigenvalues))
 
-    pass
+    for i in range(100):
+        c1 = {}
+        for v in G:
+            if G.is_directed():
+                s = sum(c[u] for u in G.predecessors(v))
+            else:
+                s = sum(c[u] for u in G.neighbors(v))
+
+            c1[v] = (1 / l) * s
+        norm = sum(x**2 for x in c1.values())**0.5
+        for v in c1:
+            c1[v] = c1[v] / norm
+        c = c1
+    return c
 
 
 def plot_centrality_measure(G: AnyNxGraph, measure: CentralityMeasure) -> None:
@@ -54,4 +91,3 @@ if __name__ == "__main__":
     plot_centrality_measure(G, closeness_centrality)
     plot_centrality_measure(G, betweenness_centrality)
     plot_centrality_measure(G, eigenvector_centrality)
-
