@@ -11,6 +11,9 @@
 # VSCode
 .vscode/
 
+#PyCharm
+.idea/
+
 # Latex
 *.aux
 *.fdb_latexmk
