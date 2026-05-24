@@ -23,7 +23,7 @@ class DfsViaLifoQueueWithPostvisit(GraphTraversal):
             self.previsit(current)
             self.visited.add(current)
             
-            for neighbor in G.neighbors(current):
+            for neighbor in self.G.neighbors(current):
                 if neighbor not in self.visited:
                     # If there is a cycle, it won't let us fall in it
                     if neighbor not in inDepth:

@@ -77,9 +77,9 @@ class DijkstraAlgorithm(GraphTraversal):
             self.visited.add(cur)
             self.previsit(cur, path = paths[cur])
             
-            for neighbor in G.neighbors(cur):
+            for neighbor in self.G.neighbors(cur):
                 # Calculate overall distance from beginning to this exact neighbor
-                neighborDist = curDist + G.edges[cur, neighbor]["weight"] 
+                neighborDist = curDist + self.G.edges[cur, neighbor]["weight"] 
                 if neighbor in pq:
                     if neighborDist < pq.get(neighbor)[1]:
 
