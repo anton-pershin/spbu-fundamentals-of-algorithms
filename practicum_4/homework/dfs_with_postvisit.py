@@ -21,7 +21,7 @@ class DfsViaLifoQueueWithPostvisit(GraphTraversal):
                 self.visited.add(cur)
                 self.previsit(cur)
 
-            for nbr in G.neighbors(cur): # neighbour
+            for nbr in self.G.neighbors(cur): # neighbour
                 if nbr not in self.visited:
                     q.append(nbr)
                     break

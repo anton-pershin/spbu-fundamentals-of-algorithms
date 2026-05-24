@@ -25,7 +25,7 @@ class DijkstraAlgorithm(GraphTraversal):
         pass
 
     def run(self, node: Any) -> None:
-        dist = {node: float("inf") for node in G.nodes()}
+        dist = {node: float("inf") for node in self.G.nodes()}
         dist[node] = 0
         pq = [(0, node)] # priority queue
         ps = {node: [node]} # paths
@@ -44,9 +44,9 @@ class DijkstraAlgorithm(GraphTraversal):
             self.visited.add(cur)
             self.previsit(cur, path=ps[cur])
 
-            for nbr in G.neighbors(cur): # neighbour
+            for nbr in self.G.neighbors(cur): # neighbour
                 if nbr not in self.visited:
-                    w = G[cur][nbr].get("weight", 1) # weight
+                    w = self.G[cur][nbr].get("weight", 1) # weight
                     up = cdist + w # update
 
                     if up < dist[nbr]:
