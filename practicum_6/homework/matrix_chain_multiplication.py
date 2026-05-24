@@ -73,7 +73,7 @@ class MatrixChainMultiplication:
         
         matmul_tree = nx.DiGraph()
         matmul_tree.add_edges_from(self.matrices[prod].tree)
-        root = matmul_tree.nodes[prod]
+        root = prod
         return matmul_tree, root
         
 
