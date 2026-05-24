@@ -2,8 +2,8 @@ from pathlib import Path
 from typing import Any
 from abc import ABC, abstractmethod
 
-import numpy as np
-import networkx as nx
+import numpy as np #type: ignore
+import networkx as nx #type: ignore
 
 from practicum_4.dfs import GraphTraversal 
 from src.plotting.graphs import plot_graph
