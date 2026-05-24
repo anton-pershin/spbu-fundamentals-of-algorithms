@@ -15,7 +15,6 @@ class DfsViaLifoQueueWithPostvisit(GraphTraversal):
         visited = set()
         lifo = deque()
         lifo.append((node,False))
-        visited.add(node)
 
         while lifo:
             node, is_post = lifo.pop()
@@ -23,11 +22,15 @@ class DfsViaLifoQueueWithPostvisit(GraphTraversal):
                 self.postvisit(node)
                 continue
 
+            if node in visited:
+                continue
+
+            visited.add(node)
             self.previsit(node)
+
             lifo.append((node,True))
             for adj in self.G.neighbors(node):
                 if adj not in visited:
-                    visited.add(adj)
                     lifo.append((adj,False))
 
 
