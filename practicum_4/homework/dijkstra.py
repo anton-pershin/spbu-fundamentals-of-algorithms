@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Any
 from abc import ABC, abstractmethod
 
+import heapq
 import numpy as np
 import networkx as nx
 
@@ -16,23 +17,55 @@ class DijkstraAlgorithm(GraphTraversal):
         super().__init__(G)
 
     def previsit(self, node: Any, **params) -> None:
-        """List of params:
-        * path: list[Any] (path from the initial node to the given node)
-        """
         self.shortest_paths[node] = params["path"]
 
     def postvisit(self, node: Any, **params) -> None:
         pass
 
-    def run(self, node: Any) -> None:
+    def _restore_path(self, parents : dict, end : Any) -> list:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        path = []
+        start = end
 
-        pass
+        while start is not None:
+            path.append(start)
+            start = parents[start]
+        path.reverse()
 
+        return path
+    
+    def run(self, start_node: Any) -> None:
 
+        distances = {node: float("inf") for node in self.G.nodes()}
+        distances[start_node] = 0
+        parent = {node: None for node in self.G.nodes()}
+
+        min_dist_queue = [(0, start_node)]
+        
+        while min_dist_queue:
+            current_dist, current = heapq.heappop(min_dist_queue)
+
+            if current_dist > distances[current]:
+                continue
+
+            for neighbor, edge_info in self.G[current].items():
+                if "weight" in edge_info:
+                    weight = edge_info["weight"]
+                else:
+                    weight = 1
+                new_dist = current_dist + weight
+
+                if new_dist < distances[neighbor]:
+                    distances[neighbor] = new_dist
+                    parent[neighbor] = current
+                    heapq.heappush(min_dist_queue, (new_dist, neighbor))
+
+        for node in self.G.nodes():
+            if distances[node] == float("inf"):
+                continue
+            path = self._restore_path(parent, node)
+            self.previsit(node, path=path)
+        
 if __name__ == "__main__":
     G = nx.read_edgelist(
         Path("practicum_4") / "simple_weighted_graph_9_nodes.edgelist",
