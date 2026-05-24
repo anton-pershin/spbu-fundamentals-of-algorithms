@@ -14,8 +14,6 @@ class DfsViaLifoQueueWithPostvisit(GraphTraversal):
     def run(self, node: Any) -> None:
 
         visited = set()
-        visited.add(node)
-        
         lifo_queue = deque()
         lifo_queue.append((node, "previsit"))
 
@@ -26,12 +24,15 @@ class DfsViaLifoQueueWithPostvisit(GraphTraversal):
                 self.postvisit(current)
                 continue
 
+            if current in visited:
+                continue
+
+            visited.add(current)
             self.previsit(current)
             lifo_queue.append((current, "postvisit"))
             
             for child_node in self.G.neighbors(current):
                 if child_node not in visited:
-                    visited.add(child_node)
                     lifo_queue.append((child_node, "previsit"))
                 
 class DfsViaLifoQueueWithPrinting(DfsViaLifoQueueWithPostvisit):
@@ -52,4 +53,3 @@ if __name__ == "__main__":
 
     dfs = DfsViaLifoQueueWithPrinting(G)
     dfs.run(node="0")
-
