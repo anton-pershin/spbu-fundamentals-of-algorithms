@@ -9,6 +9,8 @@ from practicum_4.dfs import GraphTraversal
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
+import heapq
+
 
 class DijkstraAlgorithm(GraphTraversal):
     def __init__(self, G: AnyNxGraph) -> None:
