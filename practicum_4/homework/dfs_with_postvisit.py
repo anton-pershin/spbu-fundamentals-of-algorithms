@@ -13,9 +13,24 @@ from src.common import AnyNxGraph
 class DfsViaLifoQueueWithPostvisit(GraphTraversal):
     def run(self, node: Any) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        stack = deque([(node, "ENTER")])
+        visited = {node}
+
+        while stack:
+            u, action = stack.pop()
+
+            if action == "EXIT":
+                self.postvisit(u)
+            
+            elif action == "ENTER":
+                self.previsit(u)
+                
+                stack.append((u, "EXIT"))
+                
+                for v in reversed(list(self.G.neighbors(u))):
+                    if v not in visited:
+                        visited.add(v)
+                        stack.append((v, "ENTER"))
 
         pass
 
