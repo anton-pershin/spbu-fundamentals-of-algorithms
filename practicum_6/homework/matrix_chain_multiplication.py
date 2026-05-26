@@ -67,14 +67,11 @@ class MatrixChainMultiplication:
 
         mapping = {i:f"пустая вершина{j}" for j, i in enumerate(self.tree) if isinstance(i, tuple)}
         self.tree = nx.relabel_nodes(self.tree, mapping)
-
-        return self.tree, root_tuple
+        
+        actual_root = mapping.get(root_tuple, root_tuple)
+        return self.tree, actual_root
         
 
-
-
-
-                
 
 if __name__ == "__main__":
 
