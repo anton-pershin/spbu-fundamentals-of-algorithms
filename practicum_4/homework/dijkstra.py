@@ -25,7 +25,7 @@ class DijkstraAlgorithm(GraphTraversal):
         pass
 
     def run(self, node: Any) -> None:
-
+        import heapq
         visited = set()
         q = [(0, node, [node])]
         dist = {node: 0}
