@@ -25,10 +25,22 @@ class DijkstraAlgorithm(GraphTraversal):
         pass
 
     def run(self, node: Any) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        import heapq
+        visited = set()
+        q = [(0, node, [node])]
+        dist = {node: 0}
+        while q:
+            cur_dist, cur, path = heapq.heappop(q)
+            if cur in visited:
+                continue
+            self.previsit(cur, path=path)
+            visited.add(cur)
+            for neighbor in self.G.neighbors(cur):
+                if neighbor not in visited:
+                    w = self.G[cur][neighbor]['weight']
+                    new_dist = cur_dist + w
+                    new_path = path + [neighbor]
+                    heapq.heappush(q, (new_dist, neighbor, new_path))
 
         pass
 
