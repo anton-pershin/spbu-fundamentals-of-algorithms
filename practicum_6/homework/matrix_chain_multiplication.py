@@ -4,11 +4,8 @@ from typing import Any, Union
 import numpy as np
 import networkx as nx
 
-import sys
-sys.path.append('D:/spbu/spbu-fundamentals-of-algorithms/src')
-
-from plotting.graphs import plot_graph
-from common import AnyNxGraph
+from src.plotting.graphs import plot_graph
+from src.common import AnyNxGraph
 
 class MatrixChainMultiplication:
     def __init__(self) -> None:
