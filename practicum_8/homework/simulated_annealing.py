@@ -22,7 +22,7 @@ def set_colors(G: nx.Graph, colors: NDArrayInt) -> None:
     for n, color in zip(G.nodes, colors):
         G.nodes[n]["color"] = color
 
-def tweaks(bestColors: NDArrayInt, n_max_colors: int) -> NDArrayInt:
+def tweaks(G, bestColors: NDArrayInt, n_max_colors: int) -> NDArrayInt:
     newColors = bestColors
     vertex = np.random.randint(0, len(newColors))
     neighColors = list()
@@ -57,7 +57,7 @@ def solve_via_simulated_annealing(
     for iteration in range(n_iters):
         buff = 1
 
-        newColors = tweaks(bestColors, n_max_colors)
+        newColors = tweaks(G, bestColors, n_max_colors)
         newConflicts = number_of_conflicts(G, newColors)
         diff = abs(newConflicts - bestConflicts)
         
