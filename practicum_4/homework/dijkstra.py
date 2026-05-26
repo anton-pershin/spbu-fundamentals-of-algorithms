@@ -1,3 +1,4 @@
+from typing import Any
 import numpy as np
 import networkx as nx
 from pathlib import Path
