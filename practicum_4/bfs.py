@@ -20,12 +20,12 @@ class BfsViaFifoQueue(GraphTraversal):
             node = queue.popleft()
             self.previsit(node)
 
-            for neigh in G.neighbors(node):
+            for neigh in self.G.neighbors(node):
                 if neigh not in self.visited:
                     self.visited.add(neigh)
                     queue.append(neigh)
 
-            self.postvisit(node)
+        self.postvisit(node)
 
 
 class BfsViaLifoQueueWithPrinting(BfsViaFifoQueue):
