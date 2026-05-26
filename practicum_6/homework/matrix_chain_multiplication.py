@@ -25,21 +25,19 @@ class MatrixChainMultiplication:
         for i in range(1, n+1):
             m[(i,i)] = 0
         
-        for i in range(1, n+1):
-            for j in range(i, n+1):
-                if i == j:
-                    m[(i,j)] = 0
-                else:
-                    best = None
-                    best_c = float('inf')
-                    for k in range(i, j):
-                        c = m[(i,k)] + m[(k+1,j)] + d[i-1] * d[k] * d[j] 
-                        if c< best_c:
-                            best = k
-                            best_c = c
+        for l in range(2, n + 1):
+            for i in range(1, n - l + 2):
+                j = i + l - 1
+                best = None
+                best_c = float('inf')
+                for k in range(i, j):
+                    c = m[(i,k)] + m[(k+1,j)] + d[i-1] * d[k] * d[j] 
+                    if c< best_c:
+                        best = k
+                        best_c = c
 
-                    m[(i,j)] = best_c
-                    s[(i,j)] = best
+                m[(i,j)] = best_c
+                s[(i,j)] = best
         G = self.graph
         self.id = 0
         def build(i,j):
