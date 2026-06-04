@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Any
 from abc import ABC, abstractmethod
+import heapq
 
 import numpy as np
 import networkx as nx
@@ -26,9 +27,41 @@ class DijkstraAlgorithm(GraphTraversal):
 
     def run(self, node: Any) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        distances = {n: float('inf') for n in self.G.nodes()}
+        distances[node] = 0
+        predecessors = {n: None for n in self.G.nodes()}
+        
+        pq = [(0, node)]
+        visited = set()
+
+        while pq:
+            current_distance, u = heapq.heappop(pq)
+
+            if u in visited:
+                continue
+            
+            visited.add(u)
+
+            path = []
+            curr = u
+            while curr is not None:
+                path.append(curr)
+                curr = predecessors.get(curr)
+            path.reverse() 
+            
+            self.previsit(u, path=path)
+
+            for v in self.G.neighbors(u):
+                if v in visited:
+                    continue
+                
+                weight = self.G[u][v].get("weight", 1.0)
+                new_distance = current_distance + weight
+
+                if new_distance < distances[v]:
+                    distances[v] = new_distance
+                    predecessors[v] = u
+                    heapq.heappush(pq, (new_distance, v))
 
         pass
 
