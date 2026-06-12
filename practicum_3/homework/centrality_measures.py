@@ -14,30 +14,77 @@ class CentralityMeasure(Protocol):
 
 
 def closeness_centrality(G: AnyNxGraph) -> dict[Any, float]:
+    nodes = list(G.nodes())
+    n = len(nodes)
+    res = {}
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
-
-    pass
+    for u in nodes:
+        lengths = nx.single_source_shortest_path_length(G, u)
+        sum_dist = sum(lengths.values())
+        
+        if sum_dist > 0:
+            reachable_nodes = len(lengths) - 1
+            if reachable_nodes > 0:
+                norm = reachable_nodes / (n - 1)
+                res[u] = (reachable_nodes / sum_dist) * norm
+            else:
+                res[u] = 0.0
+        else:
+            res[u] = 0.0
+            
+    return res
 
 
 def betweenness_centrality(G: AnyNxGraph) -> dict[Any, float]: 
+    nodes = list(G.nodes())
+    n = len(nodes)
+    between = {node: 0.0 for node in nodes}
+    
+    for s, t in combinations(nodes, 2):
+        try:
+            all_paths = list(nx.all_shortest_paths(G, source=s, target=t))
+            sigma_st = len(all_paths)
+            
+            for v in nodes:
+                if v != s and v != t:
+                    sigma_v = 0
+                    for path in all_paths:
+                        if v in path:
+                            sigma_v += 1
+                    
+                    between[v] += sigma_v / sigma_st
+        except nx.NetworkXNoPath:
+            pass
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
-
-    pass
+    if n > 2:
+        coeff = 2.0 / ((n - 1) * (n - 2))
+        for node in between:
+            between[node] *= coeff
+            
+    return between
 
 
 def eigenvector_centrality(G: AnyNxGraph) -> dict[Any, float]: 
-
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
-
-    pass
+    nodes = list(G.nodes())
+    n = len(nodes)
+    
+    adj = nx.to_numpy_array(G, nodelist=nodes)
+    
+    x = np.ones(n)
+    
+    for _ in range(100):
+        prev_x = x.copy()
+        
+        x = adj @ x
+        
+        norm = np.linalg.norm(x)
+        if norm > 0:
+            x = x / norm
+        
+        if np.allclose(x, prev_x, atol=1e-6):
+            break
+            
+    return {nodes[i]: float(x[i]) for i in range(n)}
 
 
 def plot_centrality_measure(G: AnyNxGraph, measure: CentralityMeasure) -> None:
@@ -54,4 +101,3 @@ if __name__ == "__main__":
     plot_centrality_measure(G, closeness_centrality)
     plot_centrality_measure(G, betweenness_centrality)
     plot_centrality_measure(G, eigenvector_centrality)
-
