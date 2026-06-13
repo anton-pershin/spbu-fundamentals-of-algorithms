@@ -22,15 +22,55 @@ def set_colors(G: nx.Graph, colors: NDArrayInt) -> None:
     for n, color in zip(G.nodes, colors):
         G.nodes[n]["color"] = color
 
+def tweak(G: nx.Graph, colors: NDArrayInt,maxColors : int) -> NDArrayInt:
+    newColors = colors.copy()
+
+    conflictNodes = []
+    for u,v in G.edges:
+        if colors[u] == colors[v]:
+            conflictNodes.extend([u,v])
+
+    if conflictNodes and np.random.random() < 0.8:
+        node = np.random.choice(conflictNodes)
+    else:
+        node = np.random.randint(0,len(colors))
+
+    currentColor = newColors[node]
+
+    possibleColors = [c for c in range(maxColors) if c != currentColor]
+
+    if len(possibleColors) > 0:
+        newColors[node] = np.random.choice(possibleColors)
+
+    return newColors;
+
 
 def solve_via_simulated_annealing(
     G: nx.Graph, n_max_colors: int, initial_colors: NDArrayInt, n_iters: int
 ) -> NDArrayInt:
     loss_history = np.zeros((n_iters,), dtype=np.int_)
+    
+    currentColors = initial_colors.copy()
+    currentConflicts = number_of_conflicts(G,currentColors)
+    bestConflicts = currentConflicts
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    T = 100.0
+
+    for i in range(n_iters):
+        loss_history[i] = bestConflicts
+        if bestConflicts == 0:
+            loss_history[i::] = 0
+            break
+        newColors = tweak(G,currentColors,n_max_colors)
+        newConflicts = number_of_conflicts(G,newColors)
+        d = newConflicts - currentConflicts
+
+        if d <= 0 or np.random.rand() < np.exp(-d/T):
+            currentColors = newColors
+            currentConflicts = newConflicts
+            bestConflicts = min(bestConflicts, currentConflicts)
+
+        T *=0.9
 
     return loss_history
 
@@ -50,3 +90,4 @@ if __name__ == "__main__":
     )
     plot_loss_history(loss_history)
     print()
+
