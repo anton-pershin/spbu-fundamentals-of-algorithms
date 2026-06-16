@@ -7,9 +7,12 @@ import plotly.graph_objects as go
 import networkx as nx
 from networkx.drawing.nx_pydot import graphviz_layout
 
+from pathlib import Path
+
 
 def plot_graph(
-    G, 
+    G,
+    img_path: str | Path,
     node_weights=None,
     figsize=(6, 5),
     name=None,
@@ -56,12 +59,16 @@ def plot_graph(
     if node_weights is not None:
         sm = plt.cm.ScalarMappable(cmap=truncated_cmap, norm=norm)
         sm.set_array([])
-        plt.colorbar(sm)
+        plt.colorbar(sm, ax=ax)
 
     if name is not None:
         ax.set_title(name)
 
     plt.show()
+
+    img_path = Path(img_path)
+    img_path.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(img_path)
 
 
 def plot_tree(G: nx.DiGraph) -> None:
