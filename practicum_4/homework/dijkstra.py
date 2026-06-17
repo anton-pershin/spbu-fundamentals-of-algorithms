@@ -9,6 +9,8 @@ from practicum_4.dfs import GraphTraversal
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
+import heapq
+
 
 class DijkstraAlgorithm(GraphTraversal):
     def __init__(self, G: AnyNxGraph) -> None:
@@ -16,23 +18,46 @@ class DijkstraAlgorithm(GraphTraversal):
         super().__init__(G)
 
     def previsit(self, node: Any, **params) -> None:
-        """List of params:
-        * path: list[Any] (path from the initial node to the given node)
-        """
         self.shortest_paths[node] = params["path"]
 
     def postvisit(self, node: Any, **params) -> None:
         pass
 
     def run(self, node: Any) -> None:
+        self.reset()
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        dist = {n: float("inf") for n in self.G.nodes}
+        dist[node] = 0
 
-        pass
+        prev = {}
 
+        heap = [(0, node)]
 
+        while heap:
+            cur_dist, u = heapq.heappop(heap)
+
+            if cur_dist > dist[u]:
+                continue
+
+            path = []
+            cur = u
+            while cur in prev:
+                path.append(cur)
+                cur = prev[cur]
+            path.append(node)
+            path.reverse()
+
+            self.previsit(u, path=path)
+
+            for v in self.G.neighbors(u):
+                weight = self.G[u][v].get("weight", 1)
+                new_dist = cur_dist + weight
+
+                if new_dist < dist[v]:
+                    dist[v] = new_dist
+                    prev[v] = u
+                    heapq.heappush(heap, (new_dist, v))
+                    
 if __name__ == "__main__":
     G = nx.read_edgelist(
         Path("practicum_4") / "simple_weighted_graph_9_nodes.edgelist",
