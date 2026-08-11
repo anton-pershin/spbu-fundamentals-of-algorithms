@@ -27,10 +27,31 @@ def solve_via_simulated_annealing(
     G: nx.Graph, n_max_colors: int, initial_colors: NDArrayInt, n_iters: int
 ) -> NDArrayInt:
     loss_history = np.zeros((n_iters,), dtype=np.int_)
-
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    current_colors = initial_colors.copy()
+    current_loss = number_of_conflicts(G, current_colors)
+    
+    for i in range(n_iters):
+        temp = max(0.01, 1.0 - i / n_iters)
+        
+        node_idx = np.random.randint(0, len(G.nodes))
+        new_color = np.random.randint(0, n_max_colors)
+        
+        new_colors = current_colors.copy()
+        new_colors[node_idx] = new_color
+        new_loss = number_of_conflicts(G, new_colors)
+        
+        delta = new_loss - current_loss
+        
+        if delta <= 0:
+            current_colors = new_colors
+            current_loss = new_loss
+        else:
+            probability = np.exp(-delta / temp)
+            if np.random.rand() < probability:
+                current_colors = new_colors
+                current_loss = new_loss
+        
+        loss_history[i] = current_loss
 
     return loss_history
 
