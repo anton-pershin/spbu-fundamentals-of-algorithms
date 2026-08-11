@@ -10,64 +10,53 @@ from src.common import AnyNxGraph
 
 class DisjointSets:
     def __init__(self) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.parent: dict[Any, Any] = dict()
+        self.rank: dict[Any, int] = dict()
 
     def make_set(self, v: Any) -> None:
-        """
-        Creates a set of a single element
-        """
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        self.parent[v] = v
+        self.rank[v] = 0
 
     def find(self, v: Any) -> set[Any]:
-        """
-        Finds the set containing v without using recursion
-        """
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        current_node = v
+        while self.parent[current_node] != current_node:
+            current_node = self.parent[current_node]
+        return set(current_node)
 
     def union(self, u: Any, v: Any) -> None:
-        """
-        Unites the sets containing u and v using union by rank,
-        i.e. we hang the smaller tree under the larger one
-        """
+        root_u = list(self.find(u))[0]
+        root_v = list(self.find(v))[0]
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        if root_u == root_v:
+            return
+        else:
+            if self.rank[root_u] > self.rank[root_v]:
+                self.parent[root_v] = root_u
+            elif self.rank[root_u] < self.rank[root_v]:
+                self.parent[root_u] = root_v
+            else:
+                self.parent[root_u] = root_v
+                self.rank[root_v] += 1
 
-        pass
         
 
 class KruskalAlgorithm:
     def __init__(self, G: AnyNxGraph) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
-
+        self.G = G
+        self.Djs = DisjointSets()
+        self.edges = sorted(G.edges(data='weight', default=1), key=lambda x: x[2])
     def run(self) -> set[tuple[Any, Any]]:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        for node in self.G:
+            self.Djs.make_set(node)
+        
+        result = set()
+        for edge in self.edges:
+            first, second, length = edge
+            if self.Djs.find(first) != self.Djs.find(second):
+                self.Djs.union(first, second)
+                result.add(tuple(sorted((first, second))))
+        self.mst_edges = result
+        return result
 
 
 if __name__ == "__main__":
