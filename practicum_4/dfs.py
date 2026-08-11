@@ -13,7 +13,7 @@ class GraphTraversal(ABC):
     def __init__(self, G: AnyNxGraph) -> None:
         self.G: nx.Graph = G
         self.visited: set[Any] = set()
-        
+
     def reset(self):
         self.visited.clear()
 
@@ -44,12 +44,27 @@ class DfsViaRecursion(GraphTraversal):
 
 class DfsViaLifoQueue(GraphTraversal):
     def run(self, node: Any) -> None:
+        def run(self, node: Any) -> None:
+            stack = [(node, False)]
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+            while stack:
+                current_node, is_postvisit = stack.pop()
 
-        pass
+                if is_postvisit:
+                    self.postvisit(current_node)
+                    continue
+
+                if current_node in self.visited:
+                    continue
+
+                self.visited.add(current_node)
+                self.previsit(current_node)
+                stack.append((current_node, True))
+
+                neighbors_list = list(self.G.neighbors(current_node))
+                for neighbor in reversed(neighbors_list):
+                    if neighbor not in self.visited:
+                        stack.append((neighbor, False))
 
 
 class DfsViaRecursionWithPrinting(DfsViaRecursion):
@@ -69,11 +84,21 @@ class DfsViaLifoQueueWithPrinting(DfsViaLifoQueue):
 
 
 class TopologicalSorting(DfsViaRecursion):
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    #########################
+    def __init__(self, G: AnyNxGraph):
+        super().__init__(G)
+        self.order = []
 
-    pass
+    def sort(self, node: Any) -> list:
+        self.reset()
+        self.order = []
+        self.run(node)
+        return self.order
+
+    def postvisit(self, node: Any, **params) -> None:
+        self.order.insert(0, node)
+
+        def previsit(self, node: Any, **params) -> None:
+            pass
 
 
 if __name__ == "__main__":
@@ -110,4 +135,3 @@ if __name__ == "__main__":
     sorted_nodes = ts.sort(node="0")
     print(sorted_nodes)
     plot_graph(G)
-
