@@ -25,12 +25,35 @@ class DijkstraAlgorithm(GraphTraversal):
         pass
 
     def run(self, node: Any) -> None:
+        distances = {node: float("inf") for node in self.G.nodes()}
+        distances[node] = 0
+        priority_queue = [(0, node)]
+        paths = {node: [node]} 
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        while priority_queue:
+            min_index = 0 
+            for i in range(len(priority_queue)):
+                if priority_queue[i][0] < priority_queue[min_index][0]:
+                    min_index = i
 
-        pass
+            current_distance, current_node = priority_queue.pop(min_index) 
+            if current_node in self.visited:
+                continue
+
+            self.visited.add(current_node)
+            self.previsit(current_node, path=paths[current_node])
+
+            for neighbor in self.G.neighbors(current_node): 
+                if neighbor not in self.visited:
+                    edge_weight = self.G[current_node][neighbor].get("weight", 1) 
+                    updated_distance = current_distance + edge_weight 
+
+                    if updated_distance < distances[neighbor]:
+                        distances[neighbor] = updated_distance
+                        paths[neighbor] = paths[current_node] + [neighbor]
+                        priority_queue.append((updated_distance, neighbor))
+
+            self.postvisit(current_node )
 
 
 if __name__ == "__main__":
@@ -49,4 +72,3 @@ if __name__ == "__main__":
         for i in range(len(sp.shortest_paths[test_node]) - 1)
     ]
     plot_graph(G, highlighted_edges=shortest_path_edges)
-
