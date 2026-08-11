@@ -9,6 +9,47 @@ from practicum_4.dfs import GraphTraversal
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
+# There was no suitable enough lib for my aims
+# So I made it myself
+# It may be a little clumsy, yet it works
+class PriorityQueue():
+    def __init__(self) -> None:
+        self.data: list(tuple()) = list()
+
+    def __repr__(self) -> str():
+        return f"{self.data}"
+
+    def __contains__(self, key) -> bool():
+        for item in self.data:
+            if item[0] == key:
+                return True
+        return False
+
+    def notempty(self) -> bool:
+        return len(self.data) != 0
+
+    def add(self, item) -> None:
+        self.data.append(item)
+        self.data = sorted(self.data, key = lambda item: item[1])
+    
+    def get(self, key) -> tuple():
+        for item in self.data:
+            if item[0] == key:
+                return item
+
+    def pop(self) -> tuple():
+        item = self.data.pop(0)
+        return item
+    
+    def change(self, key, value) -> tuple():
+        for i in range(len(self.data)):
+            itemKey = self.data[i][0]
+            if itemKey == key:
+                self.data[i] = (itemKey, value)
+                return True
+        return False
+
+
 
 class DijkstraAlgorithm(GraphTraversal):
     def __init__(self, G: AnyNxGraph) -> None:
@@ -25,12 +66,29 @@ class DijkstraAlgorithm(GraphTraversal):
         pass
 
     def run(self, node: Any) -> None:
+        pq = PriorityQueue()
+        paths: dict[Any, list[Any]] = {}
+        
+        pq.add((node, 0))
+        paths[node] = [node]
+        
+        while pq.notempty() == True:
+            cur, curDist = pq.pop()
+            self.visited.add(cur)
+            self.previsit(cur, path = paths[cur])
+            
+            for neighbor in G.neighbors(cur):
+                # Calculate overall distance from beginning to this exact neighbor
+                neighborDist = curDist + G.edges[cur, neighbor]["weight"] 
+                if neighbor in pq:
+                    if neighborDist < pq.get(neighbor)[1]:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+                        pq.change(neighbor, neighborDist)
+                        paths[neighbor] = paths[cur] + [neighbor]
 
-        pass
+                elif neighbor not in self.visited:
+                    pq.add((neighbor, neighborDist))
+                    paths[neighbor] = paths[cur] + [neighbor]
 
 
 if __name__ == "__main__":
