@@ -44,12 +44,20 @@ class DfsViaRecursion(GraphTraversal):
 
 class DfsViaLifoQueue(GraphTraversal):
     def run(self, node: Any) -> None:
-
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
-
-        pass
+        stack = [node]
+        
+        while stack:
+            current = stack.pop()
+            
+            if current not in self.visited:
+                self.previsit(current)
+                self.visited.add(current)
+                
+                for neighbor in self.G.neighbors(current):
+                    if neighbor not in self.visited:
+                        stack.append(neighbor)
+                
+                self.postvisit(current)
 
 
 class DfsViaRecursionWithPrinting(DfsViaRecursion):
