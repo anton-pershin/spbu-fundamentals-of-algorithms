@@ -1,11 +1,10 @@
 from pathlib import Path
 from typing import Any
-from abc import ABC, abstractmethod
+import heapq
 
-import numpy as np
 import networkx as nx
 
-from practicum_4.dfs import GraphTraversal 
+from practicum_4.dfs import GraphTraversal
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
 
@@ -16,21 +15,33 @@ class DijkstraAlgorithm(GraphTraversal):
         super().__init__(G)
 
     def previsit(self, node: Any, **params) -> None:
-        """List of params:
-        * path: list[Any] (path from the initial node to the given node)
-        """
         self.shortest_paths[node] = params["path"]
 
     def postvisit(self, node: Any, **params) -> None:
         pass
 
     def run(self, node: Any) -> None:
+        #расст-ия и пути от старт-ой вершины
+        dist = {node: 0}
+        path = {node: [node]}
+        #очередь с приоритетом
+        pq = [(0, node)]
+        visited = set()
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        while pq:
+            cur_dist, cur = heapq.heappop(pq)
+            if cur in visited:
+                continue
+            visited.add(cur)
+            self.previsit(cur, path=path[cur])
 
-        pass
+            for nb in self.G.neighbors(cur):
+                w = float(self.G[cur][nb].get("weight", 1.0))
+                new_dist = cur_dist + w
+                if nb not in dist or new_dist < dist[nb]:
+                    dist[nb] = new_dist
+                    path[nb] = path[cur] + [nb]
+                    heapq.heappush(pq, (new_dist, nb))
 
 
 if __name__ == "__main__":
@@ -39,14 +50,9 @@ if __name__ == "__main__":
         create_using=nx.Graph
     )
     plot_graph(G)
-
     sp = DijkstraAlgorithm(G)
     sp.run("0")
-
-    test_node = "5"
-    shortest_path_edges = [
-        (sp.shortest_paths[test_node][i], sp.shortest_paths[test_node][i + 1])
-        for i in range(len(sp.shortest_paths[test_node]) - 1)
-    ]
-    plot_graph(G, highlighted_edges=shortest_path_edges)
-
+    test = "5"
+    edges = [(sp.shortest_paths[test][i], sp.shortest_paths[test][i + 1])
+             for i in range(len(sp.shortest_paths[test]) - 1)]
+    plot_graph(G, highlighted_edges=edges)
