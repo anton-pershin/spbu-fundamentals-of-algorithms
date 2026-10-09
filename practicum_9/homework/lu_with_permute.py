@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 from numpy.typing import DTypeLike
 
-from practicum_7.lu import LinearSystemSolver
+from practicum_9.lu import LinearSystemSolver
 from src.common import NDArrayFloat
 
 
@@ -13,20 +13,57 @@ class LuSolverWithPermute(LinearSystemSolver):
         self.L, self.U, self.P = self._decompose(permute)
 
     def solve(self, b: NDArrayFloat) -> NDArrayFloat:
+        bp = self.P @ b
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        n = self.L.shape[0]
 
-        pass
+        y = np.zeros(n, dtype=self.dtype)
+        for i in range(n):
+            s = bp[i]
+            for j in range(i):
+                s -= self.L[i, j] * y[j]
+            y[i] = s / self.L[i, i]
+
+        x = np.zeros(n, dtype=self.dtype)
+        for i in range(n - 1, -1, -1):
+            s = y[i]
+            for j in range(i + 1, n):
+                s -= self.U[i, j] * x[j]
+            x[i] = s / self.U[i, i]
+
+        return x
 
     def _decompose(self, permute: bool) -> tuple[NDArrayFloat, NDArrayFloat, NDArrayFloat]:
+        A_curr = self.A.astype(self.dtype).copy()
+        n = A_curr.shape[0]
+        P = np.eye(n, dtype=self.dtype)
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        for k in range(n):
+            if permute:
+                pivot = k
+                for r in range(k + 1, n):
+                    if abs(A_curr[r, k]) > abs(A_curr[pivot, k]):
+                        pivot = r
+                if pivot != k:
+                    A_curr[[k, pivot], :] = A_curr[[pivot, k], :]
+                    P[[k, pivot], :] = P[[pivot, k], :]
 
-        pass
+            for i in range(k + 1, n):
+                factor = A_curr[i, k] / A_curr[k, k]
+                A_curr[i, k] = factor
+                for j in range(k + 1, n):
+                    A_curr[i, j] -= factor * A_curr[k, j]
+
+        L = np.eye(n, dtype=self.dtype)
+        U = np.zeros((n, n), dtype=self.dtype)
+        for i in range(n):
+            for j in range(n):
+                if i > j:
+                    L[i, j] = A_curr[i, j]
+                else:
+                    U[i, j] = A_curr[i, j]
+
+        return L, U, P
 
 
 def get_A_b(a_11: float, b_1: float) -> tuple[NDArrayFloat, NDArrayFloat]:
@@ -36,12 +73,12 @@ def get_A_b(a_11: float, b_1: float) -> tuple[NDArrayFloat, NDArrayFloat]:
 
 
 if __name__ == "__main__":
-    p = 16  # modify from 7 to 16 to check instability
-    a_11 = 3 + 10 ** (-p)  # add/remove 10**(-p) to check instability
-    b_1 = -16 + 10 ** (-p)  # add/remove 10**(-p) to check instability
+    p = 16
+    a_11 = 3 + 10 ** (-p)
+    b_1 = -16 + 10 ** (-p)
     A, b = get_A_b(a_11, b_1)
 
-    solver = LuSolver(A, np.float64, permute=True)
+    solver = LuSolverWithPermute(A, np.float64, permute=True)
     x = solver.solve(b)
     assert np.all(np.isclose(x, [1, -7, 4])), f"The anwser {x} is not accurate enough"
-
+    print("OK:", x)
