@@ -16,9 +16,6 @@ class DijkstraAlgorithm(GraphTraversal):
         super().__init__(G)
 
     def previsit(self, node: Any, **params) -> None:
-        """List of params:
-        * path: list[Any] (path from the initial node to the given node)
-        """
         self.shortest_paths[node] = params["path"]
 
     def postvisit(self, node: Any, **params) -> None:
@@ -26,11 +23,28 @@ class DijkstraAlgorithm(GraphTraversal):
 
     def run(self, node: Any) -> None:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        #########################
+        import heapq
 
-        pass
+        dist = {node: 0.0}
+        paths = {node: [node]}
+        pq = [(0.0, 0, node)]
+        counter = 1
+        while pq:
+            d, _, u = heapq.heappop(pq)
+            if u in self.visited:
+                continue
+            self.visited.add(u)
+            self.previsit(u, path=paths[u])
+            for v in self.G.neighbors(u):
+                if v in self.visited:
+                    continue
+                new_d = d + self.G[u][v].get("weight", 1)
+                if v not in dist or new_d < dist[v]:
+                    dist[v] = new_d
+                    paths[v] = paths[u] + [v]
+                    heapq.heappush(pq, (new_d, counter, v))
+                    counter += 1
+            self.postvisit(u)
 
 
 if __name__ == "__main__":
