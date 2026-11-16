@@ -12,8 +12,7 @@ from src.common import AnyNxGraph
 
 class DfsViaLifoQueueWithPostvisit(GraphTraversal):
     def run(self, node: Any) -> None:
-
-        stack = [(node, False)]  # (node, processed_flag); flag marks postvisit
+        stack = [(node, False)]
         while stack:
             node, processed = stack.pop()
             if processed:
@@ -38,12 +37,10 @@ class DfsViaLifoQueueWithPrinting(DfsViaLifoQueueWithPostvisit):
 
 
 if __name__ == "__main__":
-    # Load and plot the graph
     G = nx.read_edgelist(
         Path("practicum_4") / "simple_graph_10_nodes.edgelist",
         create_using=nx.Graph
     )
-    # plot_graph(G)
 
     dfs = DfsViaLifoQueueWithPrinting(G)
     dfs.run(node="0")
