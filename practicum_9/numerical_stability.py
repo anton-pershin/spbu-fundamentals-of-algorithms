@@ -49,19 +49,19 @@ class Polynomial(Evaluator):
 
     def _eval_standard(self, x):
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        x = self.dtype(x)
+        res = self.dtype(0.0)
+        for i, a in enumerate(self.coeffs):
+            res += a * x ** self.dtype(i)
+        return res
 
     def _eval_optimal(self, x):
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        x = self.dtype(x)
+        res = self.dtype(0.0)
+        for a in self.coeffs[::-1]:
+            res = res * x + a
+        return res
 
 
 class SeriesSum(Evaluator):
@@ -77,19 +77,21 @@ class SeriesSum(Evaluator):
 
     def _eval_standard(self):
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        res = self.dtype(0.0)
+        for i in range(1, self.max_i + 1):
+            res += self.dtype(1.0) / self.dtype(i)
+        return res
 
     def _eval_optimal(self):
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        s = self.dtype(0.0)
+        c = self.dtype(0.0)
+        for i in range(1, self.max_i + 1):
+            y = self.dtype(1.0) / self.dtype(i) - c
+            t = s + y
+            c = (t - s) - y
+            s = t
+        return s
 
 
 def _get_value(f, x=None):
