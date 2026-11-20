@@ -1,7 +1,11 @@
-from abc import ABC, abstractmethod
+import sys
+from pathlib import Path
 
 import numpy as np
 from numpy.typing import DTypeLike
+
+if __name__ == "__main__" and not __package__:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from practicum_9.lu import LinearSystemSolver
 from src.common import NDArrayFloat
