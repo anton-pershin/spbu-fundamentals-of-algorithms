@@ -1,6 +1,12 @@
+import sys
+from pathlib import Path
+
 import numpy as np
 from numpy.typing import NDArray
 import networkx as nx
+
+if __name__ == "__main__" and not __package__:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from src.plotting.graphs import plot_graph
 from src.plotting.misc import plot_loss_history
@@ -28,9 +34,46 @@ def solve_via_simulated_annealing(
 ) -> NDArrayInt:
     loss_history = np.zeros((n_iters,), dtype=np.int_)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    n_nodes = len(G.nodes)
+    nodes = list(G.nodes)
+    index = {n: i for i, n in enumerate(nodes)}
+    neighbors = [[index[m] for m in G.neighbors(n)] for n in nodes]
+
+    colors = initial_colors.copy()
+    n_conflicts = number_of_conflicts(G, colors)
+
+    t_start, t_end = 1.0, 0.02
+    alpha = (t_end / t_start) ** (1.0 / max(n_iters - 1, 1))
+    temperature = t_start
+
+    n_moves_per_iter = 10
+
+    for i in range(n_iters):
+        loss_history[i] = n_conflicts
+
+        for _ in range(n_moves_per_iter):
+            conflicting = [
+                v for v in range(n_nodes)
+                if any(colors[v] == colors[u] for u in neighbors[v])
+            ]
+            if conflicting:
+                v = conflicting[np.random.randint(len(conflicting))]
+            else:
+                v = np.random.randint(n_nodes)
+
+            new_color = np.random.randint(n_max_colors - 1)
+            if new_color >= colors[v]:
+                new_color += 1
+
+            old_local = sum(colors[v] == colors[u] for u in neighbors[v])
+            new_local = sum(new_color == colors[u] for u in neighbors[v])
+            delta = new_local - old_local
+
+            if delta <= 0 or np.random.rand() < np.exp(-delta / temperature):
+                colors[v] = new_color
+                n_conflicts += delta
+
+        temperature *= alpha
 
     return loss_history
 
