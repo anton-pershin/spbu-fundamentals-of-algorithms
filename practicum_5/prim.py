@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 import heapq
 from typing import Any
@@ -5,6 +6,9 @@ from abc import ABC, abstractmethod
 
 import networkx as nx
 import numpy as np
+
+if __name__ == "__main__" and not __package__:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph
