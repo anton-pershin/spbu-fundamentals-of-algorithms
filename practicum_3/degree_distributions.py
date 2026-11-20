@@ -5,6 +5,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
 
+if __name__ == "__main__" and not __package__:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 from src.plotting.graphs import plot_graph, plot_network_via_plotly
 from src.common import NDArrayFloat
 

@@ -1,8 +1,13 @@
+import sys
+from pathlib import Path
 from typing import Any, Protocol
 from itertools import combinations
 
 import numpy as np
 import networkx as nx
+
+if __name__ == "__main__" and not __package__:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from src.plotting.graphs import plot_graph, plot_network_via_plotly
 from src.common import AnyNxGraph 
