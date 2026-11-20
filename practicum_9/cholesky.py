@@ -4,11 +4,14 @@ from numpy.typing import ArrayLike
 
 def cholesky(A: ArrayLike) -> ArrayLike:
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-
-    pass
+    A = np.asarray(A, dtype=float)
+    n = A.shape[0]
+    L = np.zeros_like(A)
+    for i in range(n):
+        for j in range(i):
+            L[i, j] = (A[i, j] - L[i, :j] @ L[j, :j]) / L[j, j]
+        L[i, i] = np.sqrt(A[i, i] - L[i, :i] @ L[i, :i])
+    return L
 
 
 if __name__ == "__main__":

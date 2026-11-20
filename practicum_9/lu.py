@@ -23,19 +23,26 @@ class LuSolver(LinearSystemSolver):
 
     def solve(self, b: NDArrayFloat) -> NDArrayFloat:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        n = self.A.shape[0]
+        b = b.astype(self.dtype)
+        y = np.zeros(n, dtype=self.dtype)
+        for i in range(n):
+            y[i] = b[i] - self.L[i, :i] @ y[:i]
+        x = np.zeros(n, dtype=self.dtype)
+        for i in range(n - 1, -1, -1):
+            x[i] = (y[i] - self.U[i, i + 1 :] @ x[i + 1 :]) / self.U[i, i]
+        return x
 
     def _decompose(self) -> tuple[NDArrayFloat, NDArrayFloat]:
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
-
-        pass
+        n = self.A.shape[0]
+        U = self.A.copy()
+        L = np.eye(n, dtype=self.dtype)
+        for k in range(n - 1):
+            for i in range(k + 1, n):
+                L[i, k] = U[i, k] / U[k, k]
+                U[i, k:] -= L[i, k] * U[k, k:]
+        return L, U
 
 
 def get_A_b(a_11: float, b_1: float) -> tuple[NDArrayFloat, NDArrayFloat]:
