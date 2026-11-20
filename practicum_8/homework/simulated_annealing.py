@@ -1,6 +1,12 @@
+import sys
+from pathlib import Path
+
 import numpy as np
 from numpy.typing import NDArray
 import networkx as nx
+
+if __name__ == "__main__" and not __package__:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from src.plotting.graphs import plot_graph
 from src.plotting.misc import plot_loss_history

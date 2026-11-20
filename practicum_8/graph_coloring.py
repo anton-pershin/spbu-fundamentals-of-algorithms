@@ -1,7 +1,12 @@
+import sys
+from pathlib import Path
 from typing import Protocol
 
 import numpy as np
 import networkx as nx
+
+if __name__ == "__main__" and not __package__:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.common import NDArrayInt
 from src.plotting.graphs import plot_graph
