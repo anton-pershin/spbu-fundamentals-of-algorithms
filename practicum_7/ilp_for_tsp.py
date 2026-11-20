@@ -1,9 +1,13 @@
+import sys
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 import networkx as nx
 from scipy.optimize import milp, Bounds, LinearConstraint
+
+if __name__ == "__main__" and not __package__:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.plotting.graphs import plot_graph
 from src.common import AnyNxGraph, NDArrayInt, NDArrayFloat
