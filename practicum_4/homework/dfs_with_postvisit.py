@@ -1,9 +1,13 @@
+import sys
 from pathlib import Path
 from collections import deque
 from typing import Any
 from abc import ABC, abstractmethod
 
 import networkx as nx
+
+if __name__ == "__main__" and not __package__:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from practicum_4.dfs import GraphTraversal
 from src.plotting.graphs import plot_graph
